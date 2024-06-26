@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3 uid="uid://dqna38x6815dm"]
+
+[ext_resource type="Texture2D" uid="uid://bjr6mjt1vafl1" path="res://assets/white-circle.png" id="1_id2bx"]
+[ext_resource type="Script" path="res://error_popup.gd" id="1_ijebm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fwr8l"]
+bg_color = Color(1, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_cmesm"]
+font_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_72lba"]
+bg_color = Color(1, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 1)
+
+[node name="ErrorPopup" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 0
+script = ExtResource("1_ijebm")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_id2bx")
+
+[node name="LabelTop" type="Label" parent="."]
+layout_mode = 0
+offset_left = -32.0
+offset_top = -28.0
+offset_right = 32.0
+offset_bottom = -9.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_fwr8l")
+text = "ERR"
+label_settings = SubResource("LabelSettings_cmesm")
+horizontal_alignment = 1
+
+[node name="LabelBot" type="Label" parent="."]
+layout_mode = 0
+offset_left = -32.0
+offset_top = 9.0
+offset_right = 32.0
+offset_bottom = 28.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_72lba")
+text = "ERR"
+label_settings = SubResource("LabelSettings_cmesm")
+horizontal_alignment = 1

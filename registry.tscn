@@ -1,0 +1,84 @@
+[gd_scene load_steps=8 format=3 uid="uid://dtl428geay23t"]
+
+[ext_resource type="Script" path="res://registry.gd" id="1_100ds"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iy4y3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iykxg"]
+content_margin_left = 6.0
+bg_color = Color(0.156863, 0.168627, 0.196078, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5k5sp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hdj36"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qh7hy"]
+bg_color = Color(0.156863, 0.168627, 0.196078, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jaf1y"]
+font_size = 12
+
+[node name="registry" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 488.0
+offset_bottom = 32.0
+script = ExtResource("1_100ds")
+
+[node name="Registry" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 44.0
+offset_right = 328.0
+offset_bottom = 32.0
+size_flags_horizontal = 0
+theme_override_colors/font_uneditable_color = Color(0.920995, 0.920995, 0.920995, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_iy4y3")
+theme_override_styles/read_only = SubResource("StyleBoxFlat_iykxg")
+text = "dev.registry.io"
+editable = false
+context_menu_enabled = false
+virtual_keyboard_enabled = false
+shortcut_keys_enabled = false
+middle_mouse_paste_enabled = false
+selecting_enabled = false
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="Cluster" type="OptionButton" parent="."]
+layout_mode = 0
+offset_left = 336.0
+offset_right = 488.0
+offset_bottom = 32.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_5k5sp")
+
+[node name="EnabledSwitch" type="CheckButton" parent="."]
+layout_mode = 0
+offset_right = 44.0
+offset_bottom = 32.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hdj36")
+button_pressed = true
+
+[node name="DisabledLabel" type="Label" parent="."]
+modulate = Color(1, 1, 1, 0.956863)
+layout_mode = 0
+offset_left = 44.0
+offset_right = 328.0
+offset_bottom = 32.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_qh7hy")
+label_settings = SubResource("LabelSettings_jaf1y")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DisabledLabel2" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 336.0
+offset_right = 488.0
+offset_bottom = 32.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_qh7hy")
+label_settings = SubResource("LabelSettings_jaf1y")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="item_selected" from="Cluster" to="." method="_on_cluster_item_selected"]
+[connection signal="toggled" from="EnabledSwitch" to="." method="_on_enabled_switch_toggled"]

@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://cipdh04n0d1cu"]
+
+[ext_resource type="Script" path="res://log_entry.gd" id="1_2nsmg"]
+[ext_resource type="PackedScene" uid="uid://bwhnhl6sninak" path="res://letter_icon.tscn" id="2_cvrk6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_to8b0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_p2qis"]
+
+[node name="HBoxContainer" type="HBoxContainer"]
+clip_contents = true
+script = ExtResource("1_2nsmg")
+desc = "aaa"
+icon_text = "x"
+
+[node name="IconWrap" type="Panel" parent="."]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxEmpty_to8b0")
+
+[node name="Letter" parent="IconWrap" instance=ExtResource("2_cvrk6")]
+position = Vector2(15, 15)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+
+[node name="Desc" type="Label" parent="MarginContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(328, 0)
+layout_mode = 2
+text = "what about a really long line that has text does it wrap or doe sit"
+label_settings = SubResource("LabelSettings_p2qis")
+autowrap_mode = 2

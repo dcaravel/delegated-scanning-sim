@@ -1,0 +1,104 @@
+[gd_scene load_steps=7 format=3 uid="uid://dqsf4fb6s5p2m"]
+
+[ext_resource type="StyleBox" uid="uid://j1dsq6iyrr2h" path="res://theme/panel/scan.stylebox" id="1_sa2iu"]
+[ext_resource type="Script" path="res://ImageStatusZoom.gd" id="2_54lgo"]
+[ext_resource type="StyleBox" uid="uid://b1yy7062uksaa" path="res://theme/panel/inactive.stylebox" id="3_gf2g1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q3dwx"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+bg_color = Color(1, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_3a5c1"]
+font_size = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_4jr3e"]
+font_size = 12
+
+[node name="ImageStatusZoom" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 120.0
+offset_bottom = 160.0
+script = ExtResource("2_54lgo")
+
+[node name="BG" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 136.0
+theme_override_styles/panel = ExtResource("1_sa2iu")
+
+[node name="MetadataPill" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 112.0
+offset_bottom = 31.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.117647)
+theme_override_styles/normal = ExtResource("3_gf2g1")
+text = "metadata"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="IndexReportPill" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 40.0
+offset_right = 112.0
+offset_bottom = 63.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.117647)
+theme_override_styles/normal = ExtResource("3_gf2g1")
+text = "index report"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VulnReportPill" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 72.0
+offset_right = 112.0
+offset_bottom = 95.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.117647)
+theme_override_styles/normal = ExtResource("3_gf2g1")
+text = "vuln report"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SignaturesPill" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 104.0
+offset_right = 112.0
+offset_bottom = 127.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.117647)
+theme_override_styles/normal = ExtResource("3_gf2g1")
+text = "signatures"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ErrorLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 84.0
+offset_right = 102.0
+offset_bottom = 116.0
+rotation = -0.736529
+theme_override_styles/normal = SubResource("StyleBoxFlat_q3dwx")
+text = "ERROR"
+label_settings = SubResource("LabelSettings_3a5c1")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ImageLabel" type="Label" parent="."]
+layout_mode = 0
+offset_top = 136.0
+offset_right = 120.0
+offset_bottom = 159.0
+text = "storage.Image"
+label_settings = SubResource("LabelSettings_4jr3e")
+horizontal_alignment = 1

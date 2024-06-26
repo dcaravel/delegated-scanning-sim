@@ -1,0 +1,1213 @@
+[gd_scene load_steps=95 format=3 uid="uid://1d30nevdx8ls"]
+
+[ext_resource type="Script" path="res://arch.gd" id="1_p2u15"]
+[ext_resource type="PackedScene" uid="uid://bq8pyne1pxix3" path="res://cluster.tscn" id="2_70j8o"]
+[ext_resource type="PackedScene" uid="uid://xc7ehdgts1gt" path="res://image.tscn" id="3_5ph6d"]
+[ext_resource type="PackedScene" uid="uid://dtl428geay23t" path="res://registry.tscn" id="3_pco5m"]
+[ext_resource type="PackedScene" uid="uid://dyxof76c6vcef" path="res://log_panel.tscn" id="7_1jrm4"]
+[ext_resource type="PackedScene" uid="uid://dqsf4fb6s5p2m" path="res://ImageStatusZoom.tscn" id="8_6wjqu"]
+[ext_resource type="Texture2D" uid="uid://rutfbve2kuta" path="res://assets/cloud4-svgrepo-com-256x256.png" id="8_aq7sb"]
+[ext_resource type="Texture2D" uid="uid://cadl2focovlil" path="res://assets/power-off-svgrepo-com-16x16.png" id="8_wo2kh"]
+[ext_resource type="Texture2D" uid="uid://dxwjp014yh72h" path="res://assets/backward-step-svgrepo-com-16x16.png" id="9_6wee7"]
+[ext_resource type="Texture2D" uid="uid://d1f7errq8u5g8" path="res://assets/play-svgrepo-com-16x16.png" id="9_f2pe8"]
+[ext_resource type="Texture2D" uid="uid://dijl4n88jtnv6" path="res://assets/forward-step-svgrepo-com.png" id="12_mln1t"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5c2nx"]
+bg_color = Color(0.180392, 0.180392, 0.180392, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3uyhb"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_6wsxw"]
+resource_name = "DeleRegsRadio"
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fs0i5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_inmen"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_rk3k5"]
+font_size = 12
+font_color = Color(0.712129, 0.712129, 0.712129, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rgmtv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v2rmo"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6vqw1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_i5cdb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbdf4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fww3u"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b2k4s"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2lkia"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nlwxi"]
+
+[sub_resource type="Curve2D" id="Curve2D_o8erq"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 1200, -24, 0, 0, 0, 0, 1088, -24)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_30u4c"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 736, 72, 0, 0, 0, 0, 704, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_v1qas"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 704, 72, 0, 0, 0, 0, 680, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_6ujwj"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 680, 72, 0, 0, 0, 0, 648, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_y0bid"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 648, 72, 0, 0, 0, 0, 704, 120)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_pn0xd"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 648, 72, 0, 0, 0, 0, 584, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_hkjkj"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 584, 72, 0, 0, 0, 0, 504, 136)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_s4o5n"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 504, 136, 0, 0, 0, 0, 672, 160)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_2fjuf"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 584, 72, 0, 0, 0, 0, 520, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_tc4ff"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 520, 72, 0, 0, 0, 0, 696, 144)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_kjf6w"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 520, 72, 0, 0, 0, 0, 480, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_31nta"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 680, 72, 0, 0, 0, 0, 488, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_3g6n5"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 680, 72, 0, 0, 0, 0, 648, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_x5lxa"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 648, 72, 0, 0, 0, 0, 680, 136)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_3lnux"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 648, 72, 0, 0, 0, 0, 584, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_allx0"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 584, 72, 0, 0, 0, 0, 504, 136)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_uhfdb"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 504, 136, 0, 0, 0, 0, 576, 136)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_qqf30"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 584, 72, 0, 0, 0, 0, 520, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_foywv"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 520, 72, 0, 0, 0, 0, 624, 136)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_d5e31"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 520, 72, 0, 0, 0, 0, 480, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_qbr58"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 680, 72, 0, 0, 0, 0, 632, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_ioh78"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 632, 72, 0, 0, 0, 0, 632, 32)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_vwyin"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 632, 72, 0, 0, 0, 0, 480, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_8akas"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 480, 72, 0, 0, 0, 0, 456, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_dwdxe"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 456, 72, 0, 0, 0, 0, 440, 72, 0, 0, 0, 0, 440, 248, 0, 0, 0, 0, 408, 248)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_ow3v3"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 456, 248, 0, 0, 0, 0, 408, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_rwpca"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 456, 424, 0, 0, 0, 0, 424, 424, 0, 0, 0, 0, 424, 248, 0, 0, 0, 0, 408, 248)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_slf1r"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 408, 232, 0, 0, 0, 0, 424, 232, 0, 0, 0, 0, 424, 56, 0, 0, 0, 0, 456, 56)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_xk4yu"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 456, 56, 0, 0, 0, 0, 680, 72)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_sd2ja"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 408, 232, 0, 0, 0, 0, 456, 232)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_uo7aj"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 456, 232, 0, 0, 0, 0, 680, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_jxqis"]
+
+[sub_resource type="Curve2D" id="Curve2D_ehur1"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 408, 232, 0, 0, 0, 0, 440, 232, 0, 0, 0, 0, 440, 408, 0, 0, 0, 0, 456, 408)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_y1drc"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 456, 408, 0, 0, 0, 0, 680, 424)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_r77ap"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 376, 248, 0, 0, 0, 0, 112, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_167ag"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 248, 0, 0, 0, 0, 112, 304)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_lubov"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 248, 0, 0, 0, 0, 80, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_pce0t"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 376, 248, 0, 0, 0, 0, 232, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_o0nub"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 232, 248, 0, 0, 0, 0, 232, 312)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_7r4vv"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 232, 248, 0, 0, 0, 0, 112, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_y71fi"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 248, 0, 0, 0, 0, 112, 304)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_k0oa5"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 248, 0, 0, 0, 0, 80, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_bpxek"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 376, 248, 0, 0, 0, 0, 352, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_n464b"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 352, 248, 0, 0, 0, 0, 248, 112)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_juv8t"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 352, 248, 0, 0, 0, 0, 312, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_kgxeh"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 312, 248, 0, 0, 0, 0, 384, 312)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_n628w"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 384, 312, 0, 0, 0, 0, 392, 312, 0, 0, 0, 0, 392, 224, 0, 0, 0, 0, 312, 112)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_milce"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 312, 248, 0, 0, 0, 0, 232, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_bdye1"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 232, 248, 0, 0, 0, 0, 232, 312)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_pdoa2"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 232, 312, 0, 0, 0, 0, 328, 312)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_m8pmu"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 232, 248, 0, 0, 0, 0, 176, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_h0b1x"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 176, 248, 0, 0, 0, 0, 176, 112)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_vsr3a"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 176, 248, 0, 0, 0, 0, 112, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_bhks4"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 248, 0, 0, 0, 0, 112, 304)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_m2m0e"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 248, 0, 0, 0, 0, 80, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_og35n"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 376, 248, 0, 0, 0, 0, 336, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_ito15"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 336, 248, 0, 0, 0, 0, 336, 208)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_ux0f1"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 336, 248, 0, 0, 0, 0, 112, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_abe5l"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 248, 0, 0, 0, 0, 112, 304)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_ada67"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 248, 0, 0, 0, 0, 80, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_tgqcy"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 24, 232, 0, 0, 0, 0, 56, 232)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_ybm4f"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 56, 232, 0, 0, 0, 0, 376, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_fm5pg"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 80, 248, 0, 0, 0, 0, 56, 232, 0, 0, 0, 0, 24, 232)
+}
+point_count = 3
+
+[sub_resource type="Curve2D" id="Curve2D_bxnrg"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 376, 248, 0, 0, 0, 0, 336, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_0okne"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 336, 248, 0, 0, 0, 0, 336, 208)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_aplus"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 336, 248, 0, 0, 0, 0, 80, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_7otxq"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 56, 232, 0, 0, 0, 0, 408, 232, 0, 0, 0, 0, 408, 232)
+}
+point_count = 3
+
+[sub_resource type="Curve2D" id="Curve2D_cfslr"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 408, 248, 0, 0, 0, 0, 376, 248)
+}
+point_count = 2
+
+[node name="Arch" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 176.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_p2u15")
+metadata/_edit_lock_ = true
+
+[node name="BottomPanelBG" type="ColorRect" parent="."]
+layout_mode = 0
+offset_top = 552.0
+offset_right = 1200.0
+offset_bottom = 800.0
+color = Color(0.211765, 0.239216, 0.290196, 1)
+metadata/_edit_lock_ = true
+
+[node name="TopPanelBG" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 1200.0
+offset_bottom = 552.0
+color = Color(0.0768358, 0.0768358, 0.0768358, 1)
+metadata/_edit_lock_ = true
+
+[node name="ProdCluster" parent="." instance=ExtResource("2_70j8o")]
+offset_left = 448.0
+offset_top = 16.0
+offset_right = 713.0
+offset_bottom = 186.0
+cluster_name = "prod"
+registry_name = "prod.registry.io"
+metadata/_edit_pinned_properties_ = [&"cluster_name"]
+
+[node name="DevCluster" parent="." instance=ExtResource("2_70j8o")]
+offset_left = 448.0
+offset_top = 192.0
+offset_right = 713.0
+offset_bottom = 360.0
+cluster_name = "dev"
+registry_name = "dev.registry.io"
+
+[node name="OtherCluster" parent="." instance=ExtResource("2_70j8o")]
+offset_left = 448.0
+offset_top = 368.0
+offset_right = 713.0
+offset_bottom = 536.0
+cluster_name = "other"
+registry_name = ""
+
+[node name="CentralServices" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 48.0
+offset_top = 192.0
+offset_right = 416.0
+offset_bottom = 360.0
+
+[node name="ColorRect5" type="ColorRect" parent="CentralServices"]
+layout_mode = 0
+offset_right = 368.0
+offset_bottom = 168.0
+color = Color(0.211765, 0.239216, 0.290196, 1)
+
+[node name="Central" type="Label" parent="CentralServices"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 360.0
+offset_bottom = 80.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "central"
+horizontal_alignment = 1
+
+[node name="Indexer" type="Label" parent="CentralServices"]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 88.0
+offset_right = 360.0
+offset_bottom = 160.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "indexer"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Matcher" type="Label" parent="CentralServices"]
+layout_mode = 0
+offset_left = 128.0
+offset_top = 88.0
+offset_right = 240.0
+offset_bottom = 160.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "matcher"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="CentralDB" type="Label" parent="CentralServices"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 88.0
+offset_right = 120.0
+offset_bottom = 160.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "central-db"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Line2D" type="Line2D" parent="CentralServices"]
+position = Vector2(56, -32)
+scale = Vector2(1, 0.995049)
+points = PackedVector2Array(-56, 32.1592, -56, 200.995, 312, 200.995, 312, 32.1592)
+closed = true
+width = 1.0
+default_color = Color(0.180392, 0.180392, 0.180392, 1)
+
+[node name="DelegatedScanningConfig" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 703.0
+offset_top = 592.0
+offset_right = 1199.0
+offset_bottom = 800.0
+
+[node name="DefaultClusterIDLabel" type="Label" parent="DelegatedScanningConfig"]
+layout_mode = 2
+offset_left = 44.0
+offset_right = 181.0
+offset_bottom = 23.0
+text = "Default Cluster"
+
+[node name="DefaultClusterOption" type="OptionButton" parent="DelegatedScanningConfig"]
+unique_name_in_owner = true
+layout_mode = 2
+offset_left = 44.0
+offset_top = 24.0
+offset_right = 192.0
+offset_bottom = 55.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_3uyhb")
+item_count = 4
+selected = 0
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_1/text = "prod"
+popup/item_1/id = 1
+popup/item_2/text = "dev"
+popup/item_2/id = 2
+popup/item_3/text = "other"
+popup/item_3/id = 3
+
+[node name="RegistryLabel" type="Label" parent="DelegatedScanningConfig"]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 64.0
+offset_right = 328.0
+offset_bottom = 87.0
+text = "Registry"
+
+[node name="ClusterIDLabel" type="Label" parent="DelegatedScanningConfig"]
+layout_mode = 0
+offset_left = 336.0
+offset_top = 64.0
+offset_right = 487.0
+offset_bottom = 87.0
+text = "Cluster"
+
+[node name="dev" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
+unique_name_in_owner = true
+offset_left = 1.0
+offset_top = 128.0
+offset_bottom = 160.0
+registry_name = "dev.registry.io"
+selection = 2
+
+[node name="prod" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
+unique_name_in_owner = true
+offset_left = 1.0
+offset_top = 88.0
+offset_bottom = 120.0
+registry_name = "prod.registry.io"
+selection = 1
+
+[node name="quay" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
+unique_name_in_owner = true
+offset_left = 1.0
+offset_top = 168.0
+offset_bottom = 200.0
+registry_name = "quay.io"
+
+[node name="EnabledForRadios" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 704.0
+offset_top = 552.0
+offset_right = 1192.0
+offset_bottom = 584.0
+
+[node name="NoneRadio" type="CheckBox" parent="EnabledForRadios"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 96.0
+offset_bottom = 32.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_3uyhb")
+button_pressed = true
+button_group = SubResource("ButtonGroup_6wsxw")
+text = "None"
+
+[node name="AllRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 96.0
+offset_right = 248.0
+offset_bottom = 32.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fs0i5")
+button_group = SubResource("ButtonGroup_6wsxw")
+text = "All Registries"
+
+[node name="SpecificRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 248.0
+offset_right = 418.0
+offset_bottom = 32.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_inmen")
+button_group = SubResource("ButtonGroup_6wsxw")
+text = "Specific Registries"
+
+[node name="BotLine2" type="Line2D" parent="EnabledForRadios"]
+position = Vector2(-474, -280)
+points = PackedVector2Array(962, 312, 474, 312)
+width = 1.0
+sharp_limit = 1.0
+round_precision = 1
+
+[node name="Images" type="Control" parent="."]
+anchors_preset = 0
+offset_top = 552.0
+offset_right = 648.0
+offset_bottom = 760.0
+
+[node name="QuayImage" parent="Images" instance=ExtResource("3_5ph6d")]
+unique_name_in_owner = true
+offset_top = 80.0
+offset_bottom = 112.0
+image_reference = "quay.io/rhacs-eng/main:latest"
+
+[node name="ExampleImage" parent="Images" instance=ExtResource("3_5ph6d")]
+visible = false
+offset_top = 200.0
+offset_bottom = 232.0
+image_reference = "example.com/some/image:tag"
+
+[node name="DevImage" parent="Images" instance=ExtResource("3_5ph6d")]
+unique_name_in_owner = true
+offset_top = 160.0
+offset_bottom = 192.0
+image_reference = "dev.registry.io/repo/path:2.0"
+
+[node name="ProdImage" parent="Images" instance=ExtResource("3_5ph6d")]
+unique_name_in_owner = true
+offset_top = 120.0
+offset_bottom = 152.0
+image_reference = "prod.registry.io/hello/world:stable"
+
+[node name="DockerImage" parent="Images" instance=ExtResource("3_5ph6d")]
+unique_name_in_owner = true
+offset_top = 39.0
+offset_bottom = 71.0
+image_reference = "docker.io/library/nginx:1.25.0"
+
+[node name="Headers" type="Control" parent="Images"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ImagesHeader" type="Control" parent="Images/Headers"]
+anchors_preset = 0
+offset_left = 8.0
+offset_right = 280.0
+offset_bottom = 32.0
+
+[node name="Images" type="Label" parent="Images/Headers/ImagesHeader"]
+layout_mode = 0
+offset_right = 272.0
+offset_bottom = 32.0
+text = "Images"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ImagesUnderline" type="Line2D" parent="Images/Headers/ImagesHeader"]
+position = Vector2(-167, -31)
+points = PackedVector2Array(439, 63, 167, 63)
+width = 1.0
+
+[node name="DeployClusterHeader" type="Control" parent="Images/Headers"]
+anchors_preset = 0
+offset_left = 288.0
+offset_right = 496.0
+offset_bottom = 32.0
+
+[node name="DeployClusterLabel" type="Label" parent="Images/Headers/DeployClusterHeader"]
+layout_mode = 0
+offset_right = 208.0
+offset_bottom = 32.0
+text = "Deploy To Cluster"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DeployClusterUnderline" type="Line2D" parent="Images/Headers/DeployClusterHeader"]
+position = Vector2(194, -32)
+points = PackedVector2Array(14, 64, -194, 64)
+width = 1.0
+
+[node name="APIHeader" type="Control" parent="Images/Headers"]
+anchors_preset = 0
+offset_left = 504.0
+offset_right = 592.0
+offset_bottom = 32.0
+
+[node name="API" type="Label" parent="Images/Headers/APIHeader"]
+layout_mode = 0
+offset_right = 88.0
+offset_bottom = 32.0
+text = "API"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="APIUnderline" type="Line2D" parent="Images/Headers/APIHeader"]
+position = Vector2(-14, -32)
+points = PackedVector2Array(102, 64, 14, 64)
+width = 1.0
+
+[node name="As Of Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 776.0
+offset_right = 152.0
+offset_bottom = 799.0
+text = "As of version: 4.4.4"
+label_settings = SubResource("LabelSettings_rk3k5")
+vertical_alignment = 2
+
+[node name="ImageStatusZoomed" parent="." instance=ExtResource("8_6wjqu")]
+layout_mode = 0
+offset_left = 172.0
+offset_top = 384.0
+offset_right = 292.0
+offset_bottom = 544.0
+
+[node name="BigCloud" type="Node2D" parent="."]
+
+[node name="Cloud4-svgrepo-com-256x256" type="Sprite2D" parent="BigCloud"]
+position = Vector2(232, 88)
+texture = ExtResource("8_aq7sb")
+
+[node name="BigCloudLabel" type="Label" parent="BigCloud"]
+offset_left = 277.0
+offset_top = 21.0
+offset_right = 350.0
+offset_bottom = 44.0
+text = "registry..."
+
+[node name="LogPanel" parent="." instance=ExtResource("7_1jrm4")]
+unique_name_in_owner = true
+offset_left = 792.0
+offset_right = 1200.0
+
+[node name="FlowControls" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 168.0
+offset_bottom = 31.0
+
+[node name="ColorRect" type="ColorRect" parent="FlowControls"]
+layout_mode = 0
+offset_left = 792.0
+offset_top = 512.0
+offset_right = 1200.0
+offset_bottom = 552.0
+color = Color(0.211765, 0.239216, 0.290196, 1)
+
+[node name="ResetButton" type="Button" parent="FlowControls"]
+layout_mode = 0
+offset_left = 1160.0
+offset_top = 520.0
+offset_right = 1192.0
+offset_bottom = 544.0
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_rgmtv")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_v2rmo")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6vqw1")
+icon = ExtResource("8_wo2kh")
+icon_alignment = 1
+
+[node name="PausePlayButton" type="Button" parent="FlowControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 840.0
+offset_top = 520.0
+offset_right = 904.0
+offset_bottom = 544.0
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_i5cdb")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gbdf4")
+icon = ExtResource("9_f2pe8")
+clip_text = true
+icon_alignment = 1
+
+[node name="BackStepButton" type="Button" parent="FlowControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 800.0
+offset_top = 520.0
+offset_right = 832.0
+offset_bottom = 544.0
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_fww3u")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_b2k4s")
+icon = ExtResource("9_6wee7")
+clip_text = true
+icon_alignment = 1
+
+[node name="ForwardStepButton" type="Button" parent="FlowControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 912.0
+offset_top = 520.0
+offset_right = 944.0
+offset_bottom = 544.0
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_2lkia")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_nlwxi")
+icon = ExtResource("12_mln1t")
+clip_text = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="SpeedSlider" type="HSlider" parent="FlowControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 952.0
+offset_top = 520.0
+offset_right = 1152.0
+offset_bottom = 544.0
+max_value = 10.0
+value = 2.0
+
+[node name="Line2D" type="Line2D" parent="FlowControls"]
+visible = false
+position = Vector2(1016, 461.815)
+scale = Vector2(1, 1.73847)
+points = PackedVector2Array(-16, 38.0712, -16, 42.6729)
+width = 1.0
+default_color = Color(0.359069, 0.359069, 0.359069, 1)
+
+[node name="Line2D2" type="Line2D" parent="FlowControls"]
+visible = false
+position = Vector2(1048, 504)
+points = PackedVector2Array(-16, 24, -16, 32)
+width = 1.0
+default_color = Color(0.359069, 0.359069, 0.359069, 1)
+
+[node name="Line2D3" type="Line2D" parent="FlowControls"]
+position = Vector2(945.133, 490.708)
+points = PackedVector2Array(246.867, 61.2924, -145.133, 61.292)
+width = 1.0
+default_color = Color(0.359069, 0.359069, 0.359069, 1)
+
+[node name="Line2D4" type="Line2D" parent="FlowControls"]
+position = Vector2(944, 448)
+points = PackedVector2Array(248, 64, -144, 64)
+width = 1.0
+default_color = Color(0.359069, 0.359069, 0.359069, 1)
+
+[node name="Paths" type="Node2D" parent="."]
+
+[node name="pause" type="Path2D" parent="Paths"]
+unique_name_in_owner = true
+visible = false
+curve = SubResource("Curve2D_o8erq")
+
+[node name="template" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="cPaths" type="Node2D" parent="Paths"]
+
+[node name="c0-deploy" type="Node2D" parent="Paths/cPaths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/cPaths/c0-deploy"]
+curve = SubResource("Curve2D_30u4c")
+
+[node name="a2" type="Path2D" parent="Paths/cPaths/c0-deploy"]
+curve = SubResource("Curve2D_v1qas")
+
+[node name="c0-scan-cloud" type="Node2D" parent="Paths/cPaths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/cPaths/c0-scan-cloud"]
+curve = SubResource("Curve2D_6ujwj")
+
+[node name="a2" type="Path2D" parent="Paths/cPaths/c0-scan-cloud"]
+curve = SubResource("Curve2D_y0bid")
+
+[node name="a3" type="Path2D" parent="Paths/cPaths/c0-scan-cloud"]
+curve = SubResource("Curve2D_pn0xd")
+
+[node name="a4" type="Path2D" parent="Paths/cPaths/c0-scan-cloud"]
+curve = SubResource("Curve2D_hkjkj")
+
+[node name="a5" type="Path2D" parent="Paths/cPaths/c0-scan-cloud"]
+curve = SubResource("Curve2D_s4o5n")
+
+[node name="a6" type="Path2D" parent="Paths/cPaths/c0-scan-cloud"]
+curve = SubResource("Curve2D_2fjuf")
+
+[node name="a7" type="Path2D" parent="Paths/cPaths/c0-scan-cloud"]
+curve = SubResource("Curve2D_tc4ff")
+
+[node name="a8" type="Path2D" parent="Paths/cPaths/c0-scan-cloud"]
+curve = SubResource("Curve2D_kjf6w")
+
+[node name="c0-scan-central" type="Node2D" parent="Paths/cPaths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/cPaths/c0-scan-central"]
+curve = SubResource("Curve2D_31nta")
+
+[node name="c0-scan-local" type="Node2D" parent="Paths/cPaths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/cPaths/c0-scan-local"]
+curve = SubResource("Curve2D_3g6n5")
+
+[node name="a2" type="Path2D" parent="Paths/cPaths/c0-scan-local"]
+curve = SubResource("Curve2D_x5lxa")
+
+[node name="a3" type="Path2D" parent="Paths/cPaths/c0-scan-local"]
+curve = SubResource("Curve2D_3lnux")
+
+[node name="a4" type="Path2D" parent="Paths/cPaths/c0-scan-local"]
+curve = SubResource("Curve2D_allx0")
+
+[node name="a5" type="Path2D" parent="Paths/cPaths/c0-scan-local"]
+curve = SubResource("Curve2D_uhfdb")
+
+[node name="a6" type="Path2D" parent="Paths/cPaths/c0-scan-local"]
+curve = SubResource("Curve2D_qqf30")
+
+[node name="a7" type="Path2D" parent="Paths/cPaths/c0-scan-local"]
+curve = SubResource("Curve2D_foywv")
+
+[node name="a8" type="Path2D" parent="Paths/cPaths/c0-scan-local"]
+curve = SubResource("Curve2D_d5e31")
+
+[node name="c0-scan-local-error" type="Node2D" parent="Paths/cPaths"]
+
+[node name="a1" type="Path2D" parent="Paths/cPaths/c0-scan-local-error"]
+curve = SubResource("Curve2D_qbr58")
+
+[node name="a2" type="Path2D" parent="Paths/cPaths/c0-scan-local-error"]
+curve = SubResource("Curve2D_ioh78")
+
+[node name="a3" type="Path2D" parent="Paths/cPaths/c0-scan-local-error"]
+curve = SubResource("Curve2D_vwyin")
+
+[node name="c0-end" type="Node2D" parent="Paths/cPaths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/cPaths/c0-end"]
+curve = SubResource("Curve2D_8akas")
+
+[node name="c0-to-central" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/c0-to-central"]
+curve = SubResource("Curve2D_dwdxe")
+
+[node name="c1-to-central" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/c1-to-central"]
+curve = SubResource("Curve2D_ow3v3")
+
+[node name="c2-to-central" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/c2-to-central"]
+curve = SubResource("Curve2D_rwpca")
+
+[node name="central-to-c0" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/central-to-c0"]
+curve = SubResource("Curve2D_slf1r")
+
+[node name="a2" type="Path2D" parent="Paths/central-to-c0"]
+curve = SubResource("Curve2D_xk4yu")
+
+[node name="central-to-c1" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/central-to-c1"]
+curve = SubResource("Curve2D_sd2ja")
+
+[node name="a2" type="Path2D" parent="Paths/central-to-c1"]
+curve = SubResource("Curve2D_uo7aj")
+
+[node name="central-to-c2" type="Path2D" parent="Paths"]
+visible = false
+curve = SubResource("Curve2D_jxqis")
+
+[node name="a1" type="Path2D" parent="Paths/central-to-c2"]
+curve = SubResource("Curve2D_ehur1")
+
+[node name="a2" type="Path2D" parent="Paths/central-to-c2"]
+curve = SubResource("Curve2D_y1drc")
+
+[node name="central-error-from-sensor" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/central-error-from-sensor"]
+curve = SubResource("Curve2D_r77ap")
+
+[node name="a2" type="Path2D" parent="Paths/central-error-from-sensor"]
+curve = SubResource("Curve2D_167ag")
+
+[node name="a3" type="Path2D" parent="Paths/central-error-from-sensor"]
+curve = SubResource("Curve2D_lubov")
+
+[node name="central-match" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/central-match"]
+curve = SubResource("Curve2D_pce0t")
+
+[node name="a2" type="Path2D" parent="Paths/central-match"]
+curve = SubResource("Curve2D_o0nub")
+
+[node name="a3" type="Path2D" parent="Paths/central-match"]
+curve = SubResource("Curve2D_7r4vv")
+
+[node name="a4" type="Path2D" parent="Paths/central-match"]
+curve = SubResource("Curve2D_y71fi")
+
+[node name="a5" type="Path2D" parent="Paths/central-match"]
+curve = SubResource("Curve2D_k0oa5")
+
+[node name="central-scan" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_bpxek")
+
+[node name="a2" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_n464b")
+
+[node name="a3" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_juv8t")
+
+[node name="a4" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_kgxeh")
+
+[node name="a5" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_n628w")
+
+[node name="a6" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_milce")
+
+[node name="a7" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_bdye1")
+
+[node name="a7_1" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_pdoa2")
+
+[node name="a8" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_m8pmu")
+
+[node name="a9" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_h0b1x")
+
+[node name="a10" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_vsr3a")
+
+[node name="a11" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_bhks4")
+
+[node name="a12" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_m2m0e")
+
+[node name="central-scan-error" type="Node2D" parent="Paths"]
+
+[node name="a1" type="Path2D" parent="Paths/central-scan-error"]
+curve = SubResource("Curve2D_og35n")
+
+[node name="a2" type="Path2D" parent="Paths/central-scan-error"]
+curve = SubResource("Curve2D_ito15")
+
+[node name="a3" type="Path2D" parent="Paths/central-scan-error"]
+curve = SubResource("Curve2D_ux0f1")
+
+[node name="a4" type="Path2D" parent="Paths/central-scan-error"]
+curve = SubResource("Curve2D_abe5l")
+
+[node name="a5" type="Path2D" parent="Paths/central-scan-error"]
+curve = SubResource("Curve2D_ada67")
+
+[node name="central-roxctl-start" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/central-roxctl-start"]
+curve = SubResource("Curve2D_tgqcy")
+
+[node name="central-roxctl-to-central-scan" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/central-roxctl-to-central-scan"]
+curve = SubResource("Curve2D_ybm4f")
+
+[node name="b1" type="Path2D" parent="Paths/central-roxctl-to-central-scan"]
+curve = SubResource("Curve2D_fm5pg")
+
+[node name="central-delegate-error" type="Node2D" parent="Paths"]
+
+[node name="a1" type="Path2D" parent="Paths/central-delegate-error"]
+curve = SubResource("Curve2D_bxnrg")
+
+[node name="a2" type="Path2D" parent="Paths/central-delegate-error"]
+curve = SubResource("Curve2D_0okne")
+
+[node name="a3" type="Path2D" parent="Paths/central-delegate-error"]
+curve = SubResource("Curve2D_aplus")
+
+[node name="central-roxctl-to-cluster" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/central-roxctl-to-cluster"]
+curve = SubResource("Curve2D_7otxq")
+
+[node name="central-from-sensor-start" type="Node2D" parent="Paths"]
+visible = false
+
+[node name="a1" type="Path2D" parent="Paths/central-from-sensor-start"]
+curve = SubResource("Curve2D_cfslr")
+
+[connection signal="toggled" from="EnabledForRadios/NoneRadio" to="." method="_on_none_radio_toggled"]
+[connection signal="toggled" from="EnabledForRadios/AllRegistriesRadio" to="." method="_on_all_registries_radio_toggled"]
+[connection signal="toggled" from="EnabledForRadios/SpecificRegistriesRadio" to="." method="_on_specific_registries_radio_toggled"]
+[connection signal="dev_pressed" from="Images/QuayImage" to="." method="_on_quay_image_dev_pressed"]
+[connection signal="other_pressed" from="Images/QuayImage" to="." method="_on_quay_image_other_pressed"]
+[connection signal="prod_pressed" from="Images/QuayImage" to="." method="_on_quay_image_prod_pressed"]
+[connection signal="roxctl_pressed" from="Images/QuayImage" to="." method="_on_quay_image_roxctl_pressed"]
+[connection signal="dev_pressed" from="Images/DevImage" to="." method="_on_dev_image_dev_pressed"]
+[connection signal="other_pressed" from="Images/DevImage" to="." method="_on_dev_image_other_pressed"]
+[connection signal="prod_pressed" from="Images/DevImage" to="." method="_on_dev_image_prod_pressed"]
+[connection signal="roxctl_pressed" from="Images/DevImage" to="." method="_on_dev_image_roxctl_pressed"]
+[connection signal="dev_pressed" from="Images/ProdImage" to="." method="_on_prod_image_dev_pressed"]
+[connection signal="other_pressed" from="Images/ProdImage" to="." method="_on_prod_image_other_pressed"]
+[connection signal="prod_pressed" from="Images/ProdImage" to="." method="_on_prod_image_prod_pressed"]
+[connection signal="roxctl_pressed" from="Images/ProdImage" to="." method="_on_prod_image_roxctl_pressed"]
+[connection signal="dev_pressed" from="Images/DockerImage" to="." method="_on_docker_image_dev_pressed"]
+[connection signal="other_pressed" from="Images/DockerImage" to="." method="_on_docker_image_other_pressed"]
+[connection signal="prod_pressed" from="Images/DockerImage" to="." method="_on_docker_image_prod_pressed"]
+[connection signal="roxctl_pressed" from="Images/DockerImage" to="." method="_on_docker_image_roxctl_pressed"]
+[connection signal="pressed" from="FlowControls/ResetButton" to="." method="_on_reset_button_pressed"]
+[connection signal="pressed" from="FlowControls/PausePlayButton" to="." method="_on_pause_play_button_pressed"]
+[connection signal="pressed" from="FlowControls/BackStepButton" to="." method="_on_back_step_button_pressed"]
+[connection signal="value_changed" from="FlowControls/SpeedSlider" to="." method="_on_speed_slider_value_changed"]

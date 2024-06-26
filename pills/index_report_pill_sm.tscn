@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://ce2m856c8mrw7"]
+
+[ext_resource type="StyleBox" uid="uid://b1yy7062uksaa" path="res://theme/panel/inactive.stylebox" id="1_vwdiy"]
+[ext_resource type="Script" path="res://pills/index_report_pill_sm.gd" id="2_20w23"]
+
+[node name="IndexReportPill" type="Label"]
+offset_left = -8.0
+offset_top = -4.0
+offset_right = 38.0
+offset_bottom = 19.0
+scale = Vector2(0.35, 0.35)
+theme_override_colors/font_color = Color(1, 1, 1, 0.117647)
+theme_override_styles/normal = ExtResource("1_vwdiy")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_20w23")

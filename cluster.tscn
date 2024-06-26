@@ -1,0 +1,166 @@
+[gd_scene load_steps=8 format=3 uid="uid://bq8pyne1pxix3"]
+
+[ext_resource type="Script" path="res://cluster.gd" id="1_q0r7i"]
+[ext_resource type="Texture2D" uid="uid://fhjwqg7nhvao" path="res://assets/cloud4-svgrepo-com.png" id="2_85q0g"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5c2nx"]
+bg_color = Color(0.180392, 0.180392, 0.180392, 1)
+
+[sub_resource type="Animation" id="Animation_ooj3w"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Registry:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_m1ax1"]
+resource_name = "highlight-registry"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Registry:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 0, 0, 1), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Registry:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2lcg0"]
+_data = {
+"RESET": SubResource("Animation_ooj3w"),
+"highlight-registry": SubResource("Animation_m1ax1")
+}
+
+[sub_resource type="LabelSettings" id="LabelSettings_lpli0"]
+font_size = 12
+
+[node name="Cluster" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 265.0
+offset_bottom = 168.0
+script = ExtResource("1_q0r7i")
+cluster_name = "blah"
+registry_name = "registry.blah.io"
+cloud_text = "quay.io"
+show_cloud = true
+
+[node name="BG" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 264.0
+offset_bottom = 168.0
+color = Color(0.211765, 0.239216, 0.290196, 1)
+
+[node name="Scanner" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 88.0
+offset_right = 96.0
+offset_bottom = 160.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "indexer"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Sensor" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 256.0
+offset_bottom = 80.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "sensor
+"
+horizontal_alignment = 1
+
+[node name="Label" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 208.0
+offset_right = 264.0
+offset_bottom = 24.0
+
+[node name="ColorRect" type="ColorRect" parent="Label"]
+layout_mode = 0
+offset_right = 56.0
+offset_bottom = 24.0
+color = Color(0.211765, 0.239216, 0.290196, 1)
+
+[node name="ClusterName" type="Label" parent="Label"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 56.0
+offset_bottom = 24.0
+theme_override_constants/line_spacing = -3
+text = "blah"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Line2D" type="Line2D" parent="Label"]
+points = PackedVector2Array(0, 24, 56, 24, 56, 0, 0, 0, 0, 24)
+width = 1.0
+default_color = Color(0.180392, 0.180392, 0.180392, 1)
+
+[node name="Line2D" type="Line2D" parent="."]
+position = Vector2(-8, 0)
+points = PackedVector2Array(272, 0, 8, 0, 8, 168, 272, 168, 272, 24)
+width = 1.0
+default_color = Color(0.180392, 0.180392, 0.180392, 1)
+
+[node name="Registry" type="Label" parent="."]
+modulate = Color(1, 1, 1, 0.2)
+layout_mode = 0
+offset_left = 104.0
+offset_top = 88.0
+offset_right = 256.0
+offset_bottom = 160.0
+pivot_offset = Vector2(76, 36)
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "registry.blah.io"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Registry"]
+root_node = NodePath("../..")
+libraries = {
+"": SubResource("AnimationLibrary_2lcg0")
+}
+speed_scale = 0.5
+
+[node name="Cloud" type="Node2D" parent="."]
+position = Vector2(304, 128)
+
+[node name="Cloud4-svgrepo-com" type="Sprite2D" parent="Cloud"]
+position = Vector2(-48, 0)
+texture = ExtResource("2_85q0g")
+
+[node name="CloudLabel" type="Label" parent="Cloud"]
+offset_left = -24.0
+offset_top = 31.0
+offset_right = 88.0
+offset_bottom = 54.0
+text = "quay.io"
+label_settings = SubResource("LabelSettings_lpli0")

@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://dyxof76c6vcef"]
+
+[ext_resource type="Script" path="res://log_panel.gd" id="1_gn8y7"]
+
+[node name="LogPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 408.0
+offset_bottom = 512.0
+script = ExtResource("1_gn8y7")
+
+[node name="OuterRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 408.0
+offset_bottom = 512.0
+color = Color(0.211765, 0.239216, 0.290196, 1)
+
+[node name="InnerRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 400.0
+offset_bottom = 504.0
+color = Color(0.129412, 0.14902, 0.180392, 1)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 392.0
+offset_bottom = 496.0
+
+[node name="LogEntries" type="VBoxContainer" parent="ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
