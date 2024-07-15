@@ -6,9 +6,8 @@
 *.tmp
 
 # project exports
-export/**
-!export/web
-!export/web/*
+export/
+builds/
 
 
 # vscode
