@@ -29,3 +29,6 @@ func _process(_delta):
 	else:
 		c.visible=false
 		$Registry.modulate.a = 1.0
+
+func _exit_tree():
+	queue_free()

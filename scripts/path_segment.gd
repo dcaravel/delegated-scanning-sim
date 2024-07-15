@@ -37,29 +37,16 @@ var use_alt_color:bool
 func _init(
 	p_parent:Arch, 
 	p_path:Path2D, 
-	p_draw_trail:bool=true, 
 	):
 	
 	parent = p_parent
 	path = p_path
-	
-	if p_draw_trail:
-		for i in range(0,path.curve.point_count-1):
-			var start = path.curve.get_point_position(i)
-			var l = Line2D.new()
-			l.width = 2
-			l.default_color=parent.line_color
-			l.add_point(start)
-			l.add_point(start)
-			path.add_child(l)
-			lines.append(l)
 	
 	path_follow = PathFollow2D.new()
 	path_follow.rotates = false
 	path.add_child(path_follow)
 	
 	parent.all_path_segments.append(self)
-
 	
 # returns the total progress walked so far
 func progress() -> float:
@@ -75,36 +62,33 @@ func reset(hard:bool=true):
 		path_follow.progress_ratio = 0
 		inner_progress=0
 	
-	if start_icon:
+	if start_icon != null:
 		path.remove_child(start_icon)
 		start_icon.queue_free()
 		start_icon = null
 	
-	if icon:
+	if icon != null:
 		path_follow.remove_child(icon)
 		icon.queue_free()
 		icon = null
 	
-	if end_icon:
+	if end_icon != null:
 		path_follow.remove_child(end_icon)
 		end_icon.queue_free()
 		end_icon = null
 
-	if mid_icon:
+	if mid_icon != null:
 		path.remove_child(mid_icon)
 		mid_icon.queue_free()
 		mid_icon = null
 		parent._del_log_entry()
 	
 	if draw_trail:
-		for i in range(0,path.curve.point_count-1):
+		for i in range(0, lines.size()):
 			var l = lines[i]
-			if !use_alt_color:
-				l.default_color=parent.line_color
-			else:
-				l.default_color=parent.line_color_alt
-			var start = path.curve.get_point_position(i)
-			l.set_point_position(1, start)
+			path.remove_child(l)
+			l.queue_free()
+		lines.clear()
 	
 	started_walk = false
 
@@ -125,11 +109,22 @@ func walk(delta) -> bool:
 			start_icon = start_icon_creator.call()
 			start_icon.position = _cur_path_pos()
 			path.add_child(start_icon)
-		if !end_icon_creator.is_null():
-			end_icon = end_icon_creator.call()
 		if !walk_icon_creator.is_null():
 			icon = walk_icon_creator.call()
 			path_follow.add_child(icon)
+		if draw_trail:
+			for i in range(0,path.curve.point_count-1):
+				var start = path.curve.get_point_position(i)
+				var l = Line2D.new()
+				l.width = 2
+				if !use_alt_color:
+					l.default_color=parent.line_color
+				else:
+					l.default_color=parent.line_color_alt
+				l.add_point(start)
+				l.add_point(start)
+				path.add_child(l)
+				lines.append(l)
 		
 		_callback(Constants.Event.START)
 		
@@ -142,8 +137,11 @@ func walk(delta) -> bool:
 	
 	if done:
 		path_follow.remove_child(icon)
+		icon.queue_free()
+		icon == null
 		_callback(Constants.Event.END)
-		if end_icon != null:
+		if !end_icon_creator.is_null() && !end_icon:
+			end_icon = end_icon_creator.call()
 			path_follow.add_child(end_icon)
 	
 	return done

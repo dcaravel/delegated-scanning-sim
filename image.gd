@@ -57,3 +57,6 @@ func _on_deployother_pressed():
 func _on_roxctl_pressed():
 	active_button_idx = buttonsIdx.ROXCTL
 	roxctl_pressed.emit()
+
+func _exit_tree():
+	queue_free()

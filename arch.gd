@@ -246,6 +246,8 @@ func _reset(soft:bool=false):
 		a.stop()
 
 	if !soft:
+		print_orphan_nodes()
+		all_path_segments = []
 		active_path = []
 		$BigCloud.visible = false
 		$BigCloud/BigCloudLabel.text = ""

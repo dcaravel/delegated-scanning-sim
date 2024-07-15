@@ -33,3 +33,6 @@ func _process(_delta):
 	
 	$LabelTop.position.x = _def_label_offsetX + LabelOffsetX
 	$LabelBot.position.x = _def_label_offsetX + LabelOffsetX
+
+func _exit_tree():
+	queue_free()

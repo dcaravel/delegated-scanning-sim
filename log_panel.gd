@@ -60,3 +60,6 @@ func _remove_last(el:Node) -> bool:
 
 func get_all() -> Array[LogEntry]:
 	return []
+
+func _exit_tree():
+	queue_free()
