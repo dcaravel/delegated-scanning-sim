@@ -73,6 +73,9 @@ var initial_log_letter = 64
 var last_log_letter:int = initial_log_letter
 
 func _ready():
+	if !_is_dialog_accepted():
+		$AcceptDialog.popup()
+		
 	animationPlayers = [
 		null,
 		$ProdCluster/Registry/AnimationPlayer,
@@ -812,3 +815,13 @@ func _midIconCB(p_text:String) -> Node:
 	i.update_icon_text(_get_next_log_letter())
 	_add_log_entry(_get_last_log_letter(), p_text)
 	return i
+
+func _is_dialog_accepted() -> bool:
+	var file = FileAccess.open("user://dialog_accepted.dat", FileAccess.READ)
+	var content = file.get_as_text()
+	return content == "true"
+
+func _on_accept_dialog_confirmed():
+	var file = FileAccess.open("user://dialog_accepted.dat", FileAccess.WRITE)
+	file.store_string("true")
+	

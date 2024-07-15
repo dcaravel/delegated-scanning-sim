@@ -1187,6 +1187,21 @@ visible = false
 [node name="a1" type="Path2D" parent="Paths/central-from-sensor-start"]
 curve = SubResource("Curve2D_cfslr")
 
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+mode = 2
+title = "Disclaimer"
+initial_position = 2
+size = Vector2i(500, 158)
+visible = true
+unresizable = true
+always_on_top = true
+popup_window = true
+dialog_text = "Thanks for trying out the Delegated Scanning Simulation!
+
+Some inaccuracies may exist, please test and verify on your own before making changes to real installations."
+dialog_close_on_escape = false
+dialog_autowrap = true
+
 [connection signal="toggled" from="EnabledForRadios/NoneRadio" to="." method="_on_none_radio_toggled"]
 [connection signal="toggled" from="EnabledForRadios/AllRegistriesRadio" to="." method="_on_all_registries_radio_toggled"]
 [connection signal="toggled" from="EnabledForRadios/SpecificRegistriesRadio" to="." method="_on_specific_registries_radio_toggled"]
@@ -1210,3 +1225,4 @@ curve = SubResource("Curve2D_cfslr")
 [connection signal="pressed" from="FlowControls/PausePlayButton" to="." method="_on_pause_play_button_pressed"]
 [connection signal="pressed" from="FlowControls/BackStepButton" to="." method="_on_back_step_button_pressed"]
 [connection signal="value_changed" from="FlowControls/SpeedSlider" to="." method="_on_speed_slider_value_changed"]
+[connection signal="confirmed" from="AcceptDialog" to="." method="_on_accept_dialog_confirmed"]
