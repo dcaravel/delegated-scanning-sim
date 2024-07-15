@@ -621,7 +621,6 @@ offset_left = 1.0
 offset_top = 128.0
 offset_bottom = 160.0
 registry_name = "dev.registry.io"
-selection = 2
 
 [node name="prod" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
 unique_name_in_owner = true
@@ -629,7 +628,6 @@ offset_left = 1.0
 offset_top = 88.0
 offset_bottom = 120.0
 registry_name = "prod.registry.io"
-selection = 1
 
 [node name="quay" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
 unique_name_in_owner = true
@@ -845,7 +843,7 @@ unique_name_in_owner = true
 layout_mode = 0
 offset_left = 840.0
 offset_top = 520.0
-offset_right = 904.0
+offset_right = 944.0
 offset_bottom = 544.0
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_i5cdb")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gbdf4")
@@ -868,6 +866,7 @@ icon_alignment = 1
 
 [node name="ForwardStepButton" type="Button" parent="FlowControls"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 0
 offset_left = 912.0
 offset_top = 520.0
