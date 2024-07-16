@@ -250,7 +250,7 @@ func _reset(soft:bool=false):
 		a.stop()
 
 	if !soft:
-		print_tree_pretty()
+		#print_tree_pretty()
 		all_path_segments = []
 		active_path = []
 		$BigCloud.visible = false
@@ -270,16 +270,25 @@ func _on_back_step_button_pressed():
 	moving = false
 	if cur_path_segment_idx >= active_path.size():
 		cur_path_segment_idx = active_path.size()-1
-	var seg = active_path[cur_path_segment_idx]
-	var progress = seg.progress()
+	var seg:PathSegment
+	var progress:float
+	seg = active_path[cur_path_segment_idx]
+	progress = seg.progress()
+	
+	seg.reset()
+	if cur_path_segment_idx >= 1:
+		cur_path_segment_idx -= 1
 
-	if progress > 0.20:
-		seg.reset()
-	else:
-		seg.reset()
-		if cur_path_segment_idx >= 1:
-			cur_path_segment_idx -= 1
-			active_path[cur_path_segment_idx].reset()
+	#if progress > 0.20:
+		#seg.reset()
+		#print("reset progress > .2: ", cur_path_segment_idx)
+	#else:
+		#seg.reset()
+		#print("reset progress: ", cur_path_segment_idx)
+		#if cur_path_segment_idx >= 1:
+			#cur_path_segment_idx -= 1
+			#active_path[cur_path_segment_idx].reset()
+			#print("reset progress (seg >=1): ", cur_path_segment_idx)
 	moving = orig_moving
 
 func _sync_enabled_for_radio():
@@ -445,7 +454,6 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	var scCentralDelegateError = SegCreator.new(self, $"Paths/central-delegate-error").wicon(_dot)
 	var scCentralToCluster = SegCreator.new(self, $"Paths/central-roxctl-to-cluster").wicon(_dot).trail(false)
 	
-	print_orphan_nodes()
 	var path:Array[PathSegment] = []
 	
 	var pathCentralMatch = [

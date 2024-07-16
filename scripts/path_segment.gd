@@ -51,30 +51,34 @@ func _init(
 	
 # returns the total progress walked so far
 func progress() -> float:
+	if path_follow == null:
+		return 0
+			
 	if reverse_dir:
 		return 1-path_follow.progress_ratio
 	return path_follow.progress_ratio
 
-func reset(hard:bool=true):
+func _reset_progress():
 	if reverse_dir:
 		inner_progress=path.curve.get_baked_length()
+		if path_follow != null:
+			path_follow.progress_ratio = 1
 	else:
 		inner_progress=0
-	
+		if path_follow != null:
+			path_follow.progress_ratio = 0
+
+func reset(hard:bool=true):
+	_reset_progress()
+	if path_follow != null:
+		path.remove_child(path_follow)
+		path_follow.queue_free()
+		path_follow = null
+
 	if start_icon != null:
 		path.remove_child(start_icon)
 		start_icon.queue_free()
 		start_icon = null
-	
-	if icon != null:
-		path_follow.remove_child(icon)
-		icon.queue_free()
-		icon = null
-	
-	if end_icon != null:
-		path_follow.remove_child(end_icon)
-		end_icon.queue_free()
-		end_icon = null
 
 	if mid_icon != null:
 		path.remove_child(mid_icon)
@@ -92,10 +96,7 @@ func reset(hard:bool=true):
 	started_walk = false
 
 	if hard:
-		if path_follow != null:
-			path.remove_child(path_follow)
-			path_follow.queue_free()
-			path_follow = null
+
 		
 		_callback(Constants.Event.RESET)
 
@@ -114,6 +115,7 @@ func walk(delta) -> bool:
 			path_follow.name = "PathSegment-PathFollow2D"
 			path_follow.rotates = false
 			path.add_child(path_follow)
+			_reset_progress()
 			
 		if !start_icon_creator.is_null():
 			start_icon = start_icon_creator.call()
@@ -148,11 +150,13 @@ func walk(delta) -> bool:
 	_draw_mid_icon()
 	
 	if done:
-		path_follow.remove_child(icon)
-		icon.queue_free()
-		icon = null
+		if icon != null:
+			path_follow.remove_child(icon)
+			icon.queue_free()
+			icon = null
+			
 		_callback(Constants.Event.END)
-		if !end_icon_creator.is_null() && !end_icon:
+		if !end_icon_creator.is_null() && end_icon == null:
 			end_icon = end_icon_creator.call()
 			path_follow.add_child(end_icon)
 	
