@@ -1,3 +1,4 @@
+extends RefCounted
 class_name Constants
 
 enum Event {START, END, RESET}

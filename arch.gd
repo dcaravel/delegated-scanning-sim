@@ -73,9 +73,6 @@ var initial_log_letter = 64
 var last_log_letter:int = initial_log_letter
 
 func _ready():
-	if !_is_dialog_accepted():
-		$AcceptDialog.popup()
-		
 	animationPlayers = [
 		null,
 		$ProdCluster/Registry/AnimationPlayer,
@@ -95,10 +92,12 @@ func _ready():
 		c.visible = true
 	
 	c1Paths = $Paths/cPaths.duplicate()
+	c1Paths.name = "c1Paths"
 	c1Paths.position += $DevCluster.position - $ProdCluster.position
 	$Paths.add_child(c1Paths)
 	
 	c2Paths = $Paths/cPaths.duplicate()
+	c2Paths.name = "c2Paths"
 	c2Paths.position += $OtherCluster.position - $ProdCluster.position
 	$Paths.add_child(c2Paths)
 	
@@ -120,6 +119,7 @@ func _error(text:String="ERR", pos:Constants.Pos=Constants.Pos.BOT, offsetX:int=
 
 func _rdot() -> Node:
 	var dot = Sprite2D.new()
+	dot.name = "_rdot"
 	dot.scale = Vector2(0.3, 0.3)
 	dot.modulate = Color(255, 0, 0, 1.0)
 	dot.texture = preload("res://assets/white-circle.png")
@@ -131,6 +131,7 @@ func _pillC(idx:int) -> Callable:
 	
 func _pill(idx:int):
 	var pill:Node2D = Node2D.new()
+	pill.name = "pill" + str(idx)
 	var c = pill_scenes[idx].instantiate()
 	pill.add_child(c)
 	c.active=true
@@ -141,6 +142,7 @@ func _pill(idx:int):
 
 func _docker_icon() -> Sprite2D:
 	var end_icon = Sprite2D.new()
+	end_icon.name = "_docker_icon"
 	end_icon.scale = Vector2(0.2, 0.2)
 	end_icon.position = Vector2(0, -5)
 	end_icon.texture = preload("res://assets/docker-mark-blue.png")
@@ -149,6 +151,7 @@ func _docker_icon() -> Sprite2D:
 
 func _dot() -> Node:
 	var dot = Sprite2D.new()
+	dot.name = "_dot"
 	dot.scale = Vector2(0.3, 0.3)
 	dot.modulate = Color(line_color.r, line_color.g, line_color.b, 1.0)
 	dot.texture = preload("res://assets/white-circle.png")
@@ -157,6 +160,7 @@ func _dot() -> Node:
 
 func _image_status() -> ImageStatusMini:
 	var dupe = image_status_mini.instantiate()
+	dupe.name = "_image_status"
 	dupe.have_metadata = have_metadata
 	dupe.have_index_report = have_index_report
 	dupe.have_vuln_report = have_vuln_report
@@ -246,7 +250,7 @@ func _reset(soft:bool=false):
 		a.stop()
 
 	if !soft:
-		print_orphan_nodes()
+		print_tree_pretty()
 		all_path_segments = []
 		active_path = []
 		$BigCloud.visible = false
@@ -370,6 +374,7 @@ class SegCreator:
 	func c(p_name:String) -> PathSegment:
 		var n = base.get_node(p_name)
 		var ps = PathSegment.new(parent, n)
+		# ps.name = "PathSegment"
 		ps.wicon(dwicon)
 		ps.eicon(deicon)
 		ps.sicon(dsicon)
@@ -440,7 +445,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	var scCentralDelegateError = SegCreator.new(self, $"Paths/central-delegate-error").wicon(_dot)
 	var scCentralToCluster = SegCreator.new(self, $"Paths/central-roxctl-to-cluster").wicon(_dot).trail(false)
 	
-
+	print_orphan_nodes()
 	var path:Array[PathSegment] = []
 	
 	var pathCentralMatch = [
@@ -455,23 +460,23 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	var pathCentralScan = [
 		scCentralScan.c("a1").sicon(_dot),
 		scCentralScan.c("a2").eicon(_pillC(MD)).micon(_midIconCBC("Get metadata from registry"), 40),
-		scCentralScan.c("a2").reverse().eicon(_pillC(MD)).wicon(_pillC(MD)).onevent(_metadataCB),
+		scCentralScan.c("a2").reverse().eicon(_pillC(MD)).wicon(_pillC(MD)).onevent(_metadataCB).trail(false),
 		scCentralScan.c("a3"),
 		scCentralScan.c("a4").micon(_midIconCBC("Get index report from indexer"), 40),
 		scCentralScan.c("a5").eicon(_docker_icon).micon(_midIconCBC("Get layers from registry"), 40),
-		scCentralScan.c("a5").reverse().wicon(_docker_icon).eicon(_pillC(IR)),
-		scCentralScan.c("a4").reverse().wicon(_pillC(IR)).eicon(_pillC(IR)).onevent(_indexReportCB),
+		scCentralScan.c("a5").reverse().wicon(_docker_icon).eicon(_pillC(IR)).trail(false),
+		scCentralScan.c("a4").reverse().wicon(_pillC(IR)).eicon(_pillC(IR)).onevent(_indexReportCB).trail(false),
 		scCentralScan.c("a6"),
 		scCentralScan.c("a7").micon(_midIconCBC("Get vuln report from matcher"), 30),
 		scCentralScan.c("a7_1").micon(_midIconCBC("Get index report from indexer"), 30),
-		scCentralScan.c("a7_1").reverse().sicon(_pillC(IR)).wicon(_pillC(IR)),
-		scCentralScan.c("a7").reverse().sicon(_pillC(VR)).wicon(_pillC(VR)).eicon(_pillC(VR)).onevent(_vulnReportCB),
+		scCentralScan.c("a7_1").reverse().sicon(_pillC(IR)).wicon(_pillC(IR)).trail(false),
+		scCentralScan.c("a7").reverse().sicon(_pillC(VR)).wicon(_pillC(VR)).eicon(_pillC(VR)).onevent(_vulnReportCB).trail(false),
 		scCentralScan.c("a8"),
 		scCentralScan.c("a9").micon(_midIconCBC("Get image signature from registry"), 30),
-		scCentralScan.c("a9").reverse().sicon(_pillC(SIG)).wicon(_pillC(SIG)).eicon(_pillC(SIG)).onevent(_signatureCB),
+		scCentralScan.c("a9").reverse().sicon(_pillC(SIG)).wicon(_pillC(SIG)).eicon(_pillC(SIG)).onevent(_signatureCB).trail(false),
 		scCentralScan.c("a10").eicon(_dot),
 		scCentralScan.c("a11").wicon(_image_status).eicon(_image_status).micon(_midIconCBC("Store final image in DB"), 20),
-		scCentralScan.c("a11").reverse(),
+		scCentralScan.c("a11").reverse().trail(false),
 		scCentralScan.c("a12").wicon(_image_status).eicon(_dot),
 	]
 	
@@ -485,7 +490,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 		## Scan In Central - Cannot reach Registry
 		scCentralError.c("a1").sicon(_dot),
 		scCentralError.c("a2").eicon(_errorC("", Constants.Pos.TOP)).onevent(regErrorAnimate).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
-		scCentralError.c("a2").wicon(_rdot).reverse().eicon(_rdot).onevent(_errorStatusCB),
+		scCentralError.c("a2").wicon(_rdot).reverse().eicon(_rdot).onevent(_errorStatusCB).trail(false),
 		scCentralError.c("a3").eicon(_dot).wicon(_rdot),
 		scCentralError.c("a4").eicon(_image_status).wicon(_rdot).micon(_midIconCBC("Store scan with error in DB (if no existing image)"), 20),
 		scCentralError.c("a5").eicon(_dot),
@@ -494,15 +499,15 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	var pathScanLocal = [
 		scScanLocal.c("a1").sicon(_dot).wicon(_dot),
 		scScanLocal.c("a2").eicon(_pillC(MD)).micon(_midIconCBC("Get metadata from registry"), 30),
-		scScanLocal.c("a2").wicon(_pillC(MD)).reverse().eicon(_pillC(MD)).onevent(_metadataCB),
+		scScanLocal.c("a2").wicon(_pillC(MD)).reverse().eicon(_pillC(MD)).onevent(_metadataCB).trail(false),
 		scScanLocal.c("a3"),
 		scScanLocal.c("a4").micon(_midIconCBC("Get index report from indexer"), 60),
 		scScanLocal.c("a5").eicon(_docker_icon).micon(_midIconCBC("Get layers from registry"), 30),
-		scScanLocal.c("a5").wicon(_docker_icon).eicon(_pillC(IR)).reverse(),
-		scScanLocal.c("a4").wicon(_pillC(IR)).eicon(_pillC(IR)).reverse().onevent(_indexReportCB),
+		scScanLocal.c("a5").wicon(_docker_icon).eicon(_pillC(IR)).reverse().trail(false),
+		scScanLocal.c("a4").wicon(_pillC(IR)).eicon(_pillC(IR)).reverse().onevent(_indexReportCB).trail(false),
 		scScanLocal.c("a6"),
 		scScanLocal.c("a7").eicon(_pillC(SIG)).micon(_midIconCBC("Get image signature from registry"), 70),
-		scScanLocal.c("a7").wicon(_pillC(SIG)).eicon(_pillC(SIG)).reverse().onevent(_signatureCB),
+		scScanLocal.c("a7").wicon(_pillC(SIG)).eicon(_pillC(SIG)).reverse().onevent(_signatureCB).trail(false),
 		scScanLocal.c("a8").eicon(_dot).micon(_midIconCBC("Send match request to central"), 24),
 		
 		scEnd.c("a1"),
@@ -515,7 +520,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 		## Scan In Sensor - Cannot reach Registry
 		scScanLocalError.c("a1").sicon(_dot),
 		scScanLocalError.c("a2").eicon(_errorC("", Constants.Pos.TOP)).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
-		scScanLocalError.c("a2").reverse().onevent(regErrorAnimate).eicon(_rdot),
+		scScanLocalError.c("a2").reverse().onevent(regErrorAnimate).eicon(_rdot).trail(false),
 		scScanLocalError.c("a3").wicon(_rdot).eicon(_dot).micon(_midIconCBC("Send failure to central"), 100),
 		
 		scEnd.c("a1"),
@@ -611,15 +616,15 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 		path.append_array([
 			scScanCloud.c("a1").sicon(_dot).wicon(_dot),
 			scScanCloud.c("a2").eicon(_pillC(MD)).micon(_midIconCBC("Get metadata from registry"), 40),
-			scScanCloud.c("a2").wicon(_pillC(MD)).reverse().eicon(_pillC(MD)).onevent(_metadataCB),
+			scScanCloud.c("a2").wicon(_pillC(MD)).reverse().eicon(_pillC(MD)).onevent(_metadataCB).trail(false),
 			scScanCloud.c("a3"),
 			scScanCloud.c("a4").micon(_midIconCBC("Get index report from indexer"), 50),
 			scScanCloud.c("a5").eicon(_docker_icon).micon(_midIconCBC("Get layers from registry"), 40),
-			scScanCloud.c("a5").wicon(_docker_icon).eicon(_pillC(IR)).reverse(),
-			scScanCloud.c("a4").wicon(_pillC(IR)).eicon(_pillC(IR)).reverse().onevent(_indexReportCB),
+			scScanCloud.c("a5").wicon(_docker_icon).eicon(_pillC(IR)).reverse().trail(false),
+			scScanCloud.c("a4").wicon(_pillC(IR)).eicon(_pillC(IR)).reverse().onevent(_indexReportCB).trail(false),
 			scScanCloud.c("a6"),
 			scScanCloud.c("a7").eicon(_pillC(SIG)).micon(_midIconCBC("Get image signature from registry"), 80),
-			scScanCloud.c("a7").wicon(_pillC(SIG)).eicon(_pillC(SIG)).reverse().onevent(_signatureCB),
+			scScanCloud.c("a7").wicon(_pillC(SIG)).eicon(_pillC(SIG)).reverse().onevent(_signatureCB).trail(false),
 			scScanCloud.c("a8").eicon(_dot).micon(_midIconCBC("Send match request to central"), 24),
 			
 			scEnd.c("a1"),
@@ -818,12 +823,3 @@ func _midIconCB(p_text:String) -> Node:
 	_add_log_entry(_get_last_log_letter(), p_text)
 	return i
 
-func _is_dialog_accepted() -> bool:
-	var file = FileAccess.open("user://dialog_accepted.dat", FileAccess.READ)
-	var content = file.get_as_text()
-	return content == "true"
-
-func _on_accept_dialog_confirmed():
-	var file = FileAccess.open("user://dialog_accepted.dat", FileAccess.WRITE)
-	file.store_string("true")
-	

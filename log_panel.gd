@@ -15,7 +15,9 @@ func add(icon_text:String, text:String):
 	
 	var el = %LogEntries
 	if el.get_child_count() > 0:
-		el.add_child(HSeparator.new())
+		var sep = HSeparator.new()
+		sep.name = "LogPanel-HSeparator"
+		el.add_child(sep)
 	
 	el.add_child(le)
 	

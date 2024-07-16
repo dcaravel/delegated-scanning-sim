@@ -1,4 +1,4 @@
-extends Node
+extends RefCounted
 class_name PathSegment
 
 const blah = preload("res://arch.gd")
@@ -43,6 +43,7 @@ func _init(
 	path = p_path
 	
 	path_follow = PathFollow2D.new()
+	path_follow.name = "PathSegment-PathFollow2D"
 	path_follow.rotates = false
 	path.add_child(path_follow)
 	
@@ -56,10 +57,8 @@ func progress() -> float:
 
 func reset(hard:bool=true):
 	if reverse_dir:
-		path_follow.progress_ratio = 1
 		inner_progress=path.curve.get_baked_length()
 	else:
-		path_follow.progress_ratio = 0
 		inner_progress=0
 	
 	if start_icon != null:
@@ -93,6 +92,11 @@ func reset(hard:bool=true):
 	started_walk = false
 
 	if hard:
+		if path_follow != null:
+			path.remove_child(path_follow)
+			path_follow.queue_free()
+			path_follow = null
+		
 		_callback(Constants.Event.RESET)
 
 func _callback(p_event:Constants.Event):
@@ -105,6 +109,12 @@ func _callback(p_event:Constants.Event):
 func walk(delta) -> bool:
 	if !started_walk:
 		reset(false)
+		if path_follow == null:
+			path_follow = PathFollow2D.new()
+			path_follow.name = "PathSegment-PathFollow2D"
+			path_follow.rotates = false
+			path.add_child(path_follow)
+			
 		if !start_icon_creator.is_null():
 			start_icon = start_icon_creator.call()
 			start_icon.position = _cur_path_pos()
@@ -116,6 +126,7 @@ func walk(delta) -> bool:
 			for i in range(0,path.curve.point_count-1):
 				var start = path.curve.get_point_position(i)
 				var l = Line2D.new()
+				l.name="PathSegment-Line2D"
 				l.width = 2
 				if !use_alt_color:
 					l.default_color=parent.line_color
@@ -125,6 +136,7 @@ func walk(delta) -> bool:
 				l.add_point(start)
 				path.add_child(l)
 				lines.append(l)
+
 		
 		_callback(Constants.Event.START)
 		
@@ -138,7 +150,7 @@ func walk(delta) -> bool:
 	if done:
 		path_follow.remove_child(icon)
 		icon.queue_free()
-		icon == null
+		icon = null
 		_callback(Constants.Event.END)
 		if !end_icon_creator.is_null() && !end_icon:
 			end_icon = end_icon_creator.call()
