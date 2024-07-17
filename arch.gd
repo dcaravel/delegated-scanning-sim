@@ -218,12 +218,15 @@ func _process(delta):
 
 func _on_none_radio_toggled(_toggled_on):
 	_sync_enabled_for_radio()
+	_reset()
 
 func _on_all_registries_radio_toggled(_toggled_on):
 	_sync_enabled_for_radio()
+	_reset()
 
 func _on_specific_registries_radio_toggled(_toggled_on):
 	_sync_enabled_for_radio()
+	_reset()
 
 func _sync_image_status():
 	$ImageStatusZoomed.have_metadata = have_metadata
