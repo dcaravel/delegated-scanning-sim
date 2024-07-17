@@ -218,15 +218,12 @@ func _process(delta):
 
 func _on_none_radio_toggled(_toggled_on):
 	_sync_enabled_for_radio()
-	_reset()
 
 func _on_all_registries_radio_toggled(_toggled_on):
 	_sync_enabled_for_radio()
-	_reset()
-
+	
 func _on_specific_registries_radio_toggled(_toggled_on):
 	_sync_enabled_for_radio()
-	_reset()
 
 func _sync_image_status():
 	$ImageStatusZoomed.have_metadata = have_metadata
@@ -307,6 +304,8 @@ func _sync_enabled_for_radio():
 	else:
 		enabled_for = ENABLED_FOR.SPECIFIC
 		$DelegatedScanningConfig.visible = true
+	
+	_config_updated()
 	
 func _sync_active_path_from_config():
 	pass
@@ -834,3 +833,22 @@ func _midIconCB(p_text:String) -> Node:
 	_add_log_entry(_get_last_log_letter(), p_text)
 	return i
 
+func _config_updated():
+	# TODO: instead of doing a full reset, perhaps just change the behavior of the flow controls
+	_reset()
+
+
+func _on_prod_config_updated():
+	_config_updated()
+
+
+func _on_dev_config_updated():
+	_config_updated()
+
+
+func _on_quay_config_updated():
+	_config_updated()
+
+
+func _on_default_cluster_option_item_selected(index):
+	_config_updated()

@@ -1202,6 +1202,10 @@ visible = false
 [node name="a1" type="Path2D" parent="Paths/central-from-sensor-start"]
 curve = SubResource("Curve2D_cfslr")
 
+[connection signal="item_selected" from="DelegatedScanningConfig/DefaultClusterOption" to="." method="_on_default_cluster_option_item_selected"]
+[connection signal="config_updated" from="DelegatedScanningConfig/dev" to="." method="_on_dev_config_updated"]
+[connection signal="config_updated" from="DelegatedScanningConfig/prod" to="." method="_on_prod_config_updated"]
+[connection signal="config_updated" from="DelegatedScanningConfig/quay" to="." method="_on_quay_config_updated"]
 [connection signal="toggled" from="EnabledForRadios/NoneRadio" to="." method="_on_none_radio_toggled"]
 [connection signal="toggled" from="EnabledForRadios/AllRegistriesRadio" to="." method="_on_all_registries_radio_toggled"]
 [connection signal="toggled" from="EnabledForRadios/SpecificRegistriesRadio" to="." method="_on_specific_registries_radio_toggled"]

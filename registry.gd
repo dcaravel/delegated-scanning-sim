@@ -1,5 +1,7 @@
 extends Control
 
+signal config_updated
+
 @export var registry_name = ""
 @export var selection = 0
 @export var enabled:bool = false
@@ -23,9 +25,11 @@ func _process(_delta):
 
 func _on_cluster_item_selected(index):
 	selection = index
+	config_updated.emit()
 
 func _on_enabled_switch_toggled(toggled_on):
 	enabled = toggled_on
+	config_updated.emit()
 
 func _exit_tree():
 	queue_free()
