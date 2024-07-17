@@ -459,7 +459,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	var pathCentralMatch = [
 		scCentralMatch.c("a1").sicon(_dot),
 		scCentralMatch.c("a2").eicon(_pillC(VR)).micon(_midIconCBC("Get vuln report from matcher"), 30),
-		scCentralMatch.c("a2").reverse().wicon(_pillC(VR)).eicon(_pillC(VR)).onevent(_vulnReportCB),
+		scCentralMatch.c("a2").reverse().wicon(_pillC(VR)).eicon(_pillC(VR)).onevent(_vulnReportCB).trail(false),
 		scCentralMatch.c("a3"),
 		scCentralMatch.c("a4").sicon(_dot).wicon(_image_status).eicon(_image_status).micon(_midIconCBC("Store final image in DB"), 20),
 		scCentralMatch.c("a5").wicon(_dot).eicon(_dot),
