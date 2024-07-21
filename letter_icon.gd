@@ -8,6 +8,3 @@ func _ready():
 func update_icon_text(p_icon_text):
 	icon_text = p_icon_text
 	%IconText.text = p_icon_text
-
-func _exit_tree():
-	queue_free()

@@ -7,6 +7,3 @@ class_name LogEntry
 func _ready():
 	$IconWrap/Letter.update_icon_text(icon_text)
 	%Desc.text = desc
-
-func _exit_tree():
-	queue_free()

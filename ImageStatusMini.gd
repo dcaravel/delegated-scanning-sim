@@ -38,6 +38,3 @@ func _sync():
 	$VulnReportPill.active=have_vuln_report
 	$SignaturesPill.active=have_signatures
 	$Error.visible=have_error
-
-func _exit_tree():
-	queue_free()

@@ -30,6 +30,3 @@ func _on_cluster_item_selected(index):
 func _on_enabled_switch_toggled(toggled_on):
 	enabled = toggled_on
 	config_updated.emit()
-
-func _exit_tree():
-	queue_free()

@@ -37,6 +37,3 @@ func _update_font(control, cond):
 		control.remove_theme_color_override("font_color")
 	else:
 		control.add_theme_color_override("font_color", inactive_color)
-
-func _exit_tree():
-	queue_free()
