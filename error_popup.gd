@@ -1,9 +1,7 @@
 extends Control
 class_name ErrorPopup
 
-const _C = preload("res://scripts/constants.gd")
-
-@export var LabelPosition:Constants.Pos = Constants.Pos.BOT
+@export var LabelPosition:Global.Pos = Global.Pos.BOT
 @export var LabelText:String = "ERR"
 @export var LabelOffsetX:int = 0
 
@@ -24,10 +22,10 @@ func _process(_delta):
 		$LabelBot.visible = false
 		return
 		
-	if LabelPosition == Constants.Pos.TOP:
+	if LabelPosition == Global.Pos.TOP:
 		$LabelTop.visible = true
 		$LabelBot.visible = false
-	elif LabelPosition == Constants.Pos.BOT:
+	elif LabelPosition == Global.Pos.BOT:
 		$LabelTop.visible = false
 		$LabelBot.visible = true
 	

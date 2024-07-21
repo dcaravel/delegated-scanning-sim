@@ -1,8 +1,7 @@
 extends RefCounted
 class_name PathSegment
 
-const blah = preload("res://arch.gd")
-const _C = preload("res://scripts/constants.gd")
+const _Arch = preload("res://arch.gd")
 
 var parent:Arch
 
@@ -34,11 +33,7 @@ var reverse_dir:bool
 var use_alt_color:bool
 
 
-func _init(
-	p_parent:Arch, 
-	p_path:Path2D, 
-	):
-	
+func _init(p_parent:Arch, p_path:Path2D):
 	parent = p_parent
 	path = p_path
 	
@@ -98,9 +93,9 @@ func reset(hard:bool=true):
 	if hard:
 
 		
-		_callback(Constants.Event.RESET)
+		_callback(Global.Event.RESET)
 
-func _callback(p_event:Constants.Event):
+func _callback(p_event:Global.Event):
 	for cb in callbacks:
 		if cb.is_null():
 			continue
@@ -140,7 +135,7 @@ func walk(delta) -> bool:
 				lines.append(l)
 
 		
-		_callback(Constants.Event.START)
+		_callback(Global.Event.START)
 		
 		started_walk = true
 	
@@ -155,7 +150,7 @@ func walk(delta) -> bool:
 			icon.queue_free()
 			icon = null
 			
-		_callback(Constants.Event.END)
+		_callback(Global.Event.END)
 		if !end_icon_creator.is_null() && end_icon == null:
 			end_icon = end_icon_creator.call()
 			path_follow.add_child(end_icon)

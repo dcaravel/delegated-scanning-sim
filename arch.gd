@@ -1,28 +1,8 @@
 extends Control
 class_name Arch
 
-@export var have_metadata:bool = false
-@export var have_index_report:bool = false
-@export var have_vuln_report:bool = false
-@export var have_signatures:bool = false
-@export var have_error:bool = false
-
-const _PathSegment = preload("res://scripts/path_segment.gd")
-const _C = preload("res://scripts/constants.gd")
-
-var moving=false
-var cur_path_segment_idx=0
-
-var all_path_segments:Array[PathSegment] = []
-var active_path:Array[PathSegment]
-
-var walk_by_px:bool = true
-var walk_speed_px:float
-var max_walk_speed_px:float = 1600.0
-var walk_speed_ratio:float = 0.6
-
-
 const MAX_ZINDEX = 10
+
 const metadata_pill_scene = preload("res://pills/metadata_pill_sm.tscn")
 const indexreport_pill_scene = preload("res://pills/index_report_pill_sm.tscn")
 const vulnreport_pill_scene = preload("res://pills/vuln_report_pill_sm.tscn")
@@ -38,13 +18,30 @@ const nil:Callable = Callable()
 
 enum ENABLED_FOR {NONE, ALL, SPECIFIC}
 enum PATH_SOURCE {CENTRAL, SENSOR_EVENT}
-
 # CLUSTER values MUST match the dropdown in the dele registry config
 enum CLUSTER {CENTRAL,PROD,DEV,OTHER}
-
 # REGISTRY and REGISTRIES MUST have same order
 enum REGISTRY {DOCKER,QUAY,DEV,PROD}
 const REGISTRIES=["docker.io","quay.io","dev","prod"]
+
+const _PathSegment = preload("res://scripts/path_segment.gd")
+
+@export var have_metadata:bool = false
+@export var have_index_report:bool = false
+@export var have_vuln_report:bool = false
+@export var have_signatures:bool = false
+@export var have_error:bool = false
+
+var moving=false
+var cur_path_segment_idx=0
+
+var all_path_segments:Array[PathSegment] = []
+var active_path:Array[PathSegment]
+
+var walk_by_px:bool = true
+var walk_speed_px:float
+var max_walk_speed_px:float = 1600.0
+var walk_speed_ratio:float = 0.6
 
 var enabled_for:ENABLED_FOR
 
@@ -106,10 +103,10 @@ func _ready():
 	_sync_enabled_for_radio()
 	_reset()
 
-func _errorC(text:String, pos:Constants.Pos=Constants.Pos.BOT, offsetX:int=0) -> Callable:
+func _errorC(text:String, pos:Global.Pos=Global.Pos.BOT, offsetX:int=0) -> Callable:
 	return Callable(self, "_error").bind(text, pos, offsetX)
 	
-func _error(text:String="ERR", pos:Constants.Pos=Constants.Pos.BOT, offsetX:int=0) -> Node:
+func _error(text:String="ERR", pos:Global.Pos=Global.Pos.BOT, offsetX:int=0) -> Node:
 	var err:ErrorPopup = error_scene.instantiate()
 	err.LabelText = text
 	err.LabelPosition = pos
@@ -499,7 +496,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	var pathCentralScanError = [
 		## Scan In Central - Cannot reach Registry
 		scCentralError.c("a1").sicon(_dot),
-		scCentralError.c("a2").eicon(_errorC("", Constants.Pos.TOP)).onevent(regErrorAnimate).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
+		scCentralError.c("a2").eicon(_errorC("", Global.Pos.TOP)).onevent(regErrorAnimate).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
 		scCentralError.c("a2").wicon(_rdot).reverse().eicon(_rdot).onevent(_errorStatusCB).trail(false),
 		scCentralError.c("a3").eicon(_dot).wicon(_rdot),
 		scCentralError.c("a4").eicon(_image_status).wicon(_rdot).micon(_midIconCBC("Store scan with error in DB (if no existing image)"), 20),
@@ -529,7 +526,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	var pathScanLocalError = [
 		## Scan In Sensor - Cannot reach Registry
 		scScanLocalError.c("a1").sicon(_dot),
-		scScanLocalError.c("a2").eicon(_errorC("", Constants.Pos.TOP)).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
+		scScanLocalError.c("a2").eicon(_errorC("", Global.Pos.TOP)).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
 		scScanLocalError.c("a2").reverse().onevent(regErrorAnimate).eicon(_rdot).trail(false),
 		scScanLocalError.c("a3").wicon(_rdot).eicon(_dot).micon(_midIconCBC("Send failure to central"), 100),
 		
@@ -583,10 +580,10 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 				scCentralToCentralScan.c("a1"),
 				
 				scCentralDelegateError.c("a1").sicon(_dot),
-				scCentralDelegateError.c("a2").eicon(_errorC("", Constants.Pos.TOP)).micon(_midIconCBC("Fail to delegate, no cluster specified"), 20),
+				scCentralDelegateError.c("a2").eicon(_errorC("", Global.Pos.TOP)).micon(_midIconCBC("Fail to delegate, no cluster specified"), 20),
 				scCentralDelegateError.c("a3").wicon(_rdot).eicon(_dot),
 				
-				scCentralToCentralScan.c("b1").wicon(_rdot).eicon(_errorC("", Constants.Pos.BOT, 10)),
+				scCentralToCentralScan.c("b1").wicon(_rdot).eicon(_errorC("", Global.Pos.BOT, 10)),
 			])
 			return path
 		
@@ -647,57 +644,57 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 
 	return path
 
-func _metadataCB(p_event:Constants.Event):
+func _metadataCB(p_event:Global.Event):
 	match p_event:
-		Constants.Event.END:
+		Global.Event.END:
 			have_metadata = true
-		Constants.Event.RESET:
+		Global.Event.RESET:
 			have_metadata = false
 
-func _indexReportCB(p_event:Constants.Event):
+func _indexReportCB(p_event:Global.Event):
 	match p_event:
-		Constants.Event.END:
+		Global.Event.END:
 			have_index_report = true
-		Constants.Event.RESET:
+		Global.Event.RESET:
 			have_index_report = false
 
-func _vulnReportCB(p_event:Constants.Event):
+func _vulnReportCB(p_event:Global.Event):
 	match p_event:
-		Constants.Event.END:
+		Global.Event.END:
 			have_vuln_report = true
-		Constants.Event.RESET:
+		Global.Event.RESET:
 			have_vuln_report = false
 
-func _signatureCB(p_event:Constants.Event):
+func _signatureCB(p_event:Global.Event):
 	match p_event:
-		Constants.Event.END:
+		Global.Event.END:
 			have_signatures = true
-		Constants.Event.RESET:
+		Global.Event.RESET:
 			have_signatures = false
 
-func _errorStatusCB(p_event:Constants.Event):
+func _errorStatusCB(p_event:Global.Event):
 	match p_event:
-		Constants.Event.END:
+		Global.Event.END:
 			have_error = true
-		Constants.Event.RESET:
+		Global.Event.RESET:
 			have_error = false
 
-func _prodAnimateCB(p_event:Constants.Event):
+func _prodAnimateCB(p_event:Global.Event):
 	_clusterAnimate(p_event, CLUSTER.PROD)
 
-func _devAnimateCB(p_event:Constants.Event):
+func _devAnimateCB(p_event:Global.Event):
 	_clusterAnimate(p_event, CLUSTER.DEV)
 	
-func _otherAnimateCB(p_event:Constants.Event):
+func _otherAnimateCB(p_event:Global.Event):
 	_clusterAnimate(p_event, CLUSTER.OTHER)
 
-func _clusterAnimate(p_event:Constants.Event, p_cluster:CLUSTER=CLUSTER.CENTRAL):
+func _clusterAnimate(p_event:Global.Event, p_cluster:CLUSTER=CLUSTER.CENTRAL):
 	match p_event:
-		Constants.Event.START:
+		Global.Event.START:
 			animationPlayers[p_cluster].play(animationRegHighlight)
-		Constants.Event.END:
+		Global.Event.END:
 			have_error = true			
-		Constants.Event.RESET:
+		Global.Event.RESET:
 			animationPlayers[p_cluster].stop()
 			have_error = false
 
@@ -850,5 +847,5 @@ func _on_quay_config_updated():
 	_config_updated()
 
 
-func _on_default_cluster_option_item_selected(index):
+func _on_default_cluster_option_item_selected(_index):
 	_config_updated()

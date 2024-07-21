@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 driver/driver="Dummy"
 
+[autoload]
+
+Global="*res://scripts/global.gd"
+
 [display]
 
 window/size/viewport_width=1200
