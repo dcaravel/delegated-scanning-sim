@@ -3,6 +3,8 @@ class_name LogPanel
 
 const log_entry_scene = preload("res://log_entry.tscn")
 
+@onready var log_entries = $ScrollContainer/LogEntries
+
 func _ready():
 	add("A", "hello from ready")
 	add("B", "Sensor pooped out a squirrel")
@@ -13,16 +15,15 @@ func add(icon_text:String, text:String):
 	le.desc = text
 	le.icon_text = icon_text
 	
-	var el = %LogEntries
-	if el.get_child_count() > 0:
+	if log_entries.get_child_count() > 0:
 		var sep = HSeparator.new()
 		sep.name = "LogPanel-HSeparator"
-		el.add_child(sep)
+		log_entries.add_child(sep)
 	
-	el.add_child(le)
+	log_entries.add_child(le)
 	
 func del() -> bool:
-	var el = %LogEntries
+	var el = log_entries
 	var statuses:Array[bool] = []
 	
 	var c = _get_last_child(el)

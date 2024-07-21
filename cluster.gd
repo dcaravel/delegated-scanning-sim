@@ -8,24 +8,27 @@ extends Control
 
 var default_cluster_name = "cluster"
 
+@onready var cluster_name_obj = $Label/ClusterName
+@onready var registry = $Registry
+@onready var cloud_label = $Cloud/CloudLabel
+@onready var cloud = $Cloud
+
 func _process(_delta):
 	var val = default_cluster_name
 	if cluster_name != null && cluster_name.length() > 0:
 		val = cluster_name
-	%ClusterName.text = val
+	cluster_name_obj.text = val
 	
 	if registry_name != null && registry_name.length() > 0:
-		$Registry.text = registry_name
-		$Registry.visible = true
+		registry.text = registry_name
+		registry.visible = true
 	else:
-		$Registry.visible = false
+		registry.visible = false
 		
-
-	var c = $Cloud
 	if show_cloud:
-		$Cloud/CloudLabel.text = cloud_text
-		c.visible=true
-		$Registry.modulate.a = 0.2
+		cloud_label.text = cloud_text
+		cloud.visible=true
+		registry.modulate.a = 0.2
 	else:
-		c.visible=false
-		$Registry.modulate.a = 1.0
+		cloud.visible=false
+		registry.modulate.a = 1.0

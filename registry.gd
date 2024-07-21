@@ -8,19 +8,23 @@ signal config_updated
 
 var items = ["Default","prod","dev","other"]
 
+@onready var cluster = $Cluster
+@onready var registry = $Registry
+@onready var enabled_switch = $EnabledSwitch
+@onready var disabled_label = $DisabledLabel
+@onready var disabled_label_2 = $DisabledLabel2
+
 func _ready():
 	for i in items.size():
-		$Cluster.add_item(items[i])
+		cluster.add_item(items[i])
 	
-	$Registry.text = registry_name
-	$Cluster.select(selection)
-	$EnabledSwitch.button_pressed = enabled
+	registry.text = registry_name
+	cluster.select(selection)
+	enabled_switch.button_pressed = enabled
 
 func _process(_delta):
-	#$Registry.visible = enabled
-	#$Cluster.visible = enabled
-	$DisabledLabel.visible = !enabled
-	$DisabledLabel2.visible = !enabled
+	disabled_label.visible = !enabled
+	disabled_label_2.visible = !enabled
 	pass
 
 func _on_cluster_item_selected(index):

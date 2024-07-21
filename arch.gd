@@ -51,6 +51,7 @@ var line_color_alt:Color = Color("ffff0f", 1.0)
 var pause_seg:PathSegment
 var pausing:bool = false
 var pausing_enabled:bool = false
+var actual_ready:bool = false # this is a hack, change ordering so that isn't needed to prevent crashing on startup
 
 const pill_scenes:Array = [
 	metadata_pill_scene,
@@ -69,37 +70,81 @@ var animationRegHighlight:String = "highlight-registry"
 var initial_log_letter = 64
 var last_log_letter:int = initial_log_letter
 
+@onready var prod_cluster:Control = $ProdCluster
+@onready var dev_cluster:Control = $DevCluster
+@onready var other_cluster:Control = $OtherCluster
+@onready var pause:Path2D = $Paths/pause
+@onready var big_cloud:Node2D = $BigCloud
+@onready var big_cloud_label:Label = $BigCloud/BigCloudLabel
+@onready var paths:Node2D = $Paths
+@onready var c_paths:Node2D = $Paths/cPaths
+@onready var speed_slider:HSlider = $FlowControls/SpeedSlider
+@onready var forward_step_button = $FlowControls/ForwardStepButton
+@onready var back_step_button = $FlowControls/BackStepButton
+@onready var pause_play_button = $FlowControls/PausePlayButton
+@onready var image_status_zoomed = $ImageStatusZoomed
+@onready var docker_image = $Images/DockerImage
+@onready var quay_image = $Images/QuayImage
+@onready var prod_image = $Images/ProdImage
+@onready var dev_image = $Images/DevImage
+@onready var delegated_scanning_config = $DelegatedScanningConfig
+@onready var c_0_to_central = $"Paths/c0-to-central"
+@onready var central_to_c_0 = $"Paths/central-to-c0"
+@onready var c_1_to_central = $"Paths/c1-to-central"
+@onready var central_to_c_1 = $"Paths/central-to-c1"
+@onready var c_2_to_central = $"Paths/c2-to-central"
+@onready var central_to_c_2 = $"Paths/central-to-c2"
+@onready var central_from_sensor_start = $"Paths/central-from-sensor-start"
+@onready var central_error_from_sensor = $"Paths/central-error-from-sensor"
+@onready var central_scan_error = $"Paths/central-scan-error"
+@onready var central_match = $"Paths/central-match"
+@onready var central_scan = $"Paths/central-scan"
+@onready var central_roxctl_start = $"Paths/central-roxctl-start"
+@onready var central_roxctl_to_central_scan = $"Paths/central-roxctl-to-central-scan"
+@onready var central_delegate_error = $"Paths/central-delegate-error"
+@onready var central_roxctl_to_cluster = $"Paths/central-roxctl-to-cluster"
+@onready var log_panel = $LogPanel
+@onready var none_radio = $EnabledForRadios/NoneRadio
+@onready var all_registries_radio = $EnabledForRadios/AllRegistriesRadio
+@onready var dev = $DelegatedScanningConfig/dev
+@onready var prod = $DelegatedScanningConfig/prod
+@onready var quay = $DelegatedScanningConfig/quay
+@onready var default_cluster_option = $DelegatedScanningConfig/DefaultClusterOption
+
 func _ready():
+	var apPath:String = "Registry/AnimationPlayer"
 	animationPlayers = [
 		null,
-		$ProdCluster/Registry/AnimationPlayer,
-		$DevCluster/Registry/AnimationPlayer,
-		$OtherCluster/Registry/AnimationPlayer,
+		prod_cluster.get_node(apPath),
+		dev_cluster.get_node(apPath),
+		other_cluster.get_node(apPath),
 	]
 	
-	pause_seg = PathSegment.new(self, %pause)
-	%pause.visible = false
+	pause_seg = PathSegment.new(self, pause)
+	pause.visible = false
 	
-	$BigCloud.visible = false
+	big_cloud.visible = false
 	
-	for c in $Paths.get_children():
+	for c in paths.get_children():
 		c.visible = true
 	
-	for c in $Paths/cPaths.get_children():
+	for c in c_paths.get_children():
 		c.visible = true
 	
-	c1Paths = $Paths/cPaths.duplicate()
+	c1Paths = c_paths.duplicate()
 	c1Paths.name = "c1Paths"
-	c1Paths.position += $DevCluster.position - $ProdCluster.position
-	$Paths.add_child(c1Paths)
+	c1Paths.position += dev_cluster.position - prod_cluster.position
+	paths.add_child(c1Paths)
 	
-	c2Paths = $Paths/cPaths.duplicate()
+	c2Paths = c_paths.duplicate()
 	c2Paths.name = "c2Paths"
-	c2Paths.position += $OtherCluster.position - $ProdCluster.position
-	$Paths.add_child(c2Paths)
+	c2Paths.position += other_cluster.position - prod_cluster.position
+	paths.add_child(c2Paths)
+	
+	actual_ready = true
 	
 	# Set the initial speed value to the slider set in the editor / scene
-	_on_speed_slider_value_changed(%SpeedSlider.value)
+	_on_speed_slider_value_changed(speed_slider.value)
 	_sync_enabled_for_radio()
 	_reset()
 
@@ -188,16 +233,14 @@ func _process(delta):
 	_sync_image_status()
 	
 	if cur_path_segment_idx >= active_path.size():
-		%ForwardStepButton.disabled = true
+		forward_step_button.disabled = true
 	else:
-		%ForwardStepButton.disabled = false
+		forward_step_button.disabled = false
 		
 	if !moving:
-		%PausePlayButton.icon = play_icon
+		pause_play_button.icon = play_icon
 		return
-
-	%PausePlayButton.icon = pause_icon
-	
+	pause_play_button.icon = pause_icon
 
 	if cur_path_segment_idx >= active_path.size():
 		moving = false
@@ -223,13 +266,16 @@ func _on_specific_registries_radio_toggled(_toggled_on):
 	_sync_enabled_for_radio()
 
 func _sync_image_status():
-	$ImageStatusZoomed.have_metadata = have_metadata
-	$ImageStatusZoomed.have_index_report = have_index_report
-	$ImageStatusZoomed.have_vuln_report = have_vuln_report
-	$ImageStatusZoomed.have_signatures = have_signatures
-	$ImageStatusZoomed.have_error = have_error
+	image_status_zoomed.have_metadata = have_metadata
+	image_status_zoomed.have_index_report = have_index_report
+	image_status_zoomed.have_vuln_report = have_vuln_report
+	image_status_zoomed.have_signatures = have_signatures
+	image_status_zoomed.have_error = have_error
 
 func _reset(soft:bool=false):
+	if !actual_ready:
+		return
+		
 	moving = false
 	cur_path_segment_idx = 0
 	have_metadata = false
@@ -250,20 +296,19 @@ func _reset(soft:bool=false):
 		#print_tree_pretty()
 		all_path_segments = []
 		active_path = []
-		$BigCloud.visible = false
-		$BigCloud/BigCloudLabel.text = ""
+		big_cloud.visible = false
+		big_cloud_label.text = ""
 		for c in CLUSTER:
 			_cloud(CLUSTER.get(c), -1, -1, false)
-		$Images/DockerImage.set_active_button_idx(ImageControl.buttonsIdx.NONE)
-		$Images/QuayImage.set_active_button_idx(ImageControl.buttonsIdx.NONE)
-		$Images/ProdImage.set_active_button_idx(ImageControl.buttonsIdx.NONE)
-		$Images/DevImage.set_active_button_idx(ImageControl.buttonsIdx.NONE)
+		docker_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
+		quay_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
+		prod_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
+		dev_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
 	
 	_del_all_log_entry()
 	last_log_letter = initial_log_letter
 
 func _on_back_step_button_pressed():
-	var orig_moving = moving
 	moving = false
 	if cur_path_segment_idx >= active_path.size():
 		cur_path_segment_idx = active_path.size()-1
@@ -276,31 +321,19 @@ func _on_back_step_button_pressed():
 	if cur_path_segment_idx >= 1:
 		cur_path_segment_idx -= 1
 
-	#if progress > 0.20:
-		#seg.reset()
-		#print("reset progress > .2: ", cur_path_segment_idx)
-	#else:
-		#seg.reset()
-		#print("reset progress: ", cur_path_segment_idx)
-		#if cur_path_segment_idx >= 1:
-			#cur_path_segment_idx -= 1
-			#active_path[cur_path_segment_idx].reset()
-			#print("reset progress (seg >=1): ", cur_path_segment_idx)
-	moving = orig_moving
-
 func _sync_enabled_for_radio():
-	var group:ButtonGroup = %NoneRadio.button_group
+	var group:ButtonGroup = none_radio.button_group
 	var button:CheckBox = group.get_pressed_button()
 	
-	if button == %NoneRadio:
+	if button == none_radio:
 		enabled_for = ENABLED_FOR.NONE
-		$DelegatedScanningConfig.visible = false
-	elif button == %AllRegistriesRadio:	
+		delegated_scanning_config.visible = false
+	elif button == all_registries_radio:	
 		enabled_for = ENABLED_FOR.ALL
-		$DelegatedScanningConfig.visible = true
+		delegated_scanning_config.visible = true
 	else:
 		enabled_for = ENABLED_FOR.SPECIFIC
-		$DelegatedScanningConfig.visible = true
+		delegated_scanning_config.visible = true
 	
 	_config_updated()
 	
@@ -316,7 +349,7 @@ func _scan_image_via_cluster(image:String) -> bool:
 	if enabled_for == ENABLED_FOR.ALL:
 		return true
 	
-	var regs = [%dev, %prod, %quay]	
+	var regs = [dev, prod, quay]	
 	for reg in regs:
 		if !reg.enabled:
 			continue
@@ -331,13 +364,13 @@ func _get_matching_dele_config_entry(image:String):
 	if enabled_for == ENABLED_FOR.NONE:
 		return [false, 0]
 	
-	var def_cluster_idx = %DefaultClusterOption.selected	
+	var def_cluster_idx = default_cluster_option.selected	
 	print("def_cluster_idx: ", def_cluster_idx)
-	print("0: ", %dev.registry_name)
-	print("1: ", %prod.registry_name)
-	print("2: ", %quay.registry_name)
+	print("0: ", dev.registry_name)
+	print("1: ", prod.registry_name)
+	print("2: ", quay.registry_name)
 
-	var regs = [%dev, %prod, %quay]
+	var regs = [dev, prod, quay]
 	var cluster_idx = def_cluster_idx
 	if enabled_for == ENABLED_FOR.ALL:
 		for reg in regs:
@@ -412,26 +445,26 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	# var delegate = resp[0] # if true, and src_cluster == central, should delegate
 	var dst_cluster = resp[1] # if src_clsuter == central, this is the cluster to delegate too
 	
-	var cPaths = $"Paths/cPaths"
-	var toCentralPaths = $"Paths/c0-to-central"
-	var toClusterPaths = $"Paths/central-to-c0"
+	var cPaths = c_paths
+	var toCentralPaths = c_0_to_central
+	var toClusterPaths = central_to_c_0
 	match src_cluster:
 		CLUSTER.CENTRAL:
 			match dst_cluster:
 				CLUSTER.DEV:
 					cPaths = c1Paths
-					toCentralPaths = $"Paths/c1-to-central"
-					toClusterPaths = $"Paths/central-to-c1"
+					toCentralPaths = c_1_to_central
+					toClusterPaths = central_to_c_1
 				CLUSTER.OTHER:
 					cPaths = c2Paths
-					toCentralPaths = $"Paths/c2-to-central"
-					toClusterPaths = $"Paths/central-to-c2"
+					toCentralPaths = c_2_to_central
+					toClusterPaths = central_to_c_2
 		CLUSTER.DEV:
 			cPaths = c1Paths
-			toCentralPaths = $"Paths/c1-to-central"
+			toCentralPaths = c_1_to_central
 		CLUSTER.OTHER:
 			cPaths = c2Paths
-			toCentralPaths = $"Paths/c2-to-central"
+			toCentralPaths = c_2_to_central
 	
 	var scToCentral = SegCreator.new(self, toCentralPaths).wicon(_dot).eicon(_dot).sicon(_dot)
 	var scToCluster = SegCreator.new(self, toClusterPaths).wicon(_dot).eicon(_dot).sicon(_dot)
@@ -442,16 +475,16 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	var scScanLocal = SegCreator.new(self, cPaths.get_node("c0-scan-local")).wicon(_dot)
 	var scScanLocalError = SegCreator.new(self, cPaths.get_node("c0-scan-local-error")).wicon(_dot).eicon(_dot)
 	var scEnd = SegCreator.new(self, cPaths.get_node("c0-end")).wicon(_dot).trail(false)
-	var scCentralFromSensorStart = SegCreator.new(self, $"Paths/central-from-sensor-start").wicon(_dot).trail(false)
 	
-	var scCentralErrorFromSensor = SegCreator.new(self, $"Paths/central-error-from-sensor").wicon(_dot)
-	var scCentralError = SegCreator.new(self, $"Paths/central-scan-error").wicon(_dot)
-	var scCentralMatch = SegCreator.new(self, $"Paths/central-match").wicon(_dot)
-	var scCentralScan = SegCreator.new(self, $"Paths/central-scan").wicon(_dot)
-	var scCentralDeploy = SegCreator.new(self, $"Paths/central-roxctl-start").wicon(_dot).eicon(_dot)
-	var scCentralToCentralScan = SegCreator.new(self, $"Paths/central-roxctl-to-central-scan").wicon(_dot).eicon(_dot).trail(false)
-	var scCentralDelegateError = SegCreator.new(self, $"Paths/central-delegate-error").wicon(_dot)
-	var scCentralToCluster = SegCreator.new(self, $"Paths/central-roxctl-to-cluster").wicon(_dot).trail(false)
+	var scCentralFromSensorStart = SegCreator.new(self, central_from_sensor_start).wicon(_dot).trail(false)
+	var scCentralErrorFromSensor = SegCreator.new(self, central_error_from_sensor).wicon(_dot)
+	var scCentralError = SegCreator.new(self, central_scan_error).wicon(_dot)
+	var scCentralMatch = SegCreator.new(self, central_match).wicon(_dot)
+	var scCentralScan = SegCreator.new(self, central_scan).wicon(_dot)
+	var scCentralDeploy = SegCreator.new(self, central_roxctl_start).wicon(_dot).eicon(_dot)
+	var scCentralToCentralScan = SegCreator.new(self, central_roxctl_to_central_scan).wicon(_dot).eicon(_dot).trail(false)
+	var scCentralDelegateError = SegCreator.new(self, central_delegate_error).wicon(_dot)
+	var scCentralToCluster = SegCreator.new(self, central_roxctl_to_cluster).wicon(_dot).trail(false)
 	
 	var path:Array[PathSegment] = []
 	
@@ -708,19 +741,19 @@ func _cloud(p_src_cluster:CLUSTER, p_dst_cluster:CLUSTER, p_reg:REGISTRY, p_show
 		CLUSTER.CENTRAL:
 			match p_dst_cluster:
 				CLUSTER.PROD:
-					c = $ProdCluster
+					c = prod_cluster
 				CLUSTER.DEV:
-					c = $DevCluster
+					c = dev_cluster
 				CLUSTER.OTHER:
-					c = $OtherCluster
+					c = other_cluster
 				_:
 					return
 		CLUSTER.PROD:
-			c = $ProdCluster
+			c = prod_cluster
 		CLUSTER.DEV:
-			c = $DevCluster
+			c = dev_cluster
 		CLUSTER.OTHER:
-			c = $OtherCluster
+			c = other_cluster
 		_:
 			return
 	
@@ -729,8 +762,8 @@ func _cloud(p_src_cluster:CLUSTER, p_dst_cluster:CLUSTER, p_reg:REGISTRY, p_show
 
 func _displayBigCloud(reg:REGISTRY):
 	if reg == REGISTRY.DOCKER || reg == REGISTRY.QUAY:
-		$BigCloud/BigCloudLabel.text = REGISTRIES[reg]
-		$BigCloud.visible = true
+		big_cloud_label.text = REGISTRIES[reg]
+		big_cloud.visible = true
 		
 func _doDeploy(cluster:CLUSTER, image:ImageControl, buttonIdx:ImageControl.buttonsIdx):
 	_reset()
@@ -739,40 +772,40 @@ func _doDeploy(cluster:CLUSTER, image:ImageControl, buttonIdx:ImageControl.butto
 	moving = true
 
 func _on_docker_image_prod_pressed():
-	_doDeploy(CLUSTER.PROD, %DockerImage, ImageControl.buttonsIdx.PROD)
+	_doDeploy(CLUSTER.PROD, docker_image, ImageControl.buttonsIdx.PROD)
 func _on_prod_image_prod_pressed():
-	_doDeploy(CLUSTER.PROD, %ProdImage, ImageControl.buttonsIdx.PROD)
+	_doDeploy(CLUSTER.PROD, prod_image, ImageControl.buttonsIdx.PROD)
 func _on_dev_image_prod_pressed():
-	_doDeploy(CLUSTER.PROD, %DevImage, ImageControl.buttonsIdx.PROD)
+	_doDeploy(CLUSTER.PROD, dev_image, ImageControl.buttonsIdx.PROD)
 func _on_quay_image_prod_pressed():
-	_doDeploy(CLUSTER.PROD, %QuayImage, ImageControl.buttonsIdx.PROD)
+	_doDeploy(CLUSTER.PROD, quay_image, ImageControl.buttonsIdx.PROD)
 
 func _on_docker_image_dev_pressed():
-	_doDeploy(CLUSTER.DEV, %DockerImage, ImageControl.buttonsIdx.DEV)
+	_doDeploy(CLUSTER.DEV, docker_image, ImageControl.buttonsIdx.DEV)
 func _on_prod_image_dev_pressed():
-	_doDeploy(CLUSTER.DEV, %ProdImage, ImageControl.buttonsIdx.DEV)
+	_doDeploy(CLUSTER.DEV, prod_image, ImageControl.buttonsIdx.DEV)
 func _on_dev_image_dev_pressed():
-	_doDeploy(CLUSTER.DEV, %DevImage, ImageControl.buttonsIdx.DEV)
+	_doDeploy(CLUSTER.DEV, dev_image, ImageControl.buttonsIdx.DEV)
 func _on_quay_image_dev_pressed():
-	_doDeploy(CLUSTER.DEV, %QuayImage, ImageControl.buttonsIdx.DEV)
+	_doDeploy(CLUSTER.DEV, quay_image, ImageControl.buttonsIdx.DEV)
 
 func _on_docker_image_other_pressed():
-	_doDeploy(CLUSTER.OTHER, %DockerImage, ImageControl.buttonsIdx.OTHER)
+	_doDeploy(CLUSTER.OTHER, docker_image, ImageControl.buttonsIdx.OTHER)
 func _on_prod_image_other_pressed():
-	_doDeploy(CLUSTER.OTHER, %ProdImage, ImageControl.buttonsIdx.OTHER)
+	_doDeploy(CLUSTER.OTHER, prod_image, ImageControl.buttonsIdx.OTHER)
 func _on_dev_image_other_pressed():
-	_doDeploy(CLUSTER.OTHER, %DevImage, ImageControl.buttonsIdx.OTHER)
+	_doDeploy(CLUSTER.OTHER, dev_image, ImageControl.buttonsIdx.OTHER)
 func _on_quay_image_other_pressed():
-	_doDeploy(CLUSTER.OTHER, %QuayImage, ImageControl.buttonsIdx.OTHER)
+	_doDeploy(CLUSTER.OTHER, quay_image, ImageControl.buttonsIdx.OTHER)
 
 func _on_docker_image_roxctl_pressed():
-	_doDeploy(CLUSTER.CENTRAL, %DockerImage, ImageControl.buttonsIdx.ROXCTL)
+	_doDeploy(CLUSTER.CENTRAL, docker_image, ImageControl.buttonsIdx.ROXCTL)
 func _on_prod_image_roxctl_pressed():
-	_doDeploy(CLUSTER.CENTRAL, %ProdImage, ImageControl.buttonsIdx.ROXCTL)
+	_doDeploy(CLUSTER.CENTRAL, prod_image, ImageControl.buttonsIdx.ROXCTL)
 func _on_dev_image_roxctl_pressed():
-	_doDeploy(CLUSTER.CENTRAL, %DevImage, ImageControl.buttonsIdx.ROXCTL)
+	_doDeploy(CLUSTER.CENTRAL, dev_image, ImageControl.buttonsIdx.ROXCTL)
 func _on_quay_image_roxctl_pressed():
-	_doDeploy(CLUSTER.CENTRAL, %QuayImage, ImageControl.buttonsIdx.ROXCTL)
+	_doDeploy(CLUSTER.CENTRAL, quay_image, ImageControl.buttonsIdx.ROXCTL)
 
 func _on_reset_button_pressed():
 	_reset()
@@ -802,15 +835,15 @@ func _on_speed_slider_value_changed(value):
 	walk_speed_px = walk_speeds_px[value]
 
 func _add_log_entry(p_icon_text:String, p_text:String):
-	%LogPanel.add(p_icon_text, p_text)
+	log_panel.add(p_icon_text, p_text)
 
 func _del_log_entry():
-	var r = %LogPanel.del()
+	var r = log_panel.del()
 	if r:
 		last_log_letter -= 1
 
 func _del_all_log_entry():
-	%LogPanel.delAll()
+	log_panel.delAll()
 
 func _get_next_log_letter() -> String:
 	last_log_letter += 1

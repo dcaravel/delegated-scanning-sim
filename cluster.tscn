@@ -110,7 +110,6 @@ offset_bottom = 24.0
 color = Color(0.211765, 0.239216, 0.290196, 1)
 
 [node name="ClusterName" type="Label" parent="Label"]
-unique_name_in_owner = true
 layout_mode = 0
 offset_right = 56.0
 offset_bottom = 24.0

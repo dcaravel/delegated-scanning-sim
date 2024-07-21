@@ -7,27 +7,30 @@ class_name ErrorPopup
 
 var _def_label_offsetX:int = 0
 
+@onready var label_top = $LabelTop
+@onready var label_bot = $LabelBot
+
 func _ready():
-	_def_label_offsetX = $LabelBot.position.x
-	$LabelTop.text = LabelText
-	$LabelBot.text = LabelText
-	$LabelTop.visible = false
-	$LabelBot.visible = false
+	_def_label_offsetX = label_bot.position.x
+	label_top.text = LabelText
+	label_bot.text = LabelText
+	label_top.visible = false
+	label_bot.visible = false
 
 func _process(_delta):
-	$LabelTop.text = LabelText
-	$LabelBot.text = LabelText
+	label_top.text = LabelText
+	label_bot.text = LabelText
 	if LabelText == "":
-		$LabelTop.visible = false
-		$LabelBot.visible = false
+		label_top.visible = false
+		label_bot.visible = false
 		return
 		
 	if LabelPosition == Global.Pos.TOP:
-		$LabelTop.visible = true
-		$LabelBot.visible = false
+		label_top.visible = true
+		label_bot.visible = false
 	elif LabelPosition == Global.Pos.BOT:
-		$LabelTop.visible = false
-		$LabelBot.visible = true
+		label_top.visible = false
+		label_bot.visible = true
 	
-	$LabelTop.position.x = _def_label_offsetX + LabelOffsetX
-	$LabelBot.position.x = _def_label_offsetX + LabelOffsetX
+	label_top.position.x = _def_label_offsetX + LabelOffsetX
+	label_bot.position.x = _def_label_offsetX + LabelOffsetX

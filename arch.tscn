@@ -585,7 +585,6 @@ offset_bottom = 23.0
 text = "Default Cluster"
 
 [node name="DefaultClusterOption" type="OptionButton" parent="DelegatedScanningConfig"]
-unique_name_in_owner = true
 layout_mode = 2
 offset_left = 44.0
 offset_top = 24.0
@@ -620,21 +619,18 @@ offset_bottom = 87.0
 text = "Cluster"
 
 [node name="dev" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
-unique_name_in_owner = true
 offset_left = 1.0
 offset_top = 128.0
 offset_bottom = 160.0
 registry_name = "dev.registry.io"
 
 [node name="prod" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
-unique_name_in_owner = true
 offset_left = 1.0
 offset_top = 88.0
 offset_bottom = 120.0
 registry_name = "prod.registry.io"
 
 [node name="quay" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
-unique_name_in_owner = true
 offset_left = 1.0
 offset_top = 168.0
 offset_bottom = 200.0
@@ -648,7 +644,6 @@ offset_right = 1192.0
 offset_bottom = 584.0
 
 [node name="NoneRadio" type="CheckBox" parent="EnabledForRadios"]
-unique_name_in_owner = true
 layout_mode = 0
 offset_right = 96.0
 offset_bottom = 32.0
@@ -658,7 +653,6 @@ button_group = SubResource("ButtonGroup_6wsxw")
 text = "None"
 
 [node name="AllRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
-unique_name_in_owner = true
 layout_mode = 0
 offset_left = 96.0
 offset_right = 248.0
@@ -668,7 +662,6 @@ button_group = SubResource("ButtonGroup_6wsxw")
 text = "All Registries"
 
 [node name="SpecificRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
-unique_name_in_owner = true
 layout_mode = 0
 offset_left = 248.0
 offset_right = 418.0
@@ -691,31 +684,21 @@ offset_right = 648.0
 offset_bottom = 760.0
 
 [node name="QuayImage" parent="Images" instance=ExtResource("3_5ph6d")]
-unique_name_in_owner = true
 offset_top = 80.0
 offset_bottom = 112.0
 image_reference = "quay.io/rhacs-eng/main:latest"
 
-[node name="ExampleImage" parent="Images" instance=ExtResource("3_5ph6d")]
-visible = false
-offset_top = 200.0
-offset_bottom = 232.0
-image_reference = "example.com/some/image:tag"
-
 [node name="DevImage" parent="Images" instance=ExtResource("3_5ph6d")]
-unique_name_in_owner = true
 offset_top = 160.0
 offset_bottom = 192.0
 image_reference = "dev.registry.io/repo/path:2.0"
 
 [node name="ProdImage" parent="Images" instance=ExtResource("3_5ph6d")]
-unique_name_in_owner = true
 offset_top = 120.0
 offset_bottom = 152.0
 image_reference = "prod.registry.io/hello/world:stable"
 
 [node name="DockerImage" parent="Images" instance=ExtResource("3_5ph6d")]
-unique_name_in_owner = true
 offset_top = 39.0
 offset_bottom = 71.0
 image_reference = "docker.io/library/nginx:1.25.0"
@@ -824,7 +807,6 @@ offset_bottom = 44.0
 text = "registry..."
 
 [node name="LogPanel" parent="." instance=ExtResource("7_1jrm4")]
-unique_name_in_owner = true
 offset_left = 792.0
 offset_right = 1200.0
 
@@ -854,7 +836,6 @@ icon = ExtResource("8_wo2kh")
 icon_alignment = 1
 
 [node name="PausePlayButton" type="Button" parent="FlowControls"]
-unique_name_in_owner = true
 layout_mode = 0
 offset_left = 840.0
 offset_top = 520.0
@@ -867,7 +848,6 @@ clip_text = true
 icon_alignment = 1
 
 [node name="BackStepButton" type="Button" parent="FlowControls"]
-unique_name_in_owner = true
 layout_mode = 0
 offset_left = 800.0
 offset_top = 520.0
@@ -880,7 +860,6 @@ clip_text = true
 icon_alignment = 1
 
 [node name="ForwardStepButton" type="Button" parent="FlowControls"]
-unique_name_in_owner = true
 visible = false
 layout_mode = 0
 offset_left = 912.0
@@ -895,7 +874,6 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="SpeedSlider" type="HSlider" parent="FlowControls"]
-unique_name_in_owner = true
 layout_mode = 0
 offset_left = 952.0
 offset_top = 520.0
@@ -934,7 +912,6 @@ default_color = Color(0.359069, 0.359069, 0.359069, 1)
 [node name="Paths" type="Node2D" parent="."]
 
 [node name="pause" type="Path2D" parent="Paths"]
-unique_name_in_owner = true
 visible = false
 curve = SubResource("Curve2D_o8erq")
 

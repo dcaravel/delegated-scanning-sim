@@ -13,18 +13,24 @@ enum buttonsIdx {NONE, PROD, DEV, OTHER, ROXCTL}
 var active_button_idx = buttonsIdx.NONE
 var buttons:Array[Control] = []
 
+@onready var deploy_prod = $"deploy-prod"
+@onready var deploy_dev = $"deploy-dev"
+@onready var deploy_other = $"deploy-other"
+@onready var roxctl = $roxctl
+@onready var label = $Label
+
 func set_active_button_idx(idx:buttonsIdx):
 	active_button_idx = idx
 
 func _ready():
 	buttons = [
 		null,
-		$"deploy-prod",
-		$"deploy-dev",
-		$"deploy-other",
-		$"roxctl",
+		deploy_prod,
+		deploy_dev,
+		deploy_other,
+		roxctl,
 	]
-	$Label.text = image_reference
+	label.text = image_reference
 
 func _process(_delta):
 	_style_active_button()
