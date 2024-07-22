@@ -35,18 +35,9 @@ const _PathSegment = preload("res://scripts/path_segment.gd")
 var moving=false
 var cur_path_segment_idx=0
 
-var all_path_segments:Array[PathSegment] = []
 var active_path:Array[PathSegment]
 
-var walk_by_px:bool = true
-var walk_speed_px:float
-var max_walk_speed_px:float = 1600.0
-var walk_speed_ratio:float = 0.6
-
 var enabled_for:ENABLED_FOR
-
-var line_color:Color = Color("afafff", 1.0)
-var line_color_alt:Color = Color("ffff0f", 1.0)
 
 var pause_seg:PathSegment
 var pausing:bool = false
@@ -103,7 +94,6 @@ var last_log_letter:int = initial_log_letter
 @onready var central_roxctl_to_central_scan = $"Paths/central-roxctl-to-central-scan"
 @onready var central_delegate_error = $"Paths/central-delegate-error"
 @onready var central_roxctl_to_cluster = $"Paths/central-roxctl-to-cluster"
-@onready var log_panel = $LogPanel
 @onready var none_radio = $EnabledForRadios/NoneRadio
 @onready var all_registries_radio = $EnabledForRadios/AllRegistriesRadio
 @onready var dev = $DelegatedScanningConfig/dev
@@ -111,7 +101,10 @@ var last_log_letter:int = initial_log_letter
 @onready var quay = $DelegatedScanningConfig/quay
 @onready var default_cluster_option = $DelegatedScanningConfig/DefaultClusterOption
 
-func _ready():
+func _ready(): 
+	SignalManager.log_entry_popped.connect(_on_log_entry_pop)
+	SignalManager.log_cleared.connect(_on_log_clear)
+
 	var apPath:String = "Registry/AnimationPlayer"
 	animationPlayers = [
 		null,
@@ -120,7 +113,7 @@ func _ready():
 		other_cluster.get_node(apPath),
 	]
 	
-	pause_seg = PathSegment.new(self, pause)
+	pause_seg = PathSegment.new(pause)
 	pause.hide()
 	
 	big_cloud.hide()
@@ -195,7 +188,8 @@ func _dot() -> Node:
 	var dot = Sprite2D.new()
 	dot.name = "_dot"
 	dot.scale = Vector2(0.3, 0.3)
-	dot.modulate = Color(line_color.r, line_color.g, line_color.b, 1.0)
+	var lc:Color = Global.TRAIL_COLOR
+	dot.modulate = Color(lc.r, lc.g, lc.b, 1.0)
 	dot.texture = preload("res://assets/white-circle.png")
 	dot.z_index = MAX_ZINDEX
 	return dot
@@ -284,17 +278,18 @@ func _reset(soft:bool=false):
 	have_signatures = false
 	have_error = false
 	
-	for segment in all_path_segments:
+	for segment in active_path:
 		segment.reset()
 
 	for a in animationPlayers:
 		if a == null:
 			continue
 		a.stop()
-
+	
+	_del_all_log_entry()
+	
 	if !soft:
 		#print_tree_pretty()
-		all_path_segments = []
 		active_path = []
 		big_cloud.hide()
 		big_cloud_label.text = ""
@@ -304,9 +299,6 @@ func _reset(soft:bool=false):
 		quay_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
 		prod_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
 		dev_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
-	
-	_del_all_log_entry()
-	last_log_letter = initial_log_letter
 
 func _on_back_step_button_pressed():
 	moving = false
@@ -365,10 +357,10 @@ func _get_matching_dele_config_entry(image:String):
 		return [false, 0]
 	
 	var def_cluster_idx = default_cluster_option.selected	
-	print("def_cluster_idx: ", def_cluster_idx)
-	print("0: ", dev.registry_name)
-	print("1: ", prod.registry_name)
-	print("2: ", quay.registry_name)
+	# print("def_cluster_idx: ", def_cluster_idx)
+	# print("0: ", dev.registry_name)
+	# print("1: ", prod.registry_name)
+	# print("2: ", quay.registry_name)
 
 	var regs = [dev, prod, quay]
 	var cluster_idx = def_cluster_idx
@@ -402,20 +394,17 @@ func _get_registry(image:String) -> REGISTRY:
 
 class SegCreator:
 	var base:Node
-	var parent:Arch
 	var dwicon:Callable
 	var deicon:Callable
 	var dsicon:Callable
 	var dtrail:bool = true
 	
-	func _init(p_parent:Arch, p_base:Node):
-		parent = p_parent
+	func _init(p_base:Node):
 		base = p_base
 	
 	func c(p_name:String) -> PathSegment:
 		var n = base.get_node(p_name)
-		var ps = PathSegment.new(parent, n)
-		# ps.name = "PathSegment"
+		var ps = PathSegment.new(n)
 		ps.wicon(dwicon)
 		ps.eicon(deicon)
 		ps.sicon(dsicon)
@@ -466,25 +455,25 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 			cPaths = c2Paths
 			toCentralPaths = c_2_to_central
 	
-	var scToCentral = SegCreator.new(self, toCentralPaths).wicon(_dot).eicon(_dot).sicon(_dot)
-	var scToCluster = SegCreator.new(self, toClusterPaths).wicon(_dot).eicon(_dot).sicon(_dot)
+	var scToCentral = SegCreator.new(toCentralPaths).wicon(_dot).eicon(_dot).sicon(_dot)
+	var scToCluster = SegCreator.new(toClusterPaths).wicon(_dot).eicon(_dot).sicon(_dot)
 
-	var scDeloy = SegCreator.new(self, cPaths.get_node("c0-deploy")).wicon(_dot).eicon(_dot)
-	var scScanCloud = SegCreator.new(self, cPaths.get_node("c0-scan-cloud")).wicon(_dot)
-	var scScanCentral = SegCreator.new(self, cPaths.get_node("c0-scan-central")).wicon(_dot)
-	var scScanLocal = SegCreator.new(self, cPaths.get_node("c0-scan-local")).wicon(_dot)
-	var scScanLocalError = SegCreator.new(self, cPaths.get_node("c0-scan-local-error")).wicon(_dot).eicon(_dot)
-	var scEnd = SegCreator.new(self, cPaths.get_node("c0-end")).wicon(_dot).trail(false)
+	var scDeloy = SegCreator.new(cPaths.get_node("c0-deploy")).wicon(_dot).eicon(_dot)
+	var scScanCloud = SegCreator.new(cPaths.get_node("c0-scan-cloud")).wicon(_dot)
+	var scScanCentral = SegCreator.new(cPaths.get_node("c0-scan-central")).wicon(_dot)
+	var scScanLocal = SegCreator.new(cPaths.get_node("c0-scan-local")).wicon(_dot)
+	var scScanLocalError = SegCreator.new(cPaths.get_node("c0-scan-local-error")).wicon(_dot).eicon(_dot)
+	var scEnd = SegCreator.new(cPaths.get_node("c0-end")).wicon(_dot).trail(false)
 	
-	var scCentralFromSensorStart = SegCreator.new(self, central_from_sensor_start).wicon(_dot).trail(false)
-	var scCentralErrorFromSensor = SegCreator.new(self, central_error_from_sensor).wicon(_dot)
-	var scCentralError = SegCreator.new(self, central_scan_error).wicon(_dot)
-	var scCentralMatch = SegCreator.new(self, central_match).wicon(_dot)
-	var scCentralScan = SegCreator.new(self, central_scan).wicon(_dot)
-	var scCentralDeploy = SegCreator.new(self, central_roxctl_start).wicon(_dot).eicon(_dot)
-	var scCentralToCentralScan = SegCreator.new(self, central_roxctl_to_central_scan).wicon(_dot).eicon(_dot).trail(false)
-	var scCentralDelegateError = SegCreator.new(self, central_delegate_error).wicon(_dot)
-	var scCentralToCluster = SegCreator.new(self, central_roxctl_to_cluster).wicon(_dot).trail(false)
+	var scCentralFromSensorStart = SegCreator.new(central_from_sensor_start).wicon(_dot).trail(false)
+	var scCentralErrorFromSensor = SegCreator.new(central_error_from_sensor).wicon(_dot)
+	var scCentralError = SegCreator.new(central_scan_error).wicon(_dot)
+	var scCentralMatch = SegCreator.new(central_match).wicon(_dot)
+	var scCentralScan = SegCreator.new(central_scan).wicon(_dot)
+	var scCentralDeploy = SegCreator.new(central_roxctl_start).wicon(_dot).eicon(_dot)
+	var scCentralToCentralScan = SegCreator.new(central_roxctl_to_central_scan).wicon(_dot).eicon(_dot).trail(false)
+	var scCentralDelegateError = SegCreator.new(central_delegate_error).wicon(_dot)
+	var scCentralToCluster = SegCreator.new(central_roxctl_to_cluster).wicon(_dot).trail(false)
 	
 	var path:Array[PathSegment] = []
 	
@@ -831,19 +820,24 @@ var walk_speeds_px:Array[float] = [
 	10000,
 ]
 func _on_speed_slider_value_changed(value):
-	walk_by_px = true
-	walk_speed_px = walk_speeds_px[value]
+	Global.update_walk_speed_px(walk_speeds_px[value])
 
 func _add_log_entry(p_icon_text:String, p_text:String):
-	log_panel.add(p_icon_text, p_text)
+	SignalManager.push_log_entry.emit(p_icon_text, p_text)
 
 func _del_log_entry():
-	var r = log_panel.del()
-	if r:
-		last_log_letter -= 1
+	SignalManager.pop_log_entry.emit()
 
 func _del_all_log_entry():
-	log_panel.delAll()
+	SignalManager.clear_log.emit()
+
+func _on_log_entry_pop():
+	last_log_letter -= 1
+	if last_log_letter < initial_log_letter:
+		last_log_letter = initial_log_letter
+
+func _on_log_clear():
+	last_log_letter = initial_log_letter
 
 func _get_next_log_letter() -> String:
 	last_log_letter += 1

@@ -6,9 +6,13 @@ const log_entry_scene = preload("res://log_entry.tscn")
 @onready var log_entries = $ScrollContainer/LogEntries
 
 func _ready():
-	add("A", "hello from ready")
-	add("B", "Sensor pooped out a squirrel")
-	add("C", "Other")
+	add("A", "A")
+	add("B", "B")
+	add("C", "C")
+	
+	SignalManager.clear_log.connect(delAll)
+	SignalManager.pop_log_entry.connect(del)
+	SignalManager.push_log_entry.connect(add)
 
 func add(icon_text:String, text:String):
 	var le = log_entry_scene.instantiate()
@@ -27,8 +31,9 @@ func del() -> bool:
 	var statuses:Array[bool] = []
 	
 	var c = _get_last_child(el)
-	if !c:
+	if c == null:
 		return false
+
 	if c is HSeparator:
 		return _remove_last(el)
 	
@@ -38,6 +43,7 @@ func del() -> bool:
 	
 	for s in statuses:
 		if s:
+			SignalManager.log_entry_popped.emit()
 			return true
 	
 	return false
@@ -45,6 +51,7 @@ func del() -> bool:
 func delAll():
 	while del():
 		pass
+	SignalManager.log_cleared.emit()
 
 func _get_last_child(el:Node) -> Node:
 	var cnt = el.get_child_count()

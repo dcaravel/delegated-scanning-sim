@@ -1,10 +1,6 @@
 extends RefCounted
 class_name PathSegment
 
-const _Arch = preload("res://arch.gd")
-
-var parent:Arch
-
 var path:Path2D
 var path_follow:PathFollow2D
 
@@ -32,18 +28,17 @@ var inner_progress:float
 var reverse_dir:bool
 var use_alt_color:bool
 
+var walk_speed_px:int
 
-func _init(p_parent:Arch, p_path:Path2D):
-	parent = p_parent
+func _init(p_path:Path2D):
 	path = p_path
-	
-	path_follow = PathFollow2D.new()
-	path_follow.name = "PathSegment-PathFollow2D"
-	path_follow.rotates = false
-	path.add_child(path_follow)
-	
-	parent.all_path_segments.append(self)
-	
+
+	SignalManager.walk_speed_updated.connect(_on_walk_speed_update)
+	_on_walk_speed_update() # set the initial speed
+
+func _on_walk_speed_update() -> void:
+	walk_speed_px = Global.get_walk_speed_px()
+
 # returns the total progress walked so far
 func progress() -> float:
 	if path_follow == null:
@@ -79,7 +74,7 @@ func reset(hard:bool=true):
 		path.remove_child(mid_icon)
 		mid_icon.queue_free()
 		mid_icon = null
-		parent._del_log_entry()
+		SignalManager.pop_log_entry.emit()
 	
 	if draw_trail:
 		for i in range(0, lines.size()):
@@ -91,8 +86,6 @@ func reset(hard:bool=true):
 	started_walk = false
 
 	if hard:
-
-		
 		_callback(Global.Event.RESET)
 
 func _callback(p_event:Global.Event):
@@ -126,9 +119,9 @@ func walk(delta) -> bool:
 				l.name="PathSegment-Line2D"
 				l.width = 2
 				if !use_alt_color:
-					l.default_color=parent.line_color
+					l.default_color=Global.TRAIL_COLOR
 				else:
-					l.default_color=parent.line_color_alt
+					l.default_color=Global.TRAIL_COLOR_ALT
 				l.add_point(start)
 				l.add_point(start)
 				path.add_child(l)
@@ -139,7 +132,7 @@ func walk(delta) -> bool:
 		
 		started_walk = true
 	
-	var done = _walk_by_px(delta) if parent.walk_by_px else _walk_by_ratio(delta)
+	var done = _walk_by_px(delta) if Global.walk_by_px else _walk_by_ratio(delta)
 	
 	_draw_line()
 	_draw_mid_icon()
@@ -199,9 +192,9 @@ func _draw_line():
 
 func _walk_by_px(delta) -> bool:
 	if reverse_dir:
-		inner_progress -= (parent.walk_speed_px * delta)
+		inner_progress -= (walk_speed_px * delta)
 	else:
-		inner_progress += (parent.walk_speed_px * delta)
+		inner_progress += (walk_speed_px * delta)
 
 	path_follow.progress = inner_progress
 	if reverse_dir:
@@ -219,13 +212,14 @@ func _walk_by_px(delta) -> bool:
 	return false
 
 func _walk_by_ratio(delta) -> bool:
-	var ratio = path_follow.progress_ratio + (parent.walk_speed_ratio * delta)
-	path_follow.progress_ratio = ratio
-	if ratio >= 1.0:
-		path_follow.progress_ratio = 1.0
-		return true
+	return true # NOT IMPLEMENTED
+	# var ratio = path_follow.progress_ratio + (walk_speed_ratio * delta)
+	# path_follow.progress_ratio = ratio
+	# if ratio >= 1.0:
+	# 	path_follow.progress_ratio = 1.0
+	# 	return true
 	
-	return false
+	# return false
 
 func _cur_path_pos() -> Vector2:
 	return path.curve.sample_baked(path_follow.progress)
