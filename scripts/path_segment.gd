@@ -28,7 +28,7 @@ var inner_progress:float
 var reverse_dir:bool
 var use_alt_color:bool
 
-var walk_speed_px:int
+var walk_speed_px:float
 
 func _init(p_path:Path2D):
 	path = p_path
@@ -211,7 +211,7 @@ func _walk_by_px(delta) -> bool:
 
 	return false
 
-func _walk_by_ratio(delta) -> bool:
+func _walk_by_ratio(_delta) -> bool:
 	return true # NOT IMPLEMENTED
 	# var ratio = path_follow.progress_ratio + (walk_speed_ratio * delta)
 	# path_follow.progress_ratio = ratio

@@ -23,6 +23,7 @@ offset_top = -15.0
 offset_right = 15.0
 offset_bottom = 15.0
 pivot_offset = Vector2(15, 15)
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_m6417")
 
 [node name="IconText" type="Label" parent="LetterIcon"]

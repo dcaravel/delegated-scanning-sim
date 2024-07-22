@@ -6,10 +6,6 @@ const log_entry_scene = preload("res://log_entry.tscn")
 @onready var log_entries = $ScrollContainer/LogEntries
 
 func _ready():
-	add("A", "A")
-	add("B", "B")
-	add("C", "C")
-	
 	SignalManager.clear_log.connect(delAll)
 	SignalManager.pop_log_entry.connect(del)
 	SignalManager.push_log_entry.connect(add)

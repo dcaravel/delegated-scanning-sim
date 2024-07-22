@@ -31,10 +31,7 @@ const _PathSegment = preload("res://scripts/path_segment.gd")
 @export var have_signatures:bool = false
 @export var have_error:bool = false
 
-var moving=false
 var cur_path_segment_idx=0
-
-var active_path:Array[PathSegment]
 
 var enabled_for:ENABLED_FOR
 
@@ -106,6 +103,7 @@ func _ready():
 	
 	SignalManager.log_entry_popped.connect(_on_log_entry_pop)
 	SignalManager.log_cleared.connect(_on_log_clear)
+	SignalManager.deploy_to_cluster.connect(_on_deploy_to_cluster)
 	
 	for cluster:String in Global.CLUSTERS:
 		default_cluster_option.add_item(cluster)
@@ -231,21 +229,21 @@ func _error_status(v:bool=true) -> Callable:
 func _process(delta):
 	_sync_image_status()
 	
-	if cur_path_segment_idx >= active_path.size():
+	if cur_path_segment_idx >= Config.active_path().size():
 		forward_step_button.disabled = true
 	else:
 		forward_step_button.disabled = false
 		
-	if !moving:
+	if !Config.moving():
 		pause_play_button.icon = play_icon
 		return
 	pause_play_button.icon = pause_icon
 
-	if cur_path_segment_idx >= active_path.size():
-		moving = false
+	if cur_path_segment_idx >= Config.active_path().size():
+		Config.set_moving(false)
 		return
 	
-	var segment:PathSegment = active_path[cur_path_segment_idx]
+	var segment:PathSegment = Config.active_path()[cur_path_segment_idx]
 	if !pausing_enabled || !pausing:
 		if segment.walk(delta):
 			pausing = true
@@ -275,7 +273,7 @@ func _reset(soft:bool=false):
 	if !actual_ready:
 		return
 		
-	moving = false
+	Config.set_moving(false)
 	cur_path_segment_idx = 0
 	have_metadata = false
 	have_index_report = false
@@ -283,7 +281,7 @@ func _reset(soft:bool=false):
 	have_signatures = false
 	have_error = false
 	
-	for segment in active_path:
+	for segment in Config.active_path():
 		segment.reset()
 
 	for a in animationPlayers:
@@ -295,7 +293,7 @@ func _reset(soft:bool=false):
 	
 	if !soft:
 		#print_tree_pretty()
-		active_path = []
+		Config.clear_active_path()
 		big_cloud.hide()
 		big_cloud_label.text = ""
 		for c in Global.CLUSTER:
@@ -306,12 +304,12 @@ func _reset(soft:bool=false):
 		dev_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
 
 func _on_back_step_button_pressed():
-	moving = false
-	if cur_path_segment_idx >= active_path.size():
-		cur_path_segment_idx = active_path.size()-1
+	Config.set_moving(false)
+	if cur_path_segment_idx >= Config.active_path().size():
+		cur_path_segment_idx = Config.active_path().size()-1
 	var seg:PathSegment
 	var progress:float
-	seg = active_path[cur_path_segment_idx]
+	seg = Config.active_path()[cur_path_segment_idx]
 	progress = seg.progress()
 	
 	seg.reset()
@@ -762,8 +760,11 @@ func _displayBigCloud(reg:REGISTRY):
 func _doDeploy(cluster:Global.CLUSTER, image:ImageControl, buttonIdx:ImageControl.buttonsIdx):
 	_reset()
 	image.set_active_button_idx(buttonIdx)
-	active_path = _prep_path(cluster, image.image_reference)
-	moving = true
+	Config.set_active_path(_prep_path(cluster, image.image_reference))
+	Config.set_moving(true)
+
+func _on_deploy_to_cluster(p_cluster:Global.CLUSTER):
+	_doDeploy(p_cluster, docker_image, ImageControl.buttonsIdx.NONE)
 
 func _on_docker_image_prod_pressed():
 	_doDeploy(Global.CLUSTER.PROD, docker_image, ImageControl.buttonsIdx.PROD)
@@ -805,10 +806,10 @@ func _on_reset_button_pressed():
 	_reset()
 
 func _on_pause_play_button_pressed():
-	if !moving && cur_path_segment_idx >= active_path.size():
+	if !Config.moving() && cur_path_segment_idx >= Config.active_path().size():
 		_reset(true)
 	
-	moving = !moving
+	Config.toggle_moving()
 
 # should be one entry here per step in the slider
 var walk_speeds_px:Array[float] = [

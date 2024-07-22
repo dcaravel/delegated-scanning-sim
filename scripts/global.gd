@@ -11,3 +11,5 @@ const CLUSTERS=["None","prod","dev","other"]
 
 const TRAIL_COLOR:Color = Color("afafff", 1.0)
 const TRAIL_COLOR_ALT:Color = Color("ffff0f", 1.0)
+
+const OVERLAY_ZINDEX:int = 20

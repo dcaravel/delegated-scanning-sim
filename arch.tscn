@@ -487,6 +487,7 @@ offset_top = 16.0
 offset_right = 713.0
 offset_bottom = 186.0
 cluster_name = "prod"
+cluster = 1
 registry_name = "prod.registry.io"
 metadata/_edit_pinned_properties_ = [&"cluster_name"]
 
@@ -496,6 +497,7 @@ offset_top = 192.0
 offset_right = 713.0
 offset_bottom = 360.0
 cluster_name = "dev"
+cluster = 2
 registry_name = "dev.registry.io"
 
 [node name="OtherCluster" parent="." instance=ExtResource("2_70j8o")]
@@ -504,6 +506,7 @@ offset_top = 368.0
 offset_right = 713.0
 offset_bottom = 536.0
 cluster_name = "other"
+cluster = 3
 registry_name = ""
 
 [node name="CentralServices" type="Control" parent="."]

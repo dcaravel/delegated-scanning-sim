@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://bq8pyne1pxix3"]
+[gd_scene load_steps=9 format=3 uid="uid://bq8pyne1pxix3"]
 
 [ext_resource type="Script" path="res://cluster.gd" id="1_q0r7i"]
 [ext_resource type="Texture2D" uid="uid://fhjwqg7nhvao" path="res://assets/cloud4-svgrepo-com.png" id="2_85q0g"]
+[ext_resource type="PackedScene" uid="uid://d1yakxej4vlq7" path="res://cluster_overlay.tscn" id="3_1x4ag"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5c2nx"]
 bg_color = Color(0.180392, 0.180392, 0.180392, 1)
@@ -73,6 +74,7 @@ show_cloud = true
 layout_mode = 0
 offset_right = 264.0
 offset_bottom = 168.0
+mouse_filter = 2
 color = Color(0.211765, 0.239216, 0.290196, 1)
 
 [node name="Scanner" type="Label" parent="."]
@@ -102,6 +104,7 @@ anchors_preset = 0
 offset_left = 208.0
 offset_right = 264.0
 offset_bottom = 24.0
+mouse_filter = 2
 
 [node name="ColorRect" type="ColorRect" parent="Label"]
 layout_mode = 0
@@ -163,3 +166,6 @@ offset_right = 88.0
 offset_bottom = 54.0
 text = "quay.io"
 label_settings = SubResource("LabelSettings_lpli0")
+
+[node name="ClusterOverlay" parent="." instance=ExtResource("3_1x4ag")]
+layout_mode = 0
