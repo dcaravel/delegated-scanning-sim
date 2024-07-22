@@ -21,8 +21,9 @@ driver/driver="Dummy"
 
 [autoload]
 
-SignalManager="*res://scripts/signal_manager.gd"
 Global="*res://scripts/global.gd"
+SignalManager="*res://scripts/signal_manager.gd"
+Config="*res://scripts/config.gd"
 
 [display]
 

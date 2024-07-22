@@ -825,7 +825,7 @@ var walk_speeds_px:Array[float] = [
 	10000,
 ]
 func _on_speed_slider_value_changed(value:float):
-	Global.update_walk_speed_px(walk_speeds_px[value])
+	Config.update_walk_speed_px(walk_speeds_px[value])
 
 func _add_log_entry(p_icon_text:String, p_text:String):
 	SignalManager.push_log_entry.emit(p_icon_text, p_text)

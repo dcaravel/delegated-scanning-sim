@@ -37,7 +37,7 @@ func _init(p_path:Path2D):
 	_on_walk_speed_update() # set the initial speed
 
 func _on_walk_speed_update() -> void:
-	walk_speed_px = Global.get_walk_speed_px()
+	walk_speed_px = Config.get_walk_speed_px()
 
 # returns the total progress walked so far
 func progress() -> float:
@@ -132,7 +132,7 @@ func walk(delta) -> bool:
 		
 		started_walk = true
 	
-	var done = _walk_by_px(delta) if Global.walk_by_px else _walk_by_ratio(delta)
+	var done = _walk_by_px(delta) if Config.walk_by_px() else _walk_by_ratio(delta)
 	
 	_draw_line()
 	_draw_mid_icon()
