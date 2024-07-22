@@ -12,8 +12,8 @@ var walk_by_px:bool = true
 var walk_speed_px:float = 0
 
 func get_walk_speed_px() -> float:
-    return walk_speed_px
+	return walk_speed_px
 
 func update_walk_speed_px(p_new_speed:float) -> void:
-    walk_speed_px = p_new_speed
-    SignalManager.walk_speed_updated.emit()
+	walk_speed_px = p_new_speed
+	SignalManager.walk_speed_updated.emit()

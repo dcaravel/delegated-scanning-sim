@@ -8,5 +8,4 @@ signal log_cleared
 
 signal push_log_entry(p_icon_text:String, p_text:String)
 
-signal walk_speed_updated(p_walk_speed:float)
-
+signal walk_speed_updated
