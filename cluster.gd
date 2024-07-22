@@ -21,14 +21,14 @@ func _process(_delta):
 	
 	if registry_name != null && registry_name.length() > 0:
 		registry.text = registry_name
-		registry.visible = true
+		registry.show()
 	else:
-		registry.visible = false
+		registry.hide()
 		
 	if show_cloud:
 		cloud_label.text = cloud_text
-		cloud.visible=true
+		cloud.show()
 		registry.modulate.a = 0.2
 	else:
-		cloud.visible=false
+		cloud.hide()
 		registry.modulate.a = 1.0

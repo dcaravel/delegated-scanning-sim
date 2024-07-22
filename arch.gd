@@ -121,15 +121,15 @@ func _ready():
 	]
 	
 	pause_seg = PathSegment.new(self, pause)
-	pause.visible = false
+	pause.hide()
 	
-	big_cloud.visible = false
+	big_cloud.hide()
 	
 	for c in paths.get_children():
-		c.visible = true
+		c.show()
 	
 	for c in c_paths.get_children():
-		c.visible = true
+		c.show()
 	
 	c1Paths = c_paths.duplicate()
 	c1Paths.name = "c1Paths"
@@ -210,7 +210,7 @@ func _image_status() -> ImageStatusMini:
 	dupe.have_error = have_error
 	
 	dupe.position = Vector2(-13, -21)
-	dupe.visible = true
+	dupe.show()
 	dupe.z_index = MAX_ZINDEX+1
 	return dupe
 
@@ -296,7 +296,7 @@ func _reset(soft:bool=false):
 		#print_tree_pretty()
 		all_path_segments = []
 		active_path = []
-		big_cloud.visible = false
+		big_cloud.hide()
 		big_cloud_label.text = ""
 		for c in CLUSTER:
 			_cloud(CLUSTER.get(c), -1, -1, false)
@@ -327,13 +327,13 @@ func _sync_enabled_for_radio():
 	
 	if button == none_radio:
 		enabled_for = ENABLED_FOR.NONE
-		delegated_scanning_config.visible = false
+		delegated_scanning_config.hide()
 	elif button == all_registries_radio:	
 		enabled_for = ENABLED_FOR.ALL
-		delegated_scanning_config.visible = true
+		delegated_scanning_config.show()
 	else:
 		enabled_for = ENABLED_FOR.SPECIFIC
-		delegated_scanning_config.visible = true
+		delegated_scanning_config.show()
 	
 	_config_updated()
 	
@@ -763,7 +763,7 @@ func _cloud(p_src_cluster:CLUSTER, p_dst_cluster:CLUSTER, p_reg:REGISTRY, p_show
 func _displayBigCloud(reg:REGISTRY):
 	if reg == REGISTRY.DOCKER || reg == REGISTRY.QUAY:
 		big_cloud_label.text = REGISTRIES[reg]
-		big_cloud.visible = true
+		big_cloud.show()
 		
 func _doDeploy(cluster:CLUSTER, image:ImageControl, buttonIdx:ImageControl.buttonsIdx):
 	_reset()

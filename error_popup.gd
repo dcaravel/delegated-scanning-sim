@@ -14,23 +14,23 @@ func _ready():
 	_def_label_offsetX = label_bot.position.x
 	label_top.text = LabelText
 	label_bot.text = LabelText
-	label_top.visible = false
-	label_bot.visible = false
+	label_top.hide()
+	label_bot.hide()
 
 func _process(_delta):
 	label_top.text = LabelText
 	label_bot.text = LabelText
 	if LabelText == "":
-		label_top.visible = false
-		label_bot.visible = false
+		label_top.hide()
+		label_bot.hide()
 		return
 		
 	if LabelPosition == Global.Pos.TOP:
-		label_top.visible = true
-		label_bot.visible = false
+		label_top.show()
+		label_bot.hide()
 	elif LabelPosition == Global.Pos.BOT:
-		label_top.visible = false
-		label_bot.visible = true
+		label_top.hide()
+		label_bot.show()
 	
 	label_top.position.x = _def_label_offsetX + LabelOffsetX
 	label_bot.position.x = _def_label_offsetX + LabelOffsetX
