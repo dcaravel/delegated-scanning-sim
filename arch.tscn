@@ -591,16 +591,6 @@ offset_top = 24.0
 offset_right = 192.0
 offset_bottom = 55.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_3uyhb")
-item_count = 4
-selected = 0
-popup/item_0/text = "None"
-popup/item_0/id = 0
-popup/item_1/text = "prod"
-popup/item_1/id = 1
-popup/item_2/text = "dev"
-popup/item_2/id = 2
-popup/item_3/text = "other"
-popup/item_3/id = 3
 
 [node name="RegistryLabel" type="Label" parent="DelegatedScanningConfig"]
 layout_mode = 0

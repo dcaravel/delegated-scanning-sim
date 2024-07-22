@@ -18,8 +18,7 @@ const nil:Callable = Callable()
 
 enum ENABLED_FOR {NONE, ALL, SPECIFIC}
 enum PATH_SOURCE {CENTRAL, SENSOR_EVENT}
-# CLUSTER values MUST match the dropdown in the dele registry config
-enum CLUSTER {CENTRAL,PROD,DEV,OTHER}
+
 # REGISTRY and REGISTRIES MUST have same order
 enum REGISTRY {DOCKER,QUAY,DEV,PROD}
 const REGISTRIES=["docker.io","quay.io","dev","prod"]
@@ -101,9 +100,15 @@ var last_log_letter:int = initial_log_letter
 @onready var quay = $DelegatedScanningConfig/quay
 @onready var default_cluster_option = $DelegatedScanningConfig/DefaultClusterOption
 
-func _ready(): 
+func _ready():
+	# The enum and list of clusters must be the same, otherwise the dropdowns will not match the output
+	assert(Global.CLUSTER.size() == Global.CLUSTERS.size())
+	
 	SignalManager.log_entry_popped.connect(_on_log_entry_pop)
 	SignalManager.log_cleared.connect(_on_log_clear)
+	
+	for cluster:String in Global.CLUSTERS:
+		default_cluster_option.add_item(cluster)
 
 	var apPath:String = "Registry/AnimationPlayer"
 	animationPlayers = [
@@ -293,8 +298,8 @@ func _reset(soft:bool=false):
 		active_path = []
 		big_cloud.hide()
 		big_cloud_label.text = ""
-		for c in CLUSTER:
-			_cloud(CLUSTER.get(c), -1, -1, false)
+		for c in Global.CLUSTER:
+			_cloud(Global.CLUSTER.get(c), -1, -1, false)
 		docker_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
 		quay_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
 		prod_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
@@ -427,7 +432,7 @@ class SegCreator:
 		dtrail = p_trail
 		return self
 
-func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
+func _prep_path(src_cluster:Global.CLUSTER, image:String) -> Array[PathSegment]:
 	var reg = _get_registry(image)
 	var isLocal = _scan_image_via_cluster(image) 
 	var resp = _get_matching_dele_config_entry(image)
@@ -438,20 +443,20 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	var toCentralPaths = c_0_to_central
 	var toClusterPaths = central_to_c_0
 	match src_cluster:
-		CLUSTER.CENTRAL:
+		Global.CLUSTER.CENTRAL:
 			match dst_cluster:
-				CLUSTER.DEV:
+				Global.CLUSTER.DEV:
 					cPaths = c1Paths
 					toCentralPaths = c_1_to_central
 					toClusterPaths = central_to_c_1
-				CLUSTER.OTHER:
+				Global.CLUSTER.OTHER:
 					cPaths = c2Paths
 					toCentralPaths = c_2_to_central
 					toClusterPaths = central_to_c_2
-		CLUSTER.DEV:
+		Global.CLUSTER.DEV:
 			cPaths = c1Paths
 			toCentralPaths = c_1_to_central
-		CLUSTER.OTHER:
+		Global.CLUSTER.OTHER:
 			cPaths = c2Paths
 			toCentralPaths = c_2_to_central
 	
@@ -564,7 +569,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 	if !isLocal: # Scan handled by central regardless of where flow starts
 		_displayBigCloud(reg)
 		
-		if src_cluster == CLUSTER.CENTRAL:
+		if src_cluster == Global.CLUSTER.CENTRAL:
 			path.append_array([
 				scCentralDeploy.c("a1"),
 				
@@ -587,17 +592,17 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 		else:
 			path.append_array(pathCentralScanError)
 		
-		if src_cluster == CLUSTER.CENTRAL:
+		if src_cluster == Global.CLUSTER.CENTRAL:
 			path.append_array([
 				scCentralToCentralScan.c("b1").wicon(_image_status).eicon(_image_status),
 			])
 		return path
 	
-	if src_cluster == CLUSTER.CENTRAL:
+	if src_cluster == Global.CLUSTER.CENTRAL:
 		path.append_array([
 			scCentralDeploy.c("a1")
 		])
-		if dst_cluster == CLUSTER.CENTRAL:
+		if dst_cluster == Global.CLUSTER.CENTRAL:
 			path.append_array([
 				scCentralToCentralScan.c("a1"),
 				
@@ -610,7 +615,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 			return path
 		
 		var offset:int = 50
-		if dst_cluster ==CLUSTER.DEV:
+		if dst_cluster == Global.CLUSTER.DEV:
 			offset = 25
 		path.append_array([
 			scCentralToCluster.c("a1"),
@@ -624,7 +629,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 		])
 	
 	if reg == REGISTRY.DEV:
-		if src_cluster == CLUSTER.DEV || (src_cluster == CLUSTER.CENTRAL && dst_cluster == CLUSTER.DEV):
+		if src_cluster == Global.CLUSTER.DEV || (src_cluster == Global.CLUSTER.CENTRAL && dst_cluster == Global.CLUSTER.DEV):
 			path.append_array(pathScanLocal)
 		else:
 			path.append_array(pathScanLocalError)
@@ -632,7 +637,7 @@ func _prep_path(src_cluster:CLUSTER, image:String) -> Array[PathSegment]:
 		return path
 	
 	if reg == REGISTRY.PROD:
-		if src_cluster == CLUSTER.PROD || (src_cluster == CLUSTER.CENTRAL && dst_cluster == CLUSTER.PROD):
+		if src_cluster == Global.CLUSTER.PROD || (src_cluster == Global.CLUSTER.CENTRAL && dst_cluster == Global.CLUSTER.PROD):
 			path.append_array(pathScanLocal)
 		else:
 			path.append_array(pathScanLocalError)
@@ -702,15 +707,15 @@ func _errorStatusCB(p_event:Global.Event):
 			have_error = false
 
 func _prodAnimateCB(p_event:Global.Event):
-	_clusterAnimate(p_event, CLUSTER.PROD)
+	_clusterAnimate(p_event, Global.CLUSTER.PROD)
 
 func _devAnimateCB(p_event:Global.Event):
-	_clusterAnimate(p_event, CLUSTER.DEV)
+	_clusterAnimate(p_event, Global.CLUSTER.DEV)
 	
 func _otherAnimateCB(p_event:Global.Event):
-	_clusterAnimate(p_event, CLUSTER.OTHER)
+	_clusterAnimate(p_event, Global.CLUSTER.OTHER)
 
-func _clusterAnimate(p_event:Global.Event, p_cluster:CLUSTER=CLUSTER.CENTRAL):
+func _clusterAnimate(p_event:Global.Event, p_cluster:Global.CLUSTER=Global.CLUSTER.CENTRAL):
 	match p_event:
 		Global.Event.START:
 			animationPlayers[p_cluster].play(animationRegHighlight)
@@ -720,28 +725,28 @@ func _clusterAnimate(p_event:Global.Event, p_cluster:CLUSTER=CLUSTER.CENTRAL):
 			animationPlayers[p_cluster].stop()
 			have_error = false
 
-func _cloudC(p_cluster:CLUSTER, p_reg:REGISTRY, p_show:bool=true):
+func _cloudC(p_cluster:Global.CLUSTER, p_reg:REGISTRY, p_show:bool=true):
 	return Callable(self, "_cloud").bind(p_cluster, p_reg, p_show)
 
-func _cloud(p_src_cluster:CLUSTER, p_dst_cluster:CLUSTER, p_reg:REGISTRY, p_show:bool=true):
+func _cloud(p_src_cluster:Global.CLUSTER, p_dst_cluster:Global.CLUSTER, p_reg:REGISTRY, p_show:bool=true):
 	
 	var c
 	match p_src_cluster:
-		CLUSTER.CENTRAL:
+		Global.CLUSTER.CENTRAL:
 			match p_dst_cluster:
-				CLUSTER.PROD:
+				Global.CLUSTER.PROD:
 					c = prod_cluster
-				CLUSTER.DEV:
+				Global.CLUSTER.DEV:
 					c = dev_cluster
-				CLUSTER.OTHER:
+				Global.CLUSTER.OTHER:
 					c = other_cluster
 				_:
 					return
-		CLUSTER.PROD:
+		Global.CLUSTER.PROD:
 			c = prod_cluster
-		CLUSTER.DEV:
+		Global.CLUSTER.DEV:
 			c = dev_cluster
-		CLUSTER.OTHER:
+		Global.CLUSTER.OTHER:
 			c = other_cluster
 		_:
 			return
@@ -754,47 +759,47 @@ func _displayBigCloud(reg:REGISTRY):
 		big_cloud_label.text = REGISTRIES[reg]
 		big_cloud.show()
 		
-func _doDeploy(cluster:CLUSTER, image:ImageControl, buttonIdx:ImageControl.buttonsIdx):
+func _doDeploy(cluster:Global.CLUSTER, image:ImageControl, buttonIdx:ImageControl.buttonsIdx):
 	_reset()
 	image.set_active_button_idx(buttonIdx)
 	active_path = _prep_path(cluster, image.image_reference)
 	moving = true
 
 func _on_docker_image_prod_pressed():
-	_doDeploy(CLUSTER.PROD, docker_image, ImageControl.buttonsIdx.PROD)
+	_doDeploy(Global.CLUSTER.PROD, docker_image, ImageControl.buttonsIdx.PROD)
 func _on_prod_image_prod_pressed():
-	_doDeploy(CLUSTER.PROD, prod_image, ImageControl.buttonsIdx.PROD)
+	_doDeploy(Global.CLUSTER.PROD, prod_image, ImageControl.buttonsIdx.PROD)
 func _on_dev_image_prod_pressed():
-	_doDeploy(CLUSTER.PROD, dev_image, ImageControl.buttonsIdx.PROD)
+	_doDeploy(Global.CLUSTER.PROD, dev_image, ImageControl.buttonsIdx.PROD)
 func _on_quay_image_prod_pressed():
-	_doDeploy(CLUSTER.PROD, quay_image, ImageControl.buttonsIdx.PROD)
+	_doDeploy(Global.CLUSTER.PROD, quay_image, ImageControl.buttonsIdx.PROD)
 
 func _on_docker_image_dev_pressed():
-	_doDeploy(CLUSTER.DEV, docker_image, ImageControl.buttonsIdx.DEV)
+	_doDeploy(Global.CLUSTER.DEV, docker_image, ImageControl.buttonsIdx.DEV)
 func _on_prod_image_dev_pressed():
-	_doDeploy(CLUSTER.DEV, prod_image, ImageControl.buttonsIdx.DEV)
+	_doDeploy(Global.CLUSTER.DEV, prod_image, ImageControl.buttonsIdx.DEV)
 func _on_dev_image_dev_pressed():
-	_doDeploy(CLUSTER.DEV, dev_image, ImageControl.buttonsIdx.DEV)
+	_doDeploy(Global.CLUSTER.DEV, dev_image, ImageControl.buttonsIdx.DEV)
 func _on_quay_image_dev_pressed():
-	_doDeploy(CLUSTER.DEV, quay_image, ImageControl.buttonsIdx.DEV)
+	_doDeploy(Global.CLUSTER.DEV, quay_image, ImageControl.buttonsIdx.DEV)
 
 func _on_docker_image_other_pressed():
-	_doDeploy(CLUSTER.OTHER, docker_image, ImageControl.buttonsIdx.OTHER)
+	_doDeploy(Global.CLUSTER.OTHER, docker_image, ImageControl.buttonsIdx.OTHER)
 func _on_prod_image_other_pressed():
-	_doDeploy(CLUSTER.OTHER, prod_image, ImageControl.buttonsIdx.OTHER)
+	_doDeploy(Global.CLUSTER.OTHER, prod_image, ImageControl.buttonsIdx.OTHER)
 func _on_dev_image_other_pressed():
-	_doDeploy(CLUSTER.OTHER, dev_image, ImageControl.buttonsIdx.OTHER)
+	_doDeploy(Global.CLUSTER.OTHER, dev_image, ImageControl.buttonsIdx.OTHER)
 func _on_quay_image_other_pressed():
-	_doDeploy(CLUSTER.OTHER, quay_image, ImageControl.buttonsIdx.OTHER)
+	_doDeploy(Global.CLUSTER.OTHER, quay_image, ImageControl.buttonsIdx.OTHER)
 
 func _on_docker_image_roxctl_pressed():
-	_doDeploy(CLUSTER.CENTRAL, docker_image, ImageControl.buttonsIdx.ROXCTL)
+	_doDeploy(Global.CLUSTER.CENTRAL, docker_image, ImageControl.buttonsIdx.ROXCTL)
 func _on_prod_image_roxctl_pressed():
-	_doDeploy(CLUSTER.CENTRAL, prod_image, ImageControl.buttonsIdx.ROXCTL)
+	_doDeploy(Global.CLUSTER.CENTRAL, prod_image, ImageControl.buttonsIdx.ROXCTL)
 func _on_dev_image_roxctl_pressed():
-	_doDeploy(CLUSTER.CENTRAL, dev_image, ImageControl.buttonsIdx.ROXCTL)
+	_doDeploy(Global.CLUSTER.CENTRAL, dev_image, ImageControl.buttonsIdx.ROXCTL)
 func _on_quay_image_roxctl_pressed():
-	_doDeploy(CLUSTER.CENTRAL, quay_image, ImageControl.buttonsIdx.ROXCTL)
+	_doDeploy(Global.CLUSTER.CENTRAL, quay_image, ImageControl.buttonsIdx.ROXCTL)
 
 func _on_reset_button_pressed():
 	_reset()
