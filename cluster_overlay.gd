@@ -33,7 +33,11 @@ func _process(_delta):
 func _set_overlay_visible(full:bool=true):
 	if full:
 		get_theme_stylebox("normal").bg_color.a = overlay_visible_alpha
-		text = overlay_visible_text
+		
+		if Config.has_images():
+			text = overlay_visible_text
+		else:
+			text = Global.NO_IMAGE_AVAIL_ERR
 	else:
 		#get_theme_stylebox("normal").bg_color.a = 0.2
 		#text = ""

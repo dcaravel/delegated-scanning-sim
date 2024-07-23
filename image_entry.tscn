@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://bwfsxegipgtiw"]
+
+[ext_resource type="StyleBox" uid="uid://c8gtm0fgufeaf" path="res://theme/styles/hover.tres" id="1_yte84"]
+[ext_resource type="Script" path="res://image_entry.gd" id="2_ql34x"]
+[ext_resource type="Texture2D" uid="uid://by2xty1mw77m3" path="res://assets/trash-svgrepo-com-16x16.png" id="3_pqh1h"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4o3yq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h3tai"]
+
+[node name="HBoxContainer" type="HBoxContainer"]
+offset_right = 119.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+script = ExtResource("2_ql34x")
+
+[node name="CheckBox" type="CheckBox" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+mouse_default_cursor_shape = 2
+theme_override_constants/check_v_offset = 0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = ExtResource("1_yte84")
+theme_override_styles/hover_pressed = ExtResource("1_yte84")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4o3yq")
+text = "abc123"
+
+[node name="DeleteButton" type="Button" parent="."]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/focus = SubResource("StyleBoxEmpty_h3tai")
+icon = ExtResource("3_pqh1h")
+
+[node name="Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+
+[connection signal="pressed" from="DeleteButton" to="." method="_on_delete_button_pressed"]

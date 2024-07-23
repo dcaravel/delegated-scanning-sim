@@ -1,0 +1,53 @@
+[gd_scene load_steps=3 format=3 uid="uid://by3lsour21dm4"]
+
+[ext_resource type="Script" path="res://image_manager.gd" id="1_p5ra4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_x2858"]
+
+[node name="MarginContainer" type="MarginContainer"]
+offset_right = 633.0
+offset_bottom = 216.0
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+script = ExtResource("1_p5ra4")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ImageNameEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Enter image full name ..."
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_x2858")
+
+[node name="AddImageButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Add Image"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ImageContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 0
+
+[connection signal="text_submitted" from="VBoxContainer/HBoxContainer/ImageNameEdit" to="." method="_on_image_name_edit_text_submitted"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/AddImageButton" to="." method="_on_add_image_button_pressed"]

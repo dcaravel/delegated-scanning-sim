@@ -768,6 +768,10 @@ func _doDeploy(cluster:Global.CLUSTER, image:ImageControl, buttonIdx:ImageContro
 
 func _on_deploy_to_cluster(p_cluster:Global.CLUSTER):
 	_reset()
+	
+	if !Config.has_images():
+		print("ERROR: no images, cannot deploy")
+		return
 	print("prepping path for image: ", Config.get_active_image())
 	Config.set_active_path(_prep_path(p_cluster, Config.get_active_image()))
 	Config.set_moving(true)

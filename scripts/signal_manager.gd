@@ -14,3 +14,4 @@ signal walk_speed_updated
 signal deploy_to_cluster(p_cluster:Global.CLUSTER)
 signal context_menu(p_cluster:Global.CLUSTER)
 signal images_updated
+signal active_image_updated

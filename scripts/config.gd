@@ -58,12 +58,32 @@ var _images:Array[String] = [
 var _default_active_image = 0
 var _active_image:int = _default_active_image
 
+func has_images() -> bool:
+	return _images.size() > 0
+	
+func has_image(p_image:String) -> bool:
+	for img in _images:
+		if img == p_image:
+			return true
+	
+	return false
 
 func get_images() -> Array[String]:
 	return _images
 
+func add_image(p_image:String):
+	if has_image(p_image):
+		return
+		
+	_images.append(p_image)
+	SignalManager.images_updated.emit()
+
+func delete_image(p_idx:int):
+	_images.remove_at(p_idx)
+	SignalManager.images_updated.emit()
+	set_active_image(_active_image) # by calling this with the same index the set_active_image method will sanitize the value
+
 func set_active_image(p_image_idx:int) -> void:
-	print("active image set to: ", p_image_idx)
 	if _images.size() == 0:
 		_active_image = _default_active_image
 		return
@@ -74,6 +94,12 @@ func set_active_image(p_image_idx:int) -> void:
 		_active_image = _images.size()-1
 	else:
 		_active_image = p_image_idx
+		
+	print("Active image: ", _active_image, " ", _images[_active_image], " -- ", _images)
+	SignalManager.active_image_updated.emit()
 
+func get_active_image_idx() -> int:
+	return _active_image
+	
 func get_active_image() -> String:
 	return _images[_active_image]

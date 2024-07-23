@@ -1,10 +1,11 @@
-[gd_scene load_steps=97 format=3 uid="uid://1d30nevdx8ls"]
+[gd_scene load_steps=98 format=3 uid="uid://1d30nevdx8ls"]
 
 [ext_resource type="Script" path="res://arch.gd" id="1_p2u15"]
 [ext_resource type="PackedScene" uid="uid://bq8pyne1pxix3" path="res://cluster.tscn" id="2_70j8o"]
 [ext_resource type="PackedScene" uid="uid://xc7ehdgts1gt" path="res://image.tscn" id="3_5ph6d"]
 [ext_resource type="PackedScene" uid="uid://dtl428geay23t" path="res://registry.tscn" id="3_pco5m"]
 [ext_resource type="PackedScene" uid="uid://dtq65a7gfvplv" path="res://central_services.tscn" id="3_srn5w"]
+[ext_resource type="PackedScene" uid="uid://by3lsour21dm4" path="res://image_manager.tscn" id="5_yp0xd"]
 [ext_resource type="PackedScene" uid="uid://dyxof76c6vcef" path="res://log_panel.tscn" id="7_1jrm4"]
 [ext_resource type="PackedScene" uid="uid://dqsf4fb6s5p2m" path="res://ImageStatusZoom.tscn" id="8_6wjqu"]
 [ext_resource type="Texture2D" uid="uid://rutfbve2kuta" path="res://assets/cloud4-svgrepo-com-256x256.png" id="8_aq7sb"]
@@ -611,7 +612,14 @@ width = 1.0
 sharp_limit = 1.0
 round_precision = 1
 
+[node name="ImageManager" parent="." instance=ExtResource("5_yp0xd")]
+layout_mode = 0
+offset_top = 553.0
+offset_right = 576.0
+offset_bottom = 776.0
+
 [node name="Images" type="Control" parent="."]
+visible = false
 anchors_preset = 0
 offset_top = 552.0
 offset_right = 648.0
@@ -1115,8 +1123,13 @@ curve = SubResource("Curve2D_cfslr")
 
 [node name="PopupMenu" type="PopupMenu" parent="."]
 position = Vector2i(550, 195)
-size = Vector2i(102, 100)
+size = Vector2i(100, 30)
 script = ExtResource("12_ndm45")
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [connection signal="item_selected" from="DelegatedScanningConfig/DefaultClusterOption" to="." method="_on_default_cluster_option_item_selected"]
 [connection signal="config_updated" from="DelegatedScanningConfig/dev" to="." method="_on_dev_config_updated"]

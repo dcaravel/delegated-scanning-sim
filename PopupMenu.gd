@@ -13,11 +13,16 @@ func _ready():
 
 func _update_images() -> void:
 	clear()
+	reset_size()
+	if !Config.has_images():
+		add_item(Global.NO_IMAGE_AVAIL_ERR)
+		set_item_disabled(0, true)
+		return
+		
 	for item in Config.get_images():
 		add_item(item)
 
 func _on_index_pressed(index: int):
 	Config.set_active_image(index)
 	
-	print("emit: ", active_cluster)
 	SignalManager.deploy_to_cluster.emit(active_cluster)
