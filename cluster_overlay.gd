@@ -35,18 +35,17 @@ func _set_overlay_visible(full:bool=true):
 		get_theme_stylebox("normal").bg_color.a = overlay_visible_alpha
 		text = overlay_visible_text
 	else:
-		get_theme_stylebox("normal").bg_color.a = 0.2
-		text = ""
+		#get_theme_stylebox("normal").bg_color.a = 0.2
+		#text = ""
+		_set_overlay_hidden()
 
 func _set_overlay_hidden():
 	get_theme_stylebox("normal").bg_color.a = 0.0
 	text = ""
 
-
 func _on_mouse_entered():
 	mouse_over = true
 	hover_start.emit()
-
 
 func _on_mouse_exited():
 	mouse_over = false

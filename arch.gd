@@ -96,14 +96,17 @@ var last_log_letter:int = initial_log_letter
 @onready var prod = $DelegatedScanningConfig/prod
 @onready var quay = $DelegatedScanningConfig/quay
 @onready var default_cluster_option = $DelegatedScanningConfig/DefaultClusterOption
+@onready var popup_menu = $PopupMenu
 
 func _ready():
+	
 	# The enum and list of clusters must be the same, otherwise the dropdowns will not match the output
 	assert(Global.CLUSTER.size() == Global.CLUSTERS.size())
 	
 	SignalManager.log_entry_popped.connect(_on_log_entry_pop)
 	SignalManager.log_cleared.connect(_on_log_clear)
 	SignalManager.deploy_to_cluster.connect(_on_deploy_to_cluster)
+	SignalManager.context_menu.connect(_on_context_menu)
 	
 	for cluster:String in Global.CLUSTERS:
 		default_cluster_option.add_item(cluster)
@@ -764,7 +767,10 @@ func _doDeploy(cluster:Global.CLUSTER, image:ImageControl, buttonIdx:ImageContro
 	Config.set_moving(true)
 
 func _on_deploy_to_cluster(p_cluster:Global.CLUSTER):
-	_doDeploy(p_cluster, docker_image, ImageControl.buttonsIdx.NONE)
+	_reset()
+	print("prepping path for image: ", Config.get_active_image())
+	Config.set_active_path(_prep_path(p_cluster, Config.get_active_image()))
+	Config.set_moving(true)
 
 func _on_docker_image_prod_pressed():
 	_doDeploy(Global.CLUSTER.PROD, docker_image, ImageControl.buttonsIdx.PROD)
@@ -871,14 +877,18 @@ func _config_updated():
 func _on_prod_config_updated():
 	_config_updated()
 
-
 func _on_dev_config_updated():
 	_config_updated()
-
 
 func _on_quay_config_updated():
 	_config_updated()
 
-
 func _on_default_cluster_option_item_selected(_index):
 	_config_updated()
+
+func _on_context_menu(p_cluster:Global.CLUSTER):
+	print(p_cluster)
+	popup_menu.active_cluster = p_cluster
+	popup_menu.position = get_viewport().get_mouse_position()
+	popup_menu.show()
+	

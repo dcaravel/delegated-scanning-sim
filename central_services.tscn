@@ -1,0 +1,78 @@
+[gd_scene load_steps=4 format=3 uid="uid://dtq65a7gfvplv"]
+
+[ext_resource type="Script" path="res://central_services.gd" id="1_18o5m"]
+[ext_resource type="PackedScene" uid="uid://d1yakxej4vlq7" path="res://cluster_overlay.tscn" id="1_o7yi8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5c2nx"]
+bg_color = Color(0.180392, 0.180392, 0.180392, 1)
+
+[node name="CentralServices" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 368.0
+offset_bottom = 168.0
+script = ExtResource("1_18o5m")
+
+[node name="ColorRect5" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 368.0
+offset_bottom = 168.0
+color = Color(0.211765, 0.239216, 0.290196, 1)
+
+[node name="Central" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 360.0
+offset_bottom = 80.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "central"
+horizontal_alignment = 1
+
+[node name="Indexer" type="Label" parent="."]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 88.0
+offset_right = 360.0
+offset_bottom = 160.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "indexer"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Matcher" type="Label" parent="."]
+layout_mode = 0
+offset_left = 128.0
+offset_top = 88.0
+offset_right = 240.0
+offset_bottom = 160.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "matcher"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="CentralDB" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 88.0
+offset_right = 120.0
+offset_bottom = 160.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
+text = "central-db"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Border" type="Line2D" parent="."]
+position = Vector2(56, -32)
+scale = Vector2(1, 0.995049)
+points = PackedVector2Array(-56, 32.1592, -56, 200.995, 312, 200.995, 312, 32.1592)
+closed = true
+width = 1.0
+default_color = Color(0.180392, 0.180392, 0.180392, 1)
+
+[node name="Overlay" parent="." instance=ExtResource("1_o7yi8")]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 367.0
+offset_bottom = 167.0

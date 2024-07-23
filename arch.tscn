@@ -1,9 +1,10 @@
-[gd_scene load_steps=96 format=3 uid="uid://1d30nevdx8ls"]
+[gd_scene load_steps=97 format=3 uid="uid://1d30nevdx8ls"]
 
 [ext_resource type="Script" path="res://arch.gd" id="1_p2u15"]
 [ext_resource type="PackedScene" uid="uid://bq8pyne1pxix3" path="res://cluster.tscn" id="2_70j8o"]
 [ext_resource type="PackedScene" uid="uid://xc7ehdgts1gt" path="res://image.tscn" id="3_5ph6d"]
 [ext_resource type="PackedScene" uid="uid://dtl428geay23t" path="res://registry.tscn" id="3_pco5m"]
+[ext_resource type="PackedScene" uid="uid://dtq65a7gfvplv" path="res://central_services.tscn" id="3_srn5w"]
 [ext_resource type="PackedScene" uid="uid://dyxof76c6vcef" path="res://log_panel.tscn" id="7_1jrm4"]
 [ext_resource type="PackedScene" uid="uid://dqsf4fb6s5p2m" path="res://ImageStatusZoom.tscn" id="8_6wjqu"]
 [ext_resource type="Texture2D" uid="uid://rutfbve2kuta" path="res://assets/cloud4-svgrepo-com-256x256.png" id="8_aq7sb"]
@@ -11,9 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dxwjp014yh72h" path="res://assets/backward-step-svgrepo-com-16x16.png" id="9_6wee7"]
 [ext_resource type="Texture2D" uid="uid://d1f7errq8u5g8" path="res://assets/play-svgrepo-com-16x16.png" id="9_f2pe8"]
 [ext_resource type="Texture2D" uid="uid://dijl4n88jtnv6" path="res://assets/forward-step-svgrepo-com.png" id="12_mln1t"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5c2nx"]
-bg_color = Color(0.180392, 0.180392, 0.180392, 1)
+[ext_resource type="Script" path="res://PopupMenu.gd" id="12_ndm45"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3uyhb"]
 
@@ -509,69 +508,11 @@ cluster_name = "other"
 cluster = 3
 registry_name = ""
 
-[node name="CentralServices" type="Control" parent="."]
-anchors_preset = 0
+[node name="CentralServices" parent="." instance=ExtResource("3_srn5w")]
 offset_left = 48.0
-offset_top = 192.0
+offset_top = 193.0
 offset_right = 416.0
-offset_bottom = 360.0
-
-[node name="ColorRect5" type="ColorRect" parent="CentralServices"]
-layout_mode = 0
-offset_right = 368.0
-offset_bottom = 168.0
-color = Color(0.211765, 0.239216, 0.290196, 1)
-
-[node name="Central" type="Label" parent="CentralServices"]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 360.0
-offset_bottom = 80.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
-text = "central"
-horizontal_alignment = 1
-
-[node name="Indexer" type="Label" parent="CentralServices"]
-layout_mode = 0
-offset_left = 248.0
-offset_top = 88.0
-offset_right = 360.0
-offset_bottom = 160.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
-text = "indexer"
-horizontal_alignment = 1
-vertical_alignment = 2
-
-[node name="Matcher" type="Label" parent="CentralServices"]
-layout_mode = 0
-offset_left = 128.0
-offset_top = 88.0
-offset_right = 240.0
-offset_bottom = 160.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
-text = "matcher"
-horizontal_alignment = 1
-vertical_alignment = 2
-
-[node name="CentralDB" type="Label" parent="CentralServices"]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 88.0
-offset_right = 120.0
-offset_bottom = 160.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_5c2nx")
-text = "central-db"
-horizontal_alignment = 1
-vertical_alignment = 2
-
-[node name="Line2D" type="Line2D" parent="CentralServices"]
-position = Vector2(56, -32)
-scale = Vector2(1, 0.995049)
-points = PackedVector2Array(-56, 32.1592, -56, 200.995, 312, 200.995, 312, 32.1592)
-closed = true
-width = 1.0
-default_color = Color(0.180392, 0.180392, 0.180392, 1)
+offset_bottom = 361.0
 
 [node name="DelegatedScanningConfig" type="Control" parent="."]
 anchors_preset = 0
@@ -1171,6 +1112,11 @@ visible = false
 
 [node name="a1" type="Path2D" parent="Paths/central-from-sensor-start"]
 curve = SubResource("Curve2D_cfslr")
+
+[node name="PopupMenu" type="PopupMenu" parent="."]
+position = Vector2i(550, 195)
+size = Vector2i(102, 100)
+script = ExtResource("12_ndm45")
 
 [connection signal="item_selected" from="DelegatedScanningConfig/DefaultClusterOption" to="." method="_on_default_cluster_option_item_selected"]
 [connection signal="config_updated" from="DelegatedScanningConfig/dev" to="." method="_on_dev_config_updated"]

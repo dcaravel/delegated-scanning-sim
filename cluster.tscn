@@ -108,27 +108,30 @@ mouse_filter = 2
 
 [node name="ColorRect" type="ColorRect" parent="Label"]
 layout_mode = 0
+offset_left = -1.0
 offset_right = 56.0
-offset_bottom = 24.0
+offset_bottom = 25.0
 color = Color(0.211765, 0.239216, 0.290196, 1)
 
 [node name="ClusterName" type="Label" parent="Label"]
 layout_mode = 0
-offset_right = 56.0
-offset_bottom = 24.0
+offset_left = -1.0
+offset_top = 1.0
+offset_right = 55.0
+offset_bottom = 25.0
 theme_override_constants/line_spacing = -3
 text = "blah"
 horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="Line2D" type="Line2D" parent="Label"]
-points = PackedVector2Array(0, 24, 56, 24, 56, 0, 0, 0, 0, 24)
+points = PackedVector2Array(-1, 0, -1, 25, 56, 25)
 width = 1.0
 default_color = Color(0.180392, 0.180392, 0.180392, 1)
 
-[node name="Line2D" type="Line2D" parent="."]
+[node name="Border" type="Line2D" parent="."]
 position = Vector2(-8, 0)
-points = PackedVector2Array(272, 0, 8, 0, 8, 168, 272, 168, 272, 24)
+points = PackedVector2Array(272, 0, 8, 0, 8, 168, 272, 168, 272, 0)
 width = 1.0
 default_color = Color(0.180392, 0.180392, 0.180392, 1)
 
@@ -168,4 +171,9 @@ text = "quay.io"
 label_settings = SubResource("LabelSettings_lpli0")
 
 [node name="ClusterOverlay" parent="." instance=ExtResource("3_1x4ag")]
+visible = false
 layout_mode = 0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 263.0
+offset_bottom = 167.0
