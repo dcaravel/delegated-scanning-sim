@@ -863,7 +863,6 @@ visible = false
 [node name="cPaths" type="Node2D" parent="Paths"]
 
 [node name="c0-deploy" type="Node2D" parent="Paths/cPaths"]
-visible = false
 
 [node name="a1" type="Path2D" parent="Paths/cPaths/c0-deploy"]
 curve = SubResource("Curve2D_30u4c")
@@ -1025,7 +1024,6 @@ curve = SubResource("Curve2D_y71fi")
 curve = SubResource("Curve2D_k0oa5")
 
 [node name="central-scan" type="Node2D" parent="Paths"]
-visible = false
 
 [node name="a1" type="Path2D" parent="Paths/central-scan"]
 curve = SubResource("Curve2D_bpxek")
@@ -1067,6 +1065,7 @@ curve = SubResource("Curve2D_bhks4")
 curve = SubResource("Curve2D_m2m0e")
 
 [node name="central-scan-error" type="Node2D" parent="Paths"]
+visible = false
 
 [node name="a1" type="Path2D" parent="Paths/central-scan-error"]
 curve = SubResource("Curve2D_og35n")
@@ -1084,7 +1083,6 @@ curve = SubResource("Curve2D_abe5l")
 curve = SubResource("Curve2D_ada67")
 
 [node name="central-roxctl-start" type="Node2D" parent="Paths"]
-visible = false
 
 [node name="a1" type="Path2D" parent="Paths/central-roxctl-start"]
 curve = SubResource("Curve2D_tgqcy")
@@ -1099,6 +1097,7 @@ curve = SubResource("Curve2D_ybm4f")
 curve = SubResource("Curve2D_fm5pg")
 
 [node name="central-delegate-error" type="Node2D" parent="Paths"]
+visible = false
 
 [node name="a1" type="Path2D" parent="Paths/central-delegate-error"]
 curve = SubResource("Curve2D_bxnrg")

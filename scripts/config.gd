@@ -103,3 +103,28 @@ func get_active_image_idx() -> int:
 	
 func get_active_image() -> String:
 	return _images[_active_image]
+
+#########################
+## Current Cluster Click #TODO: Find better name for this
+#########################
+
+var _cluster_clicked:int=-1
+
+func set_cluster_clicked(p_cluster_idx:int):
+	if p_cluster_idx < -1:
+		# Central is -1, can't go below that
+		p_cluster_idx = -1
+		return
+	
+
+	# TODO: Add list of clusters to global config when ready
+	# if p_cluster_idx > cluster_list.size():
+		# return
+
+	_cluster_clicked = p_cluster_idx
+
+func get_cluster_clicked() -> int:
+	return _cluster_clicked
+
+func reset_cluster_clicked() -> void:
+	_cluster_clicked = -1

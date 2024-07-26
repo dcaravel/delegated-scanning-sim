@@ -23,6 +23,10 @@ enum PATH_SOURCE {CENTRAL, SENSOR_EVENT}
 enum REGISTRY {DOCKER,QUAY,DEV,PROD}
 const REGISTRIES=["docker.io","quay.io","dev","prod"]
 
+
+
+
+
 const _PathSegment = preload("res://scripts/path_segment.gd")
 
 @export var have_metadata:bool = false
@@ -98,6 +102,45 @@ var last_log_letter:int = initial_log_letter
 @onready var default_cluster_option = $DelegatedScanningConfig/DefaultClusterOption
 @onready var popup_menu = $PopupMenu
 
+const CENTRAL_CLUSTER_IDX:int = -1
+var clusters:Array[String] = [
+	"prod",
+	"dev",
+	"other",
+]
+# maps a cluster index (key) to the names of all the cluster local registries (val)
+var cluster_registries = {
+	0: ["prod.registry.io"],
+	1: ["dev.registry.io"],
+}
+
+@onready var cluster_cpaths = {}
+
+@onready var cluster_scenes = {
+	0: prod_cluster,
+	1: dev_cluster,
+	2: other_cluster
+}
+
+@onready var to_cluster_paths = {
+	0: central_to_c_0,
+	1: central_to_c_1,
+	2: central_to_c_2,
+}
+
+@onready var to_central_paths = {
+	0: c_0_to_central,
+	1: c_1_to_central,
+	2: c_2_to_central,
+}
+
+# any registries in this dict are cluster local, any others are assumed internet accessable
+@onready var local_registries_animates = {
+	"prod.registry.io": _prodAnimateCB,
+	"dev.registry.io": _devAnimateCB,
+}
+
+
 func _ready():
 	
 	# The enum and list of clusters must be the same, otherwise the dropdowns will not match the output
@@ -139,6 +182,12 @@ func _ready():
 	c2Paths.name = "c2Paths"
 	c2Paths.position += other_cluster.position - prod_cluster.position
 	paths.add_child(c2Paths)
+
+	cluster_cpaths = {
+		0: c_paths,
+		1: c1Paths,
+		2: c2Paths,
+	}
 	
 	actual_ready = true
 	
@@ -297,6 +346,7 @@ func _reset(soft:bool=false):
 	if !soft:
 		#print_tree_pretty()
 		Config.clear_active_path()
+		Config.reset_cluster_clicked()
 		big_cloud.hide()
 		big_cloud_label.text = ""
 		for c in Global.CLUSTER:
@@ -335,9 +385,6 @@ func _sync_enabled_for_radio():
 	
 	_config_updated()
 	
-func _sync_active_path_from_config():
-	pass
-
 # returns true if the image should be scanned by a sensor IF sensor is
 # evaluating the request (no worky for central)
 func _scan_image_via_cluster(image:String) -> bool:
@@ -357,16 +404,15 @@ func _scan_image_via_cluster(image:String) -> bool:
 
 	return false
 
-# [<delegate>, <cluster>, <control to highlight>]
+# Returns:
+# 0 = should delegated if true
+# 1 = cluster index to delegate too for roxctl requests
+# [<delegate>, <cluster>]
 func _get_matching_dele_config_entry(image:String):
 	if enabled_for == ENABLED_FOR.NONE:
 		return [false, 0]
 	
 	var def_cluster_idx = default_cluster_option.selected	
-	# print("def_cluster_idx: ", def_cluster_idx)
-	# print("0: ", dev.registry_name)
-	# print("1: ", prod.registry_name)
-	# print("2: ", quay.registry_name)
 
 	var regs = [dev, prod, quay]
 	var cluster_idx = def_cluster_idx
@@ -433,244 +479,372 @@ class SegCreator:
 		dtrail = p_trail
 		return self
 
-func _prep_path(src_cluster:Global.CLUSTER, image:String) -> Array[PathSegment]:
-	var reg = _get_registry(image)
-	var isLocal = _scan_image_via_cluster(image) 
-	var resp = _get_matching_dele_config_entry(image)
-	# var delegate = resp[0] # if true, and src_cluster == central, should delegate
-	var dst_cluster = resp[1] # if src_clsuter == central, this is the cluster to delegate too
+# Returns:
+# 0 = true if should delegate, false otherwise
+# 1 = cluster index to delegate to (for roxctl requests)
+# [<delegate>, <cluster>]
+func _should_delegate_to_cluster(image:String):
+	if enabled_for == ENABLED_FOR.NONE:
+		return [false, -1]
 	
-	var cPaths = c_paths
-	var toCentralPaths = c_0_to_central
-	var toClusterPaths = central_to_c_0
-	match src_cluster:
-		Global.CLUSTER.CENTRAL:
-			match dst_cluster:
-				Global.CLUSTER.DEV:
-					cPaths = c1Paths
-					toCentralPaths = c_1_to_central
-					toClusterPaths = central_to_c_1
-				Global.CLUSTER.OTHER:
-					cPaths = c2Paths
-					toCentralPaths = c_2_to_central
-					toClusterPaths = central_to_c_2
-		Global.CLUSTER.DEV:
-			cPaths = c1Paths
-			toCentralPaths = c_1_to_central
-		Global.CLUSTER.OTHER:
-			cPaths = c2Paths
-			toCentralPaths = c_2_to_central
-	
-	var scToCentral = SegCreator.new(toCentralPaths).wicon(_dot).eicon(_dot).sicon(_dot)
-	var scToCluster = SegCreator.new(toClusterPaths).wicon(_dot).eicon(_dot).sicon(_dot)
+	# subtracting 1 so that "None" = -1, "prod" = 0, and so on
+	var def_cluster_idx = default_cluster_option.selected-1
 
-	var scDeloy = SegCreator.new(cPaths.get_node("c0-deploy")).wicon(_dot).eicon(_dot)
-	var scScanCloud = SegCreator.new(cPaths.get_node("c0-scan-cloud")).wicon(_dot)
-	var scScanCentral = SegCreator.new(cPaths.get_node("c0-scan-central")).wicon(_dot)
-	var scScanLocal = SegCreator.new(cPaths.get_node("c0-scan-local")).wicon(_dot)
-	var scScanLocalError = SegCreator.new(cPaths.get_node("c0-scan-local-error")).wicon(_dot).eicon(_dot)
+	var dele_config_regs_list = [dev, prod, quay]
+	var cluster_idx = def_cluster_idx
+	if enabled_for == ENABLED_FOR.ALL:
+		for reg in dele_config_regs_list:
+			if !reg.enabled:
+				continue # skip this list item if it isn't toggled on
+
+			var reg_path = reg.registry_name
+			if image.begins_with(reg_path):
+				cluster_idx = def_cluster_idx if reg.selection == 0 else reg.selection-1
+				return [true, cluster_idx]
+
+		return [true, cluster_idx]
+	
+	if enabled_for == ENABLED_FOR.SPECIFIC:
+		for reg in dele_config_regs_list:
+			if !reg.enabled:
+				continue  # skip this list item if it isn't toggled on
+
+			var reg_path = reg.registry_name
+			if image.begins_with(reg_path):
+				cluster_idx = def_cluster_idx if reg.selection == 0 else reg.selection-1
+				return [true, cluster_idx]
+		
+	return [false, -1]
+
+func _extract_registry(p_image:String) -> String:
+	return p_image.get_slice("/", 0)
+
+
+@onready var central_roxctl_start_sc = SegCreator.new(central_roxctl_start).wicon(_dot).eicon(_dot)
+@onready var central_to_central_start_sc = SegCreator.new(central_roxctl_to_central_scan).wicon(_dot).eicon(_dot).trail(false)
+@onready var central_scan_cloud_sc = SegCreator.new(central_scan).wicon(_dot)
+@onready var central_scan_error_network_sc = SegCreator.new(central_scan_error).wicon(_dot)
+@onready var central_scan_error_no_cluster_sc = SegCreator.new(central_delegate_error).wicon(_dot)
+@onready var central_passthrough_sc = SegCreator.new(central_roxctl_to_cluster).wicon(_dot).trail(false)
+@onready var sensor_to_central_start_sc = SegCreator.new(central_from_sensor_start).wicon(_dot).trail(false)
+@onready var central_match_sc = SegCreator.new(central_match).wicon(_dot)
+@onready var central_save_error_sc = SegCreator.new(central_error_from_sensor).wicon(_dot)
+
+
+func _A() -> Array[PathSegment]:
+	return [central_roxctl_start_sc.c("a1"),]
+
+func _BQ() -> Array[PathSegment]:
+	var cPaths:Node2D = cluster_cpaths[Config.get_cluster_clicked()]
+
+	var sc = SegCreator.new(cPaths.get_node("c0-deploy")).wicon(_dot).eicon(_dot)
+
+	return [
+		sc.c("a1"),
+		sc.c("a2").trail(false).sicon(nil).eicon(nil),
+	]
+
+func _C() -> Array[PathSegment]:
+	return [central_to_central_start_sc.c("a1"),]
+
+func _D() -> Array[PathSegment]:
+	big_cloud_label.text = _extract_registry(Config.get_active_image())
+	big_cloud.show()
+	return [
+		central_scan_cloud_sc.c("a1").sicon(_dot),
+		central_scan_cloud_sc.c("a2").eicon(_pillC(MD)).micon(_midIconCBC("Get metadata from registry"), 40),
+		central_scan_cloud_sc.c("a2").reverse().eicon(_pillC(MD)).wicon(_pillC(MD)).onevent(_metadataCB).trail(false),
+		central_scan_cloud_sc.c("a3"),
+		central_scan_cloud_sc.c("a4").micon(_midIconCBC("Get index report from indexer"), 40),
+		central_scan_cloud_sc.c("a5").eicon(_docker_icon).micon(_midIconCBC("Get layers from registry"), 40),
+		central_scan_cloud_sc.c("a5").reverse().wicon(_docker_icon).eicon(_pillC(IR)).trail(false),
+		central_scan_cloud_sc.c("a4").reverse().wicon(_pillC(IR)).eicon(_pillC(IR)).onevent(_indexReportCB).trail(false),
+		central_scan_cloud_sc.c("a6"),
+		central_scan_cloud_sc.c("a7").micon(_midIconCBC("Get vuln report from matcher"), 30),
+		central_scan_cloud_sc.c("a7_1").micon(_midIconCBC("Get index report from indexer"), 30),
+		central_scan_cloud_sc.c("a7_1").reverse().sicon(_pillC(IR)).wicon(_pillC(IR)).trail(false),
+		central_scan_cloud_sc.c("a7").reverse().sicon(_pillC(VR)).wicon(_pillC(VR)).eicon(_pillC(VR)).onevent(_vulnReportCB).trail(false),
+		central_scan_cloud_sc.c("a8"),
+		central_scan_cloud_sc.c("a9").micon(_midIconCBC("Get image signature from registry"), 30),
+		central_scan_cloud_sc.c("a9").reverse().sicon(_pillC(SIG)).wicon(_pillC(SIG)).eicon(_pillC(SIG)).onevent(_signatureCB).trail(false),
+		central_scan_cloud_sc.c("a10").eicon(_dot),
+		central_scan_cloud_sc.c("a11").wicon(_image_status).eicon(_image_status).micon(_midIconCBC("Store final image in DB"), 20),
+		central_scan_cloud_sc.c("a11").reverse().trail(false),
+		central_scan_cloud_sc.c("a12").wicon(_image_status).eicon(_dot),
+	]
+
+func _E() -> Array[PathSegment]:
+	var reg = _extract_registry(Config.get_active_image())
+	return [
+		central_scan_error_network_sc.c("a1").sicon(_dot),
+		central_scan_error_network_sc.c("a2").eicon(_errorC("", Global.Pos.TOP)).onevent(local_registries_animates[reg]).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
+		central_scan_error_network_sc.c("a2").wicon(_rdot).reverse().eicon(_rdot).onevent(_errorStatusCB).trail(false),
+		central_scan_error_network_sc.c("a3").eicon(_dot).wicon(_rdot),
+		central_scan_error_network_sc.c("a4").eicon(_image_status).wicon(_rdot).micon(_midIconCBC("Store scan with error in DB (if no existing image)"), 20),
+		central_scan_error_network_sc.c("a5").eicon(_dot),
+	]
+
+func _F() -> Array[PathSegment]:
+	return [
+		central_scan_error_no_cluster_sc.c("a1").sicon(_dot),
+		central_scan_error_no_cluster_sc.c("a2").eicon(_errorC("", Global.Pos.TOP)).micon(_midIconCBC("Fail to delegate, no cluster specified"), 20).onevent(_errorStatusCB),
+		central_scan_error_no_cluster_sc.c("a3").wicon(_rdot).eicon(_dot),		
+	]
+
+func _G() -> Array[PathSegment]:
+	return [
+		central_passthrough_sc.c("a1"),
+	]
+
+func _HQ() -> Array[PathSegment]:
+	var dst_cluster:int = _get_dst_cluster()
+	var cPaths:Node2D = to_cluster_paths[dst_cluster]
+	
+	var sc = SegCreator.new(cPaths).wicon(_dot).eicon(_dot).sicon(_dot)
+	var offset:int = 50
+	if dst_cluster == 1: # middle cluster - shorter offset, assumes only 3 Clusters
+		offset = 25
+
+	return [
+		sc.c("a1").altcolor().micon(_midIconCBC("Delegate scan to sensor"), offset),
+		sc.c("a2").trail(false),
+	]
+
+func _I() -> Array[PathSegment]:
+	var dst_cluster:int = _get_dst_cluster()
+	var cPaths:Node2D = cluster_cpaths[dst_cluster]
+	var sc = SegCreator.new(cPaths.get_node("c0-scan-cloud")).wicon(_dot)
+
+	var c = cluster_scenes[dst_cluster]
+	c.cloud_text = _extract_registry(Config.get_active_image())
+	c.show_cloud = true
+
+	return [
+		sc.c("a1").sicon(_dot).wicon(_dot),
+		sc.c("a2").eicon(_pillC(MD)).micon(_midIconCBC("Get metadata from registry"), 40),
+		sc.c("a2").wicon(_pillC(MD)).reverse().eicon(_pillC(MD)).onevent(_metadataCB).trail(false),
+		sc.c("a3"),
+		sc.c("a4").micon(_midIconCBC("Get index report from indexer"), 50),
+		sc.c("a5").eicon(_docker_icon).micon(_midIconCBC("Get layers from registry"), 40),
+		sc.c("a5").wicon(_docker_icon).eicon(_pillC(IR)).reverse().trail(false),
+		sc.c("a4").wicon(_pillC(IR)).eicon(_pillC(IR)).reverse().onevent(_indexReportCB).trail(false),
+		sc.c("a6"),
+		sc.c("a7").eicon(_pillC(SIG)).micon(_midIconCBC("Get image signature from registry"), 80),
+		sc.c("a7").wicon(_pillC(SIG)).eicon(_pillC(SIG)).reverse().onevent(_signatureCB).trail(false),
+		sc.c("a8").eicon(_dot).micon(_midIconCBC("Send match request to central"), 24),
+	]
+
+func _J() -> Array[PathSegment]:
+	var dst_cluster:int = _get_dst_cluster()
+
+	var cPaths:Node2D = cluster_cpaths[dst_cluster]
+	var sc = SegCreator.new(cPaths.get_node("c0-scan-local")).wicon(_dot)
+
+	return [
+		sc.c("a1").sicon(_dot).wicon(_dot),
+		sc.c("a2").eicon(_pillC(MD)).micon(_midIconCBC("Get metadata from registry"), 30),
+		sc.c("a2").wicon(_pillC(MD)).reverse().eicon(_pillC(MD)).onevent(_metadataCB).trail(false),
+		sc.c("a3"),
+		sc.c("a4").micon(_midIconCBC("Get index report from indexer"), 60),
+		sc.c("a5").eicon(_docker_icon).micon(_midIconCBC("Get layers from registry"), 30),
+		sc.c("a5").wicon(_docker_icon).eicon(_pillC(IR)).reverse().trail(false),
+		sc.c("a4").wicon(_pillC(IR)).eicon(_pillC(IR)).reverse().onevent(_indexReportCB).trail(false),
+		sc.c("a6"),
+		sc.c("a7").eicon(_pillC(SIG)).micon(_midIconCBC("Get image signature from registry"), 70),
+		sc.c("a7").wicon(_pillC(SIG)).eicon(_pillC(SIG)).reverse().onevent(_signatureCB).trail(false),
+		sc.c("a8").eicon(_dot).micon(_midIconCBC("Send match request to central"), 24),
+	]
+
+func _K() -> Array[PathSegment]:
+	var reg = _extract_registry(Config.get_active_image())
+	var dst_cluster:int = _get_dst_cluster()
+	var cPaths:Node2D = cluster_cpaths[dst_cluster]
+	var sc = SegCreator.new(cPaths.get_node("c0-scan-local-error")).wicon(_dot)
+
+	return [
+		sc.c("a1").sicon(_dot),
+		sc.c("a2").eicon(_errorC("", Global.Pos.TOP)).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
+		sc.c("a2").reverse().onevent(local_registries_animates[reg]).eicon(_rdot).trail(false),
+		sc.c("a3").wicon(_rdot).eicon(_dot).micon(_midIconCBC("Send failure to central"), 100),
+	]
+
+func _L() -> Array[PathSegment]:
+	var dst_cluster:int = _get_dst_cluster()
+	var cPaths:Node2D = cluster_cpaths[dst_cluster]
+	var sc = SegCreator.new(cPaths.get_node("c0-scan-central")).wicon(_dot)
+	return [
+		sc.c("a1").sicon(_dot).eicon(_dot).micon(_midIconCBC("Send scan request to central"), 140),
+	]
+
+func _MC() -> Array[PathSegment]:
+	var dst_cluster:int =  _get_dst_cluster()
+	var cPaths:Node2D = cluster_cpaths[ dst_cluster]
+	var toCentralPath:Node2D = to_central_paths[dst_cluster]
+	
+	var sc = SegCreator.new(toCentralPath).wicon(_dot).eicon(_dot).sicon(_dot)
 	var scEnd = SegCreator.new(cPaths.get_node("c0-end")).wicon(_dot).trail(false)
+
+	return [
+		scEnd.c("a1"),
+		sc.c("a1").wicon(_dot),
+		sensor_to_central_start_sc.c("a1"),
+	]
+
+func _N() -> Array[PathSegment]:
+	return [
+		central_match_sc.c("a1").sicon(_dot),
+		central_match_sc.c("a2").eicon(_pillC(VR)).micon(_midIconCBC("Get vuln report from matcher"), 30),
+		central_match_sc.c("a2").reverse().wicon(_pillC(VR)).eicon(_pillC(VR)).onevent(_vulnReportCB).trail(false),
+		central_match_sc.c("a3"),
+		central_match_sc.c("a4").sicon(_dot).wicon(_image_status).eicon(_image_status).micon(_midIconCBC("Store final image in DB"), 20),
+		central_match_sc.c("a5").wicon(_dot).eicon(_dot),
+	]
+
+func _O() -> Array[PathSegment]:
+	return [
+		central_save_error_sc.c("a1").wicon(_rdot).sicon(_dot),
+		central_save_error_sc.c("a2").wicon(_rdot).sicon(_dot).eicon(_image_status).micon(_midIconCBC("Store scan with error in DB (if no existing image)"), 20),
+		central_save_error_sc.c("a3").eicon(_dot),
+	]
+
+func _P() -> Array[PathSegment]:
+	return [
+		central_to_central_start_sc.c("b1").wicon(_image_status).eicon(_image_status),
+	]
+
+func _Q() -> Array[PathSegment]:
+	return [
+		central_to_central_start_sc.c("b1").wicon(_image_status).eicon(_image_status),
+	]
+
+func _get_dst_cluster() -> int:
+	var tmp = _should_delegate_to_cluster(Config.get_active_image())
+	var dst_cluster:int = tmp[1]
+	if Config.get_cluster_clicked() == -1:
+		return dst_cluster
 	
-	var scCentralFromSensorStart = SegCreator.new(central_from_sensor_start).wicon(_dot).trail(false)
-	var scCentralErrorFromSensor = SegCreator.new(central_error_from_sensor).wicon(_dot)
-	var scCentralError = SegCreator.new(central_scan_error).wicon(_dot)
-	var scCentralMatch = SegCreator.new(central_match).wicon(_dot)
-	var scCentralScan = SegCreator.new(central_scan).wicon(_dot)
-	var scCentralDeploy = SegCreator.new(central_roxctl_start).wicon(_dot).eicon(_dot)
-	var scCentralToCentralScan = SegCreator.new(central_roxctl_to_central_scan).wicon(_dot).eicon(_dot).trail(false)
-	var scCentralDelegateError = SegCreator.new(central_delegate_error).wicon(_dot)
-	var scCentralToCluster = SegCreator.new(central_roxctl_to_cluster).wicon(_dot).trail(false)
-	
+	return Config.get_cluster_clicked()
+
+# See docs\research.md for meaning of A, B, C etc.
+func _build_path(p_path_num:int) -> Array[PathSegment]: 
+	print("Path: ", p_path_num)
 	var path:Array[PathSegment] = []
-	
-	var pathCentralMatch = [
-		scCentralMatch.c("a1").sicon(_dot),
-		scCentralMatch.c("a2").eicon(_pillC(VR)).micon(_midIconCBC("Get vuln report from matcher"), 30),
-		scCentralMatch.c("a2").reverse().wicon(_pillC(VR)).eicon(_pillC(VR)).onevent(_vulnReportCB).trail(false),
-		scCentralMatch.c("a3"),
-		scCentralMatch.c("a4").sicon(_dot).wicon(_image_status).eicon(_image_status).micon(_midIconCBC("Store final image in DB"), 20),
-		scCentralMatch.c("a5").wicon(_dot).eicon(_dot),
-	]
-	
-	var pathCentralScan = [
-		scCentralScan.c("a1").sicon(_dot),
-		scCentralScan.c("a2").eicon(_pillC(MD)).micon(_midIconCBC("Get metadata from registry"), 40),
-		scCentralScan.c("a2").reverse().eicon(_pillC(MD)).wicon(_pillC(MD)).onevent(_metadataCB).trail(false),
-		scCentralScan.c("a3"),
-		scCentralScan.c("a4").micon(_midIconCBC("Get index report from indexer"), 40),
-		scCentralScan.c("a5").eicon(_docker_icon).micon(_midIconCBC("Get layers from registry"), 40),
-		scCentralScan.c("a5").reverse().wicon(_docker_icon).eicon(_pillC(IR)).trail(false),
-		scCentralScan.c("a4").reverse().wicon(_pillC(IR)).eicon(_pillC(IR)).onevent(_indexReportCB).trail(false),
-		scCentralScan.c("a6"),
-		scCentralScan.c("a7").micon(_midIconCBC("Get vuln report from matcher"), 30),
-		scCentralScan.c("a7_1").micon(_midIconCBC("Get index report from indexer"), 30),
-		scCentralScan.c("a7_1").reverse().sicon(_pillC(IR)).wicon(_pillC(IR)).trail(false),
-		scCentralScan.c("a7").reverse().sicon(_pillC(VR)).wicon(_pillC(VR)).eicon(_pillC(VR)).onevent(_vulnReportCB).trail(false),
-		scCentralScan.c("a8"),
-		scCentralScan.c("a9").micon(_midIconCBC("Get image signature from registry"), 30),
-		scCentralScan.c("a9").reverse().sicon(_pillC(SIG)).wicon(_pillC(SIG)).eicon(_pillC(SIG)).onevent(_signatureCB).trail(false),
-		scCentralScan.c("a10").eicon(_dot),
-		scCentralScan.c("a11").wicon(_image_status).eicon(_image_status).micon(_midIconCBC("Store final image in DB"), 20),
-		scCentralScan.c("a11").reverse().trail(false),
-		scCentralScan.c("a12").wicon(_image_status).eicon(_dot),
-	]
-	
-	var regErrorAnimate = nil
-	if reg == REGISTRY.DEV:
-		regErrorAnimate = _devAnimateCB
-	elif reg == REGISTRY.PROD:
-		regErrorAnimate = _prodAnimateCB
-	
-	var pathCentralScanError = [
-		## Scan In Central - Cannot reach Registry
-		scCentralError.c("a1").sicon(_dot),
-		scCentralError.c("a2").eicon(_errorC("", Global.Pos.TOP)).onevent(regErrorAnimate).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
-		scCentralError.c("a2").wicon(_rdot).reverse().eicon(_rdot).onevent(_errorStatusCB).trail(false),
-		scCentralError.c("a3").eicon(_dot).wicon(_rdot),
-		scCentralError.c("a4").eicon(_image_status).wicon(_rdot).micon(_midIconCBC("Store scan with error in DB (if no existing image)"), 20),
-		scCentralError.c("a5").eicon(_dot),
-	]
-	
-	var pathScanLocal = [
-		scScanLocal.c("a1").sicon(_dot).wicon(_dot),
-		scScanLocal.c("a2").eicon(_pillC(MD)).micon(_midIconCBC("Get metadata from registry"), 30),
-		scScanLocal.c("a2").wicon(_pillC(MD)).reverse().eicon(_pillC(MD)).onevent(_metadataCB).trail(false),
-		scScanLocal.c("a3"),
-		scScanLocal.c("a4").micon(_midIconCBC("Get index report from indexer"), 60),
-		scScanLocal.c("a5").eicon(_docker_icon).micon(_midIconCBC("Get layers from registry"), 30),
-		scScanLocal.c("a5").wicon(_docker_icon).eicon(_pillC(IR)).reverse().trail(false),
-		scScanLocal.c("a4").wicon(_pillC(IR)).eicon(_pillC(IR)).reverse().onevent(_indexReportCB).trail(false),
-		scScanLocal.c("a6"),
-		scScanLocal.c("a7").eicon(_pillC(SIG)).micon(_midIconCBC("Get image signature from registry"), 70),
-		scScanLocal.c("a7").wicon(_pillC(SIG)).eicon(_pillC(SIG)).reverse().onevent(_signatureCB).trail(false),
-		scScanLocal.c("a8").eicon(_dot).micon(_midIconCBC("Send match request to central"), 24),
-		
-		scEnd.c("a1"),
-		scToCentral.c("a1").wicon(_image_status),
-		scCentralFromSensorStart.c("a1"),
-	]
-	pathScanLocal.append_array(pathCentralMatch)
-	
-	var pathScanLocalError = [
-		## Scan In Sensor - Cannot reach Registry
-		scScanLocalError.c("a1").sicon(_dot),
-		scScanLocalError.c("a2").eicon(_errorC("", Global.Pos.TOP)).micon(_midIconCBC("Fail to get metadata from registry - unreachable"), 20),
-		scScanLocalError.c("a2").reverse().onevent(regErrorAnimate).eicon(_rdot).trail(false),
-		scScanLocalError.c("a3").wicon(_rdot).eicon(_dot).micon(_midIconCBC("Send failure to central"), 100),
-		
-		scEnd.c("a1"),
-		scToCentral.c("a1").wicon(_error),
-		scCentralFromSensorStart.c("a1"),
-		
-		scCentralErrorFromSensor.c("a1").wicon(_rdot).sicon(_dot),
-		scCentralErrorFromSensor.c("a2").wicon(_rdot).sicon(_dot).eicon(_image_status).micon(_midIconCBC("Store scan with error in DB (if no existing image)"), 20),
-		scCentralErrorFromSensor.c("a3").eicon(_dot),
-	]
-
-	if !isLocal: # Scan handled by central regardless of where flow starts
-		_displayBigCloud(reg)
-		
-		if src_cluster == Global.CLUSTER.CENTRAL:
-			path.append_array([
-				scCentralDeploy.c("a1"),
-				
-				scCentralToCentralScan.c("a1"),
-			])
-		else:
-			path.append_array([
-				scDeloy.c("a1"),
-				scDeloy.c("a2").trail(false).sicon(nil).eicon(nil),
-				
-				scScanCentral.c("a1").sicon(_dot).eicon(_dot).micon(_midIconCBC("Send scan request to central"), 140),
-				
-				scEnd.c("a1"),
-				scToCentral.c("a1").wicon(_dot),
-				scCentralFromSensorStart.c("a1"),
-			])
-		
-		if reg == REGISTRY.DOCKER || reg == REGISTRY.QUAY:
-			path.append_array(pathCentralScan)
-		else:
-			path.append_array(pathCentralScanError)
-		
-		if src_cluster == Global.CLUSTER.CENTRAL:
-			path.append_array([
-				scCentralToCentralScan.c("b1").wicon(_image_status).eicon(_image_status),
-			])
-		return path
-	
-	if src_cluster == Global.CLUSTER.CENTRAL:
-		path.append_array([
-			scCentralDeploy.c("a1")
-		])
-		if dst_cluster == Global.CLUSTER.CENTRAL:
-			path.append_array([
-				scCentralToCentralScan.c("a1"),
-				
-				scCentralDelegateError.c("a1").sicon(_dot),
-				scCentralDelegateError.c("a2").eicon(_errorC("", Global.Pos.TOP)).micon(_midIconCBC("Fail to delegate, no cluster specified"), 20),
-				scCentralDelegateError.c("a3").wicon(_rdot).eicon(_dot),
-				
-				scCentralToCentralScan.c("b1").wicon(_rdot).eicon(_errorC("", Global.Pos.BOT, 10)),
-			])
-			return path
-		
-		var offset:int = 50
-		if dst_cluster == Global.CLUSTER.DEV:
-			offset = 25
-		path.append_array([
-			scCentralToCluster.c("a1"),
-			scToCluster.c("a1").altcolor().micon(_midIconCBC("Delegate scan to sensor"), offset),
-			scToCluster.c("a2").trail(false),
-		])
-	else:
-		path.append_array([
-			scDeloy.c("a1"),
-			scDeloy.c("a2").trail(false).sicon(nil).eicon(nil),
-		])
-	
-	if reg == REGISTRY.DEV:
-		if src_cluster == Global.CLUSTER.DEV || (src_cluster == Global.CLUSTER.CENTRAL && dst_cluster == Global.CLUSTER.DEV):
-			path.append_array(pathScanLocal)
-		else:
-			path.append_array(pathScanLocalError)
-
-		return path
-	
-	if reg == REGISTRY.PROD:
-		if src_cluster == Global.CLUSTER.PROD || (src_cluster == Global.CLUSTER.CENTRAL && dst_cluster == Global.CLUSTER.PROD):
-			path.append_array(pathScanLocal)
-		else:
-			path.append_array(pathScanLocalError)
+	match p_path_num:
+		1: # scan central cloud
+			path.append_array(_A())
+			path.append_array(_C())
+			path.append_array(_D())
+			path.append_array(_P())
+		2: # scan central error - no network path
+			path.append_array(_A())
+			path.append_array(_C())
+			path.append_array(_E())
+			path.append_array(_P())
+		3: # scan central error - no cluster
+			path.append_array(_A())
+			path.append_array(_C())
+			path.append_array(_F())
+			path.append_array(_P())
+		4: # central to sensor index cloud
+			path.append_array(_A())
+			path.append_array(_G())
+			path.append_array(_HQ())
+			path.append_array(_I())
+			path.append_array(_MC())
+			path.append_array(_N())
+			path.append_array(_P())
+		5: # central to sensor index local
+			path.append_array(_A())
+			path.append_array(_G())
+			path.append_array(_HQ())
+			path.append_array(_J())
+			path.append_array(_MC())
+			path.append_array(_N())
+			path.append_array(_P())
+		6: # central to sensor error - no network path
+			path.append_array(_A())
+			path.append_array(_G())
+			path.append_array(_HQ())
+			path.append_array(_K())
+			path.append_array(_MC())
+			path.append_array(_O())
+			path.append_array(_P())
+		7: # sensor deploy index cloud
+			path.append_array(_BQ())
+			path.append_array(_I())
+			path.append_array(_MC())
+			path.append_array(_N())
+		8: # sensor deploy index local
+			path.append_array(_BQ())
+			path.append_array(_J())
+			path.append_array(_MC())
+			path.append_array(_N())
+		9: # sensor deploy index error - no network path
+			path.append_array(_BQ())
+			path.append_array(_K())
+			path.append_array(_MC())
+			path.append_array(_O())
+		10: # sensor deploy to central scan cloud
+			path.append_array(_BQ())
+			path.append_array(_L())
+			path.append_array(_MC())
+			path.append_array(_D())
+		11: # sensor deploy to central scan error - no network path
+			path.append_array(_BQ())
+			path.append_array(_L())
+			path.append_array(_MC())
+			path.append_array(_E())
 			
-		return path
-	
-	if reg == REGISTRY.DOCKER || reg == REGISTRY.QUAY:
-		# c0-scan-cloud
-		_cloud(src_cluster, dst_cluster, reg)
-		path.append_array([
-			scScanCloud.c("a1").sicon(_dot).wicon(_dot),
-			scScanCloud.c("a2").eicon(_pillC(MD)).micon(_midIconCBC("Get metadata from registry"), 40),
-			scScanCloud.c("a2").wicon(_pillC(MD)).reverse().eicon(_pillC(MD)).onevent(_metadataCB).trail(false),
-			scScanCloud.c("a3"),
-			scScanCloud.c("a4").micon(_midIconCBC("Get index report from indexer"), 50),
-			scScanCloud.c("a5").eicon(_docker_icon).micon(_midIconCBC("Get layers from registry"), 40),
-			scScanCloud.c("a5").wicon(_docker_icon).eicon(_pillC(IR)).reverse().trail(false),
-			scScanCloud.c("a4").wicon(_pillC(IR)).eicon(_pillC(IR)).reverse().onevent(_indexReportCB).trail(false),
-			scScanCloud.c("a6"),
-			scScanCloud.c("a7").eicon(_pillC(SIG)).micon(_midIconCBC("Get image signature from registry"), 80),
-			scScanCloud.c("a7").wicon(_pillC(SIG)).eicon(_pillC(SIG)).reverse().onevent(_signatureCB).trail(false),
-			scScanCloud.c("a8").eicon(_dot).micon(_midIconCBC("Send match request to central"), 24),
-			
-			scEnd.c("a1"),
-			scToCentral.c("a1").wicon(_image_status),
-			scCentralFromSensorStart.c("a1"),
-		])
-		path.append_array(pathCentralMatch)
-		
-		return path
 
 	return path
+
+func _get_path(p_src_cluster_idx:int, p_image:String) -> Array[PathSegment]:
+	if p_src_cluster_idx == CENTRAL_CLUSTER_IDX:
+		return _get_path_central_start(p_image)
+	
+	return _get_path_cluster_start(p_src_cluster_idx, p_image)
+
+func _get_path_central_start(image:String) -> Array[PathSegment]:
+	var tmp = _should_delegate_to_cluster(image)
+	var should_delegate:bool = tmp[0]
+	var dst_cluster:int = tmp[1]
+
+	var reg:String = _extract_registry(image)
+	var reg_internet_accessable:bool = !local_registries_animates.has(reg)
+
+	if !should_delegate:
+		# 01 if reg_internet_accessable else 02
+		return _build_path(1) if reg_internet_accessable else _build_path(2)
+	
+	if dst_cluster == CENTRAL_CLUSTER_IDX:
+		return _build_path(3)
+	
+	if reg_internet_accessable:
+		return _build_path(4)
+	
+	if cluster_registries.has(dst_cluster) && cluster_registries[dst_cluster].has(reg):
+		return _build_path(5)
+
+	return _build_path(6)
+
+func _get_path_cluster_start(p_src_cluster_idx:int, image:String) -> Array[PathSegment]:
+	var tmp = _should_delegate_to_cluster(image)
+	var should_delegate:bool = tmp[0]
+	
+	var reg:String = _extract_registry(image)
+	var reg_internet_accessable:bool = !local_registries_animates.has(reg)
+
+	if !should_delegate:
+		# 10 if reg_internet_accessable else 11
+		return _build_path(10) if reg_internet_accessable else _build_path(11)
+	
+	if reg_internet_accessable:
+		return _build_path(7)
+
+	if cluster_registries.has(p_src_cluster_idx) && cluster_registries[p_src_cluster_idx].has(reg):
+		return _build_path(8)
+
+	return _build_path(9)
 
 func _metadataCB(p_event:Global.Event):
 	match p_event:
@@ -760,12 +934,6 @@ func _displayBigCloud(reg:REGISTRY):
 		big_cloud_label.text = REGISTRIES[reg]
 		big_cloud.show()
 		
-func _doDeploy(cluster:Global.CLUSTER, image:ImageControl, buttonIdx:ImageControl.buttonsIdx):
-	_reset()
-	image.set_active_button_idx(buttonIdx)
-	Config.set_active_path(_prep_path(cluster, image.image_reference))
-	Config.set_moving(true)
-
 func _on_deploy_to_cluster(p_cluster:Global.CLUSTER):
 	_reset()
 	
@@ -773,44 +941,10 @@ func _on_deploy_to_cluster(p_cluster:Global.CLUSTER):
 		print("ERROR: no images, cannot deploy")
 		return
 	print("prepping path for image: ", Config.get_active_image())
-	Config.set_active_path(_prep_path(p_cluster, Config.get_active_image()))
+	Config.set_cluster_clicked(p_cluster-1)
+	# Config.set_active_path(_prep_path(p_cluster, Config.get_active_image()))
+	Config.set_active_path(_get_path(p_cluster-1, Config.get_active_image()))
 	Config.set_moving(true)
-
-func _on_docker_image_prod_pressed():
-	_doDeploy(Global.CLUSTER.PROD, docker_image, ImageControl.buttonsIdx.PROD)
-func _on_prod_image_prod_pressed():
-	_doDeploy(Global.CLUSTER.PROD, prod_image, ImageControl.buttonsIdx.PROD)
-func _on_dev_image_prod_pressed():
-	_doDeploy(Global.CLUSTER.PROD, dev_image, ImageControl.buttonsIdx.PROD)
-func _on_quay_image_prod_pressed():
-	_doDeploy(Global.CLUSTER.PROD, quay_image, ImageControl.buttonsIdx.PROD)
-
-func _on_docker_image_dev_pressed():
-	_doDeploy(Global.CLUSTER.DEV, docker_image, ImageControl.buttonsIdx.DEV)
-func _on_prod_image_dev_pressed():
-	_doDeploy(Global.CLUSTER.DEV, prod_image, ImageControl.buttonsIdx.DEV)
-func _on_dev_image_dev_pressed():
-	_doDeploy(Global.CLUSTER.DEV, dev_image, ImageControl.buttonsIdx.DEV)
-func _on_quay_image_dev_pressed():
-	_doDeploy(Global.CLUSTER.DEV, quay_image, ImageControl.buttonsIdx.DEV)
-
-func _on_docker_image_other_pressed():
-	_doDeploy(Global.CLUSTER.OTHER, docker_image, ImageControl.buttonsIdx.OTHER)
-func _on_prod_image_other_pressed():
-	_doDeploy(Global.CLUSTER.OTHER, prod_image, ImageControl.buttonsIdx.OTHER)
-func _on_dev_image_other_pressed():
-	_doDeploy(Global.CLUSTER.OTHER, dev_image, ImageControl.buttonsIdx.OTHER)
-func _on_quay_image_other_pressed():
-	_doDeploy(Global.CLUSTER.OTHER, quay_image, ImageControl.buttonsIdx.OTHER)
-
-func _on_docker_image_roxctl_pressed():
-	_doDeploy(Global.CLUSTER.CENTRAL, docker_image, ImageControl.buttonsIdx.ROXCTL)
-func _on_prod_image_roxctl_pressed():
-	_doDeploy(Global.CLUSTER.CENTRAL, prod_image, ImageControl.buttonsIdx.ROXCTL)
-func _on_dev_image_roxctl_pressed():
-	_doDeploy(Global.CLUSTER.CENTRAL, dev_image, ImageControl.buttonsIdx.ROXCTL)
-func _on_quay_image_roxctl_pressed():
-	_doDeploy(Global.CLUSTER.CENTRAL, quay_image, ImageControl.buttonsIdx.ROXCTL)
 
 func _on_reset_button_pressed():
 	_reset()
