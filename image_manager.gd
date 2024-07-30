@@ -7,6 +7,7 @@ var button_group:ButtonGroup
 	
 @onready var image_container = $VBoxContainer/ScrollContainer/ImageContainer
 @onready var image_name_edit = $VBoxContainer/HBoxContainer/ImageNameEdit
+@onready var scroll_container = $VBoxContainer/ScrollContainer
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,6 +21,7 @@ func _ready():
 	
 func _update_active_image():
 	button_group.get_buttons()[Config.get_active_image_idx()].button_pressed = true
+	scroll_container.ensure_control_visible(image_container.get_children()[Config.get_active_image_idx()])
 		
 
 func _image_selected(_base_button:BaseButton):
@@ -67,5 +69,7 @@ func _process(delta):
 func _on_add_image_button_pressed():
 	Config.add_image(image_name_edit.text)
 
+# AKA enter key
 func _on_image_name_edit_text_submitted(new_text):
 	Config.add_image(new_text)
+	image_name_edit.release_focus()

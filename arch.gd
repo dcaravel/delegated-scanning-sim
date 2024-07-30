@@ -362,6 +362,10 @@ func _on_back_step_button_pressed():
 		cur_path_segment_idx = Config.active_path().size()-1
 	var seg:PathSegment
 	var progress:float
+	
+	if Config.active_path().size() == 0:
+		return
+		
 	seg = Config.active_path()[cur_path_segment_idx]
 	progress = seg.progress()
 	
@@ -1025,8 +1029,9 @@ func _on_default_cluster_option_item_selected(_index):
 	_config_updated()
 
 func _on_context_menu(p_cluster:Global.CLUSTER):
-	print(p_cluster)
-	popup_menu.active_cluster = p_cluster
-	popup_menu.position = get_viewport().get_mouse_position()
-	popup_menu.show()
+	# disabled in preference # buttons
+	#popup_menu.active_cluster = p_cluster
+	#popup_menu.position = get_viewport().get_mouse_position()
+	#popup_menu.show()
+	pass
 	

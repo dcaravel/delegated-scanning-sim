@@ -75,6 +75,9 @@ func add_image(p_image:String):
 	if has_image(p_image):
 		return
 		
+	if _images.size() >= 9:
+		return
+
 	_images.append(p_image)
 	SignalManager.images_updated.emit()
 
@@ -91,7 +94,10 @@ func set_active_image(p_image_idx:int) -> void:
 	if p_image_idx < 0:
 		_active_image = 0
 	elif p_image_idx > _images.size()-1:
-		_active_image = _images.size()-1
+		#_active_image = _images.size()-1
+		# comented out so that hitting a # on keyboard that for image that
+		# doesn't exist, doesn't change the current selection
+		pass
 	else:
 		_active_image = p_image_idx
 		
@@ -128,3 +134,23 @@ func get_cluster_clicked() -> int:
 
 func reset_cluster_clicked() -> void:
 	_cluster_clicked = -1
+
+#########################
+## Input?
+#########################
+
+var keyToAction = {
+	KEY_1: Callable(self, "set_active_image").bind(0),
+	KEY_2: Callable(self, "set_active_image").bind(1),
+	KEY_3: Callable(self, "set_active_image").bind(2),
+	KEY_4: Callable(self, "set_active_image").bind(3),
+	KEY_5: Callable(self, "set_active_image").bind(4),
+	KEY_6: Callable(self, "set_active_image").bind(5),
+	KEY_7: Callable(self, "set_active_image").bind(6),
+	KEY_8: Callable(self, "set_active_image").bind(7),
+	KEY_9: Callable(self, "set_active_image").bind(8),
+}
+
+func _input(event:InputEvent):
+	if event is InputEventKey and event.pressed and keyToAction.has(event.keycode):
+		keyToAction[event.keycode].call()
