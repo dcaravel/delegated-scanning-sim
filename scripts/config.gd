@@ -90,18 +90,15 @@ func set_active_image(p_image_idx:int) -> void:
 	if _images.size() == 0:
 		_active_image = _default_active_image
 		return
-		
+	
 	if p_image_idx < 0:
 		_active_image = 0
 	elif p_image_idx > _images.size()-1:
-		#_active_image = _images.size()-1
-		# comented out so that hitting a # on keyboard that for image that
-		# doesn't exist, doesn't change the current selection
-		pass
+		_active_image = _images.size()-1
 	else:
 		_active_image = p_image_idx
 		
-	print("Active image: ", _active_image, " ", _images[_active_image], " -- ", _images)
+	# print("Active image: ", _active_image, " ", _images[_active_image], " -- ", _images)
 	SignalManager.active_image_updated.emit()
 
 func get_active_image_idx() -> int:

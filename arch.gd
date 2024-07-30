@@ -738,7 +738,7 @@ func _get_dst_cluster() -> int:
 
 # See docs\research.md for meaning of A, B, C etc.
 func _build_path(p_path_num:int) -> Array[PathSegment]: 
-	print("Path: ", p_path_num)
+	# print("Path: ", p_path_num)
 	var path:Array[PathSegment] = []
 	match p_path_num:
 		1: # scan central cloud
@@ -951,7 +951,7 @@ func _on_deploy_to_cluster(p_cluster:Global.CLUSTER):
 	if !Config.has_images():
 		print("ERROR: no images, cannot deploy")
 		return
-	print("prepping path for image: ", Config.get_active_image())
+	# print("prepping path for image: ", Config.get_active_image())
 	Config.set_cluster_clicked(p_cluster-1)
 	# Config.set_active_path(_prep_path(p_cluster, Config.get_active_image()))
 	Config.set_active_path(_get_path(p_cluster-1, Config.get_active_image()))

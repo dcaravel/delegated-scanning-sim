@@ -13,7 +13,7 @@ func _ready():
 	
 	overlay.hover_start.connect(_hover_start)
 	overlay.hover_end.connect(_hover_end)
-	overlay.overlay_visible_text = "Left-Click: roxctl image scan active image\nRight-Click: Select image to roxctl image scan"
+	overlay.overlay_visible_text = "Click: Scan selected image"
 
 func _process(_delta):
 	if mouse_over && Input.is_action_just_pressed("deploy_or_roxctl"):
