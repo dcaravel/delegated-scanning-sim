@@ -14,6 +14,8 @@ const pause_icon = preload("res://assets/pause-svgrepo-com-16x16.png")
 
 const error_scene = preload("res://error_popup.tscn")
 
+const version_txt_path = "res://version.txt"
+
 const nil:Callable = Callable()
 
 enum ENABLED_FOR {NONE, ALL, SPECIFIC}
@@ -101,6 +103,7 @@ var last_log_letter:int = initial_log_letter
 @onready var quay = $DelegatedScanningConfig/quay
 @onready var default_cluster_option = $DelegatedScanningConfig/DefaultClusterOption
 @onready var popup_menu = $PopupMenu
+@onready var version_label = $VersionLabel
 
 const CENTRAL_CLUSTER_IDX:int = -1
 var clusters:Array[String] = [
@@ -140,9 +143,13 @@ var cluster_registries = {
 	"dev.registry.io": _devAnimateCB,
 }
 
+func get_text_file_content(filePath):
+	var file = FileAccess.open(filePath, FileAccess.READ)
+	var content = file.get_as_text()
+	return content
 
 func _ready():
-	
+	version_label.text = "v" + get_text_file_content(version_txt_path)
 	# The enum and list of clusters must be the same, otherwise the dropdowns will not match the output
 	assert(Global.CLUSTER.size() == Global.CLUSTERS.size())
 	

@@ -1,4 +1,4 @@
-[gd_scene load_steps=98 format=3 uid="uid://1d30nevdx8ls"]
+[gd_scene load_steps=99 format=3 uid="uid://1d30nevdx8ls"]
 
 [ext_resource type="Script" path="res://arch.gd" id="1_p2u15"]
 [ext_resource type="PackedScene" uid="uid://bq8pyne1pxix3" path="res://cluster.tscn" id="2_70j8o"]
@@ -454,6 +454,10 @@ _data = {
 }
 point_count = 2
 
+[sub_resource type="LabelSettings" id="LabelSettings_2k1n6"]
+font_size = 10
+font_color = Color(1, 1, 1, 0.321569)
+
 [node name="Arch" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -719,9 +723,9 @@ vertical_alignment = 2
 
 [node name="Disclaimer" type="Label" parent="."]
 layout_mode = 0
-offset_left = 152.0
+offset_left = 160.0
 offset_top = 776.0
-offset_right = 683.0
+offset_right = 611.0
 offset_bottom = 799.0
 text = "Disclaimer: may be inaccuracies, test and verify before making changes to real installations."
 label_settings = SubResource("LabelSettings_fntr6")
@@ -1129,6 +1133,17 @@ script = ExtResource("12_ndm45")
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="VersionLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 776.0
+offset_right = 680.0
+offset_bottom = 799.0
+text = "v0.0.0"
+label_settings = SubResource("LabelSettings_2k1n6")
+horizontal_alignment = 1
+vertical_alignment = 2
 
 [connection signal="item_selected" from="DelegatedScanningConfig/DefaultClusterOption" to="." method="_on_default_cluster_option_item_selected"]
 [connection signal="config_updated" from="DelegatedScanningConfig/dev" to="." method="_on_dev_config_updated"]
