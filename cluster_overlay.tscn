@@ -14,8 +14,7 @@ offset_bottom = 166.0
 mouse_filter = 0
 mouse_default_cursor_shape = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_yn7bw")
-text = "Left-Click: Deploy active image
-Right-Click: Select image to deploy"
+text = "Click: Deploy active image"
 label_settings = SubResource("LabelSettings_m6g43")
 horizontal_alignment = 1
 vertical_alignment = 1
