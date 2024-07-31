@@ -97,7 +97,7 @@ var done_ready:bool = false
 @onready var default_cluster_option = $DelegatedScanningConfig/DefaultClusterOption
 @onready var popup_menu = $PopupMenu
 @onready var version_label = $VersionLabel
-@onready var code_edit = $CodeEdit
+
 
 @onready var cluster_scenes = {
 	0: prod_cluster,
@@ -179,6 +179,7 @@ func _ready():
 	# Set the initial speed value to the slider set in the editor / scene
 	_on_speed_slider_value_changed(speed_slider.value)
 	_sync_enabled_for_radio()
+	#_on_save_test_code_edit_ready()
 	done_ready = true
 	_reset()
 
@@ -630,7 +631,7 @@ func _build_path(p_path_num:int) -> Array[PathSegment]:
 			path.append_array(_C())
 			path.append_array(_F())
 			path.append_array(_P())
-		4: # central to sensor index cloud
+		4: # central to sensor - index via cloud
 			path.append_array(_A())
 			path.append_array(_G())
 			path.append_array(_HQ())
@@ -638,7 +639,7 @@ func _build_path(p_path_num:int) -> Array[PathSegment]:
 			path.append_array(_MC())
 			path.append_array(_N())
 			path.append_array(_P())
-		5: # central to sensor index local
+		5: # central to sensor - index via local
 			path.append_array(_A())
 			path.append_array(_G())
 			path.append_array(_HQ())
@@ -646,7 +647,7 @@ func _build_path(p_path_num:int) -> Array[PathSegment]:
 			path.append_array(_MC())
 			path.append_array(_N())
 			path.append_array(_P())
-		6: # central to sensor error - no network path
+		6: # central to sensor - error - no network path
 			path.append_array(_A())
 			path.append_array(_G())
 			path.append_array(_HQ())
@@ -654,27 +655,27 @@ func _build_path(p_path_num:int) -> Array[PathSegment]:
 			path.append_array(_MC())
 			path.append_array(_O())
 			path.append_array(_P())
-		7: # sensor deploy index cloud
+		7: # sensor deploy - index via cloud
 			path.append_array(_BQ())
 			path.append_array(_I())
 			path.append_array(_MC())
 			path.append_array(_N())
-		8: # sensor deploy index local
+		8: # sensor deploy - index via local
 			path.append_array(_BQ())
 			path.append_array(_J())
 			path.append_array(_MC())
 			path.append_array(_N())
-		9: # sensor deploy index error - no network path
+		9: # sensor deploy - index error - no network path
 			path.append_array(_BQ())
 			path.append_array(_K())
 			path.append_array(_MC())
 			path.append_array(_O())
-		10: # sensor deploy to central scan cloud
+		10: # sensor deploy to central - scan via cloud
 			path.append_array(_BQ())
 			path.append_array(_L())
 			path.append_array(_MC())
 			path.append_array(_D())
-		11: # sensor deploy to central scan error - no network path
+		11: # sensor deploy to central - scan error - no network path
 			path.append_array(_BQ())
 			path.append_array(_L())
 			path.append_array(_MC())
@@ -906,3 +907,19 @@ func _on_pause_play_button_pressed():
 	
 	Config.toggle_moving()
 
+#
+#@onready var save_test_code_edit = $SaveTestCodeEdit
+#var path:String = "user://savegame.save"
+#
+#func _on_save_test_code_edit_ready():
+	#var file:FileAccess = FileAccess.open(path, FileAccess.READ)
+	#if file == null:
+		#print("WARN: Loading saved data ", path, ": ", error_string(FileAccess.get_open_error()))
+		#return
+	#
+	#var content = file.get_as_text()
+	#save_test_code_edit.text = content
+#
+#func _on_save_test_code_edit_text_changed():
+	#var file:FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	#file.store_string(save_test_code_edit.text)

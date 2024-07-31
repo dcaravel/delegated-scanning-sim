@@ -1053,14 +1053,6 @@ text = "v0.0.0"
 label_settings = SubResource("LabelSettings_2k1n6")
 vertical_alignment = 1
 
-[node name="CodeEdit" type="CodeEdit" parent="."]
-layout_mode = 0
-offset_left = 800.0
-offset_top = 272.0
-offset_right = 1192.0
-offset_bottom = 504.0
-theme_override_font_sizes/font_size = 10
-
 [connection signal="item_selected" from="DelegatedScanningConfig/DefaultClusterOption" to="." method="_on_default_cluster_option_item_selected"]
 [connection signal="config_updated" from="DelegatedScanningConfig/dev" to="." method="_on_dev_config_updated"]
 [connection signal="config_updated" from="DelegatedScanningConfig/prod" to="." method="_on_prod_config_updated"]
