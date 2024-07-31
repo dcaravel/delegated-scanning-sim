@@ -55,8 +55,9 @@ var _images:Array[String] = [
 	"prod.registry.io/hello/world:stable",
 	"dev.registry.io/repo/path:2.0",
 ]
+var _max_images_size = 9
 var _default_active_image = 0
-var _active_image:int = _default_active_image
+var _active_image_idx:int = _default_active_image
 
 func has_images() -> bool:
 	return _images.size() > 0
@@ -75,7 +76,7 @@ func add_image(p_image:String):
 	if has_image(p_image):
 		return
 		
-	if _images.size() >= 9:
+	if _images.size() >= _max_images_size:
 		return
 
 	_images.append(p_image)
@@ -83,29 +84,38 @@ func add_image(p_image:String):
 
 func delete_image(p_idx:int):
 	_images.remove_at(p_idx)
+
+	if _active_image_idx > _images.size()-1:
+		_active_image_idx = _images.size()-1
+
 	SignalManager.images_updated.emit()
-	set_active_image(_active_image) # by calling this with the same index the set_active_image method will sanitize the value
+	set_active_image(_active_image_idx)
 
 func set_active_image(p_image_idx:int) -> void:
 	if _images.size() == 0:
-		_active_image = _default_active_image
+		_active_image_idx = _default_active_image
 		return
-	
+
+	if p_image_idx > _images.size()-1:
+		# do nothing if trying to set an index > max
+		return
+
 	if p_image_idx < 0:
-		_active_image = 0
-	elif p_image_idx > _images.size()-1:
-		_active_image = _images.size()-1
+		_active_image_idx = 0
 	else:
-		_active_image = p_image_idx
+		_active_image_idx = p_image_idx
 		
 	# print("Active image: ", _active_image, " ", _images[_active_image], " -- ", _images)
 	SignalManager.active_image_updated.emit()
 
 func get_active_image_idx() -> int:
-	return _active_image
+	return _active_image_idx
 	
 func get_active_image() -> String:
-	return _images[_active_image]
+	return _images[_active_image_idx]
+
+func at_max_images() -> bool:
+	return _images.size() == _max_images_size
 
 #########################
 ## Current Cluster Click #TODO: Find better name for this

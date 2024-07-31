@@ -1,8 +1,7 @@
-[gd_scene load_steps=99 format=3 uid="uid://1d30nevdx8ls"]
+[gd_scene load_steps=98 format=3 uid="uid://1d30nevdx8ls"]
 
 [ext_resource type="Script" path="res://arch.gd" id="1_p2u15"]
 [ext_resource type="PackedScene" uid="uid://bq8pyne1pxix3" path="res://cluster.tscn" id="2_70j8o"]
-[ext_resource type="PackedScene" uid="uid://xc7ehdgts1gt" path="res://image.tscn" id="3_5ph6d"]
 [ext_resource type="PackedScene" uid="uid://dtl428geay23t" path="res://registry.tscn" id="3_pco5m"]
 [ext_resource type="PackedScene" uid="uid://dtq65a7gfvplv" path="res://central_services.tscn" id="3_srn5w"]
 [ext_resource type="PackedScene" uid="uid://by3lsour21dm4" path="res://image_manager.tscn" id="5_yp0xd"]
@@ -622,95 +621,6 @@ offset_top = 553.0
 offset_right = 576.0
 offset_bottom = 776.0
 
-[node name="Images" type="Control" parent="."]
-visible = false
-anchors_preset = 0
-offset_top = 552.0
-offset_right = 648.0
-offset_bottom = 760.0
-
-[node name="QuayImage" parent="Images" instance=ExtResource("3_5ph6d")]
-offset_top = 80.0
-offset_bottom = 112.0
-image_reference = "quay.io/rhacs-eng/main:latest"
-
-[node name="DevImage" parent="Images" instance=ExtResource("3_5ph6d")]
-offset_top = 160.0
-offset_bottom = 192.0
-image_reference = "dev.registry.io/repo/path:2.0"
-
-[node name="ProdImage" parent="Images" instance=ExtResource("3_5ph6d")]
-offset_top = 120.0
-offset_bottom = 152.0
-image_reference = "prod.registry.io/hello/world:stable"
-
-[node name="DockerImage" parent="Images" instance=ExtResource("3_5ph6d")]
-offset_top = 39.0
-offset_bottom = 71.0
-image_reference = "docker.io/library/nginx:1.25.0"
-
-[node name="Headers" type="Control" parent="Images"]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="ImagesHeader" type="Control" parent="Images/Headers"]
-anchors_preset = 0
-offset_left = 8.0
-offset_right = 280.0
-offset_bottom = 32.0
-
-[node name="Images" type="Label" parent="Images/Headers/ImagesHeader"]
-layout_mode = 0
-offset_right = 272.0
-offset_bottom = 32.0
-text = "Images"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ImagesUnderline" type="Line2D" parent="Images/Headers/ImagesHeader"]
-position = Vector2(-167, -31)
-points = PackedVector2Array(439, 63, 167, 63)
-width = 1.0
-
-[node name="DeployClusterHeader" type="Control" parent="Images/Headers"]
-anchors_preset = 0
-offset_left = 288.0
-offset_right = 496.0
-offset_bottom = 32.0
-
-[node name="DeployClusterLabel" type="Label" parent="Images/Headers/DeployClusterHeader"]
-layout_mode = 0
-offset_right = 208.0
-offset_bottom = 32.0
-text = "Deploy To Cluster"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="DeployClusterUnderline" type="Line2D" parent="Images/Headers/DeployClusterHeader"]
-position = Vector2(194, -32)
-points = PackedVector2Array(14, 64, -194, 64)
-width = 1.0
-
-[node name="APIHeader" type="Control" parent="Images/Headers"]
-anchors_preset = 0
-offset_left = 504.0
-offset_right = 592.0
-offset_bottom = 32.0
-
-[node name="API" type="Label" parent="Images/Headers/APIHeader"]
-layout_mode = 0
-offset_right = 88.0
-offset_bottom = 32.0
-text = "API"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="APIUnderline" type="Line2D" parent="Images/Headers/APIHeader"]
-position = Vector2(-14, -32)
-points = PackedVector2Array(102, 64, 14, 64)
-width = 1.0
-
 [node name="As Of Label" type="Label" parent="."]
 layout_mode = 0
 offset_left = 8.0
@@ -1136,14 +1046,20 @@ offset_bottom = 40.0
 
 [node name="VersionLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 640.0
-offset_top = 776.0
-offset_right = 680.0
-offset_bottom = 799.0
+offset_left = 3.0
+offset_right = 131.0
+offset_bottom = 16.0
 text = "v0.0.0"
 label_settings = SubResource("LabelSettings_2k1n6")
-horizontal_alignment = 1
-vertical_alignment = 2
+vertical_alignment = 1
+
+[node name="CodeEdit" type="CodeEdit" parent="."]
+layout_mode = 0
+offset_left = 800.0
+offset_top = 272.0
+offset_right = 1192.0
+offset_bottom = 504.0
+theme_override_font_sizes/font_size = 10
 
 [connection signal="item_selected" from="DelegatedScanningConfig/DefaultClusterOption" to="." method="_on_default_cluster_option_item_selected"]
 [connection signal="config_updated" from="DelegatedScanningConfig/dev" to="." method="_on_dev_config_updated"]
@@ -1152,22 +1068,6 @@ vertical_alignment = 2
 [connection signal="toggled" from="EnabledForRadios/NoneRadio" to="." method="_on_none_radio_toggled"]
 [connection signal="toggled" from="EnabledForRadios/AllRegistriesRadio" to="." method="_on_all_registries_radio_toggled"]
 [connection signal="toggled" from="EnabledForRadios/SpecificRegistriesRadio" to="." method="_on_specific_registries_radio_toggled"]
-[connection signal="dev_pressed" from="Images/QuayImage" to="." method="_on_quay_image_dev_pressed"]
-[connection signal="other_pressed" from="Images/QuayImage" to="." method="_on_quay_image_other_pressed"]
-[connection signal="prod_pressed" from="Images/QuayImage" to="." method="_on_quay_image_prod_pressed"]
-[connection signal="roxctl_pressed" from="Images/QuayImage" to="." method="_on_quay_image_roxctl_pressed"]
-[connection signal="dev_pressed" from="Images/DevImage" to="." method="_on_dev_image_dev_pressed"]
-[connection signal="other_pressed" from="Images/DevImage" to="." method="_on_dev_image_other_pressed"]
-[connection signal="prod_pressed" from="Images/DevImage" to="." method="_on_dev_image_prod_pressed"]
-[connection signal="roxctl_pressed" from="Images/DevImage" to="." method="_on_dev_image_roxctl_pressed"]
-[connection signal="dev_pressed" from="Images/ProdImage" to="." method="_on_prod_image_dev_pressed"]
-[connection signal="other_pressed" from="Images/ProdImage" to="." method="_on_prod_image_other_pressed"]
-[connection signal="prod_pressed" from="Images/ProdImage" to="." method="_on_prod_image_prod_pressed"]
-[connection signal="roxctl_pressed" from="Images/ProdImage" to="." method="_on_prod_image_roxctl_pressed"]
-[connection signal="dev_pressed" from="Images/DockerImage" to="." method="_on_docker_image_dev_pressed"]
-[connection signal="other_pressed" from="Images/DockerImage" to="." method="_on_docker_image_other_pressed"]
-[connection signal="prod_pressed" from="Images/DockerImage" to="." method="_on_docker_image_prod_pressed"]
-[connection signal="roxctl_pressed" from="Images/DockerImage" to="." method="_on_docker_image_roxctl_pressed"]
 [connection signal="pressed" from="FlowControls/ResetButton" to="." method="_on_reset_button_pressed"]
 [connection signal="pressed" from="FlowControls/PausePlayButton" to="." method="_on_pause_play_button_pressed"]
 [connection signal="pressed" from="FlowControls/BackStepButton" to="." method="_on_back_step_button_pressed"]

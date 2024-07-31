@@ -7,44 +7,17 @@ const metadata_pill_scene = preload("res://pills/metadata_pill_sm.tscn")
 const indexreport_pill_scene = preload("res://pills/index_report_pill_sm.tscn")
 const vulnreport_pill_scene = preload("res://pills/vuln_report_pill_sm.tscn")
 const sig_pill_scene = preload("res://pills/signatures_pill_sm.tscn")
+const error_scene = preload("res://error_popup.tscn")
 const image_status_mini = preload("res://ImageStatusMini.tscn")
 
 const play_icon = preload("res://assets/play-svgrepo-com-16x16.png")
 const pause_icon = preload("res://assets/pause-svgrepo-com-16x16.png")
 
-const error_scene = preload("res://error_popup.tscn")
-
 const version_txt_path = "res://version.txt"
 
 const nil:Callable = Callable()
-
-enum ENABLED_FOR {NONE, ALL, SPECIFIC}
-enum PATH_SOURCE {CENTRAL, SENSOR_EVENT}
-
-# REGISTRY and REGISTRIES MUST have same order
-enum REGISTRY {DOCKER,QUAY,DEV,PROD}
-const REGISTRIES=["docker.io","quay.io","dev","prod"]
-
-
-
-
-
 const _PathSegment = preload("res://scripts/path_segment.gd")
-
-@export var have_metadata:bool = false
-@export var have_index_report:bool = false
-@export var have_vuln_report:bool = false
-@export var have_signatures:bool = false
-@export var have_error:bool = false
-
-var cur_path_segment_idx=0
-
-var enabled_for:ENABLED_FOR
-
-var pause_seg:PathSegment
-var pausing:bool = false
-var pausing_enabled:bool = false
-var actual_ready:bool = false # this is a hack, change ordering so that isn't needed to prevent crashing on startup
+const CENTRAL_CLUSTER_IDX:int = -1
 
 const pill_scenes:Array = [
 	metadata_pill_scene,
@@ -54,21 +27,45 @@ const pill_scenes:Array = [
 ]
 
 enum {MD,IR,VR,SIG}
+enum ENABLED_FOR {NONE, ALL, SPECIFIC}
+
+@export var have_metadata:bool = false
+@export var have_index_report:bool = false
+@export var have_vuln_report:bool = false
+@export var have_signatures:bool = false
+@export var have_error:bool = false
+
+# maps a cluster index (key) to the names of all the cluster local registries (val)
+var cluster_registries = {
+	0: ["prod.registry.io"],
+	1: ["dev.registry.io"],
+}
+
+var cur_path_segment_idx=0
+
+var enabled_for:ENABLED_FOR
+var pause_seg:PathSegment
+var pausing:bool = false
+var pausing_enabled:bool = false
 
 var c1Paths:Node2D = Node2D.new()
 var c2Paths:Node2D = Node2D.new()
+var cluster_cpaths = {}
+
 var animationPlayers:Array[AnimationPlayer] = []
 var animationRegHighlight:String = "highlight-registry"
 
 var initial_log_letter = 64
 var last_log_letter:int = initial_log_letter
 
+var done_ready:bool = false
+
+@onready var big_cloud:Node2D = $BigCloud
+@onready var big_cloud_label:Label = $BigCloud/BigCloudLabel
 @onready var prod_cluster:Control = $ProdCluster
 @onready var dev_cluster:Control = $DevCluster
 @onready var other_cluster:Control = $OtherCluster
 @onready var pause:Path2D = $Paths/pause
-@onready var big_cloud:Node2D = $BigCloud
-@onready var big_cloud_label:Label = $BigCloud/BigCloudLabel
 @onready var paths:Node2D = $Paths
 @onready var c_paths:Node2D = $Paths/cPaths
 @onready var speed_slider:HSlider = $FlowControls/SpeedSlider
@@ -76,10 +73,6 @@ var last_log_letter:int = initial_log_letter
 @onready var back_step_button = $FlowControls/BackStepButton
 @onready var pause_play_button = $FlowControls/PausePlayButton
 @onready var image_status_zoomed = $ImageStatusZoomed
-@onready var docker_image = $Images/DockerImage
-@onready var quay_image = $Images/QuayImage
-@onready var prod_image = $Images/ProdImage
-@onready var dev_image = $Images/DevImage
 @onready var delegated_scanning_config = $DelegatedScanningConfig
 @onready var c_0_to_central = $"Paths/c0-to-central"
 @onready var central_to_c_0 = $"Paths/central-to-c0"
@@ -104,20 +97,7 @@ var last_log_letter:int = initial_log_letter
 @onready var default_cluster_option = $DelegatedScanningConfig/DefaultClusterOption
 @onready var popup_menu = $PopupMenu
 @onready var version_label = $VersionLabel
-
-const CENTRAL_CLUSTER_IDX:int = -1
-var clusters:Array[String] = [
-	"prod",
-	"dev",
-	"other",
-]
-# maps a cluster index (key) to the names of all the cluster local registries (val)
-var cluster_registries = {
-	0: ["prod.registry.io"],
-	1: ["dev.registry.io"],
-}
-
-@onready var cluster_cpaths = {}
+@onready var code_edit = $CodeEdit
 
 @onready var cluster_scenes = {
 	0: prod_cluster,
@@ -196,12 +176,42 @@ func _ready():
 		2: c2Paths,
 	}
 	
-	actual_ready = true
-	
 	# Set the initial speed value to the slider set in the editor / scene
 	_on_speed_slider_value_changed(speed_slider.value)
 	_sync_enabled_for_radio()
+	done_ready = true
 	_reset()
+
+func _reset(soft:bool=false):
+	if !done_ready:
+		return
+		
+	Config.set_moving(false)
+	cur_path_segment_idx = 0
+	have_metadata = false
+	have_index_report = false
+	have_vuln_report = false
+	have_signatures = false
+	have_error = false
+	
+	for segment in Config.active_path():
+		segment.reset()
+
+	for a in animationPlayers:
+		if a == null:
+			continue
+		a.stop()
+	
+	_del_all_log_entry()
+	
+	if !soft:
+		#print_tree_pretty()
+		Config.clear_active_path()
+		Config.reset_cluster_clicked()
+		big_cloud.hide()
+		big_cloud_label.text = ""
+		for c in cluster_scenes.values():
+			c.show_cloud = false
 
 func _errorC(text:String, pos:Global.Pos=Global.Pos.BOT, offsetX:int=0) -> Callable:
 	return Callable(self, "_error").bind(text, pos, offsetX)
@@ -270,21 +280,6 @@ func _image_status() -> ImageStatusMini:
 	dupe.z_index = MAX_ZINDEX+1
 	return dupe
 
-func _metadata(v:bool=true) -> Callable:
-	return func():have_metadata=v
-
-func _index_report(v:bool=true) -> Callable:
-	return func():have_index_report=v
-
-func _vuln_report(v:bool=true) -> Callable:
-	return func():have_vuln_report=v
-
-func _signatures(v:bool=true) -> Callable:
-	return func():have_signatures=v
-	
-func _error_status(v:bool=true) -> Callable:
-	return func():have_error=v
-
 func _process(delta):
 	_sync_image_status()
 	
@@ -312,15 +307,6 @@ func _process(delta):
 			pausing = false
 			pause_seg.reset()
 
-func _on_none_radio_toggled(_toggled_on):
-	_sync_enabled_for_radio()
-
-func _on_all_registries_radio_toggled(_toggled_on):
-	_sync_enabled_for_radio()
-	
-func _on_specific_registries_radio_toggled(_toggled_on):
-	_sync_enabled_for_radio()
-
 func _sync_image_status():
 	image_status_zoomed.have_metadata = have_metadata
 	image_status_zoomed.have_index_report = have_index_report
@@ -328,57 +314,6 @@ func _sync_image_status():
 	image_status_zoomed.have_signatures = have_signatures
 	image_status_zoomed.have_error = have_error
 
-func _reset(soft:bool=false):
-	if !actual_ready:
-		return
-		
-	Config.set_moving(false)
-	cur_path_segment_idx = 0
-	have_metadata = false
-	have_index_report = false
-	have_vuln_report = false
-	have_signatures = false
-	have_error = false
-	
-	for segment in Config.active_path():
-		segment.reset()
-
-	for a in animationPlayers:
-		if a == null:
-			continue
-		a.stop()
-	
-	_del_all_log_entry()
-	
-	if !soft:
-		#print_tree_pretty()
-		Config.clear_active_path()
-		Config.reset_cluster_clicked()
-		big_cloud.hide()
-		big_cloud_label.text = ""
-		for c in Global.CLUSTER:
-			_cloud(Global.CLUSTER.get(c), -1, -1, false)
-		docker_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
-		quay_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
-		prod_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
-		dev_image.set_active_button_idx(ImageControl.buttonsIdx.NONE)
-
-func _on_back_step_button_pressed():
-	Config.set_moving(false)
-	if cur_path_segment_idx >= Config.active_path().size():
-		cur_path_segment_idx = Config.active_path().size()-1
-	var seg:PathSegment
-	var progress:float
-	
-	if Config.active_path().size() == 0:
-		return
-		
-	seg = Config.active_path()[cur_path_segment_idx]
-	progress = seg.progress()
-	
-	seg.reset()
-	if cur_path_segment_idx >= 1:
-		cur_path_segment_idx -= 1
 
 func _sync_enabled_for_radio():
 	var group:ButtonGroup = none_radio.button_group
@@ -396,65 +331,6 @@ func _sync_enabled_for_radio():
 	
 	_config_updated()
 	
-# returns true if the image should be scanned by a sensor IF sensor is
-# evaluating the request (no worky for central)
-func _scan_image_via_cluster(image:String) -> bool:
-	if enabled_for == ENABLED_FOR.NONE:
-		return false
-	
-	if enabled_for == ENABLED_FOR.ALL:
-		return true
-	
-	var regs = [dev, prod, quay]	
-	for reg in regs:
-		if !reg.enabled:
-			continue
-		var reg_path = reg.registry_name
-		if image.begins_with(reg_path):
-			return true
-
-	return false
-
-# Returns:
-# 0 = should delegated if true
-# 1 = cluster index to delegate too for roxctl requests
-# [<delegate>, <cluster>]
-func _get_matching_dele_config_entry(image:String):
-	if enabled_for == ENABLED_FOR.NONE:
-		return [false, 0]
-	
-	var def_cluster_idx = default_cluster_option.selected	
-
-	var regs = [dev, prod, quay]
-	var cluster_idx = def_cluster_idx
-	if enabled_for == ENABLED_FOR.ALL:
-		for reg in regs:
-			if !reg.enabled:
-				continue
-			var reg_path = reg.registry_name
-			if image.begins_with(reg_path):
-				cluster_idx = def_cluster_idx if reg.selection == 0 else reg.selection
-				return [true, cluster_idx]
-		return [true, cluster_idx]
-	
-	if enabled_for == ENABLED_FOR.SPECIFIC:
-		for reg in regs:
-			if !reg.enabled:
-				continue
-			var reg_path = reg.registry_name
-			if image.begins_with(reg_path):
-				cluster_idx = def_cluster_idx if reg.selection == 0 else reg.selection
-				return [true, cluster_idx]
-		
-	return [false, 0]
-	
-func _get_registry(image:String) -> REGISTRY:
-	for idx in range(0, REGISTRIES.size()):
-		if image.begins_with(REGISTRIES[idx]):
-			return idx as REGISTRY
-		
-	return REGISTRY.DOCKER
-
 class SegCreator:
 	var base:Node
 	var dwicon:Callable
@@ -530,7 +406,6 @@ func _should_delegate_to_cluster(image:String):
 func _extract_registry(p_image:String) -> String:
 	return p_image.get_slice("/", 0)
 
-
 @onready var central_roxctl_start_sc = SegCreator.new(central_roxctl_start).wicon(_dot).eicon(_dot)
 @onready var central_to_central_start_sc = SegCreator.new(central_roxctl_to_central_scan).wicon(_dot).eicon(_dot).trail(false)
 @onready var central_scan_cloud_sc = SegCreator.new(central_scan).wicon(_dot)
@@ -540,7 +415,6 @@ func _extract_registry(p_image:String) -> String:
 @onready var sensor_to_central_start_sc = SegCreator.new(central_from_sensor_start).wicon(_dot).trail(false)
 @onready var central_match_sc = SegCreator.new(central_match).wicon(_dot)
 @onready var central_save_error_sc = SegCreator.new(central_error_from_sensor).wicon(_dot)
-
 
 func _A() -> Array[PathSegment]:
 	return [central_roxctl_start_sc.c("a1"),]
@@ -805,7 +679,6 @@ func _build_path(p_path_num:int) -> Array[PathSegment]:
 			path.append_array(_L())
 			path.append_array(_MC())
 			path.append_array(_E())
-			
 
 	return path
 
@@ -911,60 +784,14 @@ func _clusterAnimate(p_event:Global.Event, p_cluster:Global.CLUSTER=Global.CLUST
 			animationPlayers[p_cluster].stop()
 			have_error = false
 
-func _cloudC(p_cluster:Global.CLUSTER, p_reg:REGISTRY, p_show:bool=true):
-	return Callable(self, "_cloud").bind(p_cluster, p_reg, p_show)
+func _add_log_entry(p_icon_text:String, p_text:String):
+	SignalManager.push_log_entry.emit(p_icon_text, p_text)
 
-func _cloud(p_src_cluster:Global.CLUSTER, p_dst_cluster:Global.CLUSTER, p_reg:REGISTRY, p_show:bool=true):
-	
-	var c
-	match p_src_cluster:
-		Global.CLUSTER.CENTRAL:
-			match p_dst_cluster:
-				Global.CLUSTER.PROD:
-					c = prod_cluster
-				Global.CLUSTER.DEV:
-					c = dev_cluster
-				Global.CLUSTER.OTHER:
-					c = other_cluster
-				_:
-					return
-		Global.CLUSTER.PROD:
-			c = prod_cluster
-		Global.CLUSTER.DEV:
-			c = dev_cluster
-		Global.CLUSTER.OTHER:
-			c = other_cluster
-		_:
-			return
-	
-	c.cloud_text = REGISTRIES[p_reg]
-	c.show_cloud = p_show
+func _del_log_entry():
+	SignalManager.pop_log_entry.emit()
 
-func _displayBigCloud(reg:REGISTRY):
-	if reg == REGISTRY.DOCKER || reg == REGISTRY.QUAY:
-		big_cloud_label.text = REGISTRIES[reg]
-		big_cloud.show()
-		
-func _on_deploy_to_cluster(p_cluster:Global.CLUSTER):
-	_reset()
-	
-	if !Config.has_images():
-		print("ERROR: no images, cannot deploy")
-		return
-	# print("prepping path for image: ", Config.get_active_image())
-	Config.set_cluster_clicked(p_cluster-1)
-	# Config.set_active_path(_prep_path(p_cluster, Config.get_active_image()))
-	Config.set_active_path(_get_path(p_cluster-1, Config.get_active_image()))
-	Config.set_moving(true)
-
-func _on_reset_button_pressed():
-	_reset()
-
-func _on_pause_play_button_pressed():
-	if !Config.moving() && cur_path_segment_idx >= Config.active_path().size():
-		_reset(true)
-	
-	Config.toggle_moving()
+func _del_all_log_entry():
+	SignalManager.clear_log.emit()
 
 # should be one entry here per step in the slider
 var walk_speeds_px:Array[float] = [
@@ -982,15 +809,6 @@ var walk_speeds_px:Array[float] = [
 ]
 func _on_speed_slider_value_changed(value:float):
 	Config.update_walk_speed_px(walk_speeds_px[value])
-
-func _add_log_entry(p_icon_text:String, p_text:String):
-	SignalManager.push_log_entry.emit(p_icon_text, p_text)
-
-func _del_log_entry():
-	SignalManager.pop_log_entry.emit()
-
-func _del_all_log_entry():
-	SignalManager.clear_log.emit()
 
 func _on_log_entry_pop():
 	last_log_letter -= 1
@@ -1022,7 +840,6 @@ func _config_updated():
 	# TODO: instead of doing a full reset, perhaps just change the behavior of the flow controls
 	_reset()
 
-
 func _on_prod_config_updated():
 	_config_updated()
 
@@ -1035,10 +852,57 @@ func _on_quay_config_updated():
 func _on_default_cluster_option_item_selected(_index):
 	_config_updated()
 
-func _on_context_menu(p_cluster:Global.CLUSTER):
+func _on_context_menu(_p_cluster:Global.CLUSTER):
 	# disabled in preference # buttons
 	#popup_menu.active_cluster = p_cluster
 	#popup_menu.position = get_viewport().get_mouse_position()
 	#popup_menu.show()
 	pass
+
+func _on_none_radio_toggled(_toggled_on):
+	_sync_enabled_for_radio()
+
+func _on_all_registries_radio_toggled(_toggled_on):
+	_sync_enabled_for_radio()
 	
+func _on_specific_registries_radio_toggled(_toggled_on):
+	_sync_enabled_for_radio()
+
+func _on_back_step_button_pressed():
+	Config.set_moving(false)
+	if cur_path_segment_idx >= Config.active_path().size():
+		cur_path_segment_idx = Config.active_path().size()-1
+	var seg:PathSegment
+	var progress:float
+	
+	if Config.active_path().size() == 0:
+		return
+		
+	seg = Config.active_path()[cur_path_segment_idx]
+	progress = seg.progress()
+	
+	seg.reset()
+	if cur_path_segment_idx >= 1:
+		cur_path_segment_idx -= 1
+		
+func _on_deploy_to_cluster(p_cluster:Global.CLUSTER):
+	_reset()
+	
+	if !Config.has_images():
+		print("ERROR: no images, cannot deploy")
+		return
+	# print("prepping path for image: ", Config.get_active_image())
+	Config.set_cluster_clicked(p_cluster-1)
+	# Config.set_active_path(_prep_path(p_cluster, Config.get_active_image()))
+	Config.set_active_path(_get_path(p_cluster-1, Config.get_active_image()))
+	Config.set_moving(true)
+
+func _on_reset_button_pressed():
+	_reset()
+
+func _on_pause_play_button_pressed():
+	if !Config.moving() && cur_path_segment_idx >= Config.active_path().size():
+		_reset(true)
+	
+	Config.toggle_moving()
+
