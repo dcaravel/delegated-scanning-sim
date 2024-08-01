@@ -4,6 +4,7 @@ const image_entry_scene = preload("res://image_entry.tscn")
 
 var button_group_res:ButtonGroup = preload("res://theme/image_entry_button_group.tres")
 var button_group:ButtonGroup
+var _orig_placholder_text:String
 	
 @onready var image_container = $VBoxContainer/ScrollContainer/ImageContainer
 @onready var image_name_edit = $VBoxContainer/HBoxContainer/ImageNameEdit
@@ -18,6 +19,7 @@ func _ready():
 	#button_group = button_group_res.duplicate()
 	#button_group.pressed.connect(_image_selected)
 
+	_orig_placholder_text = image_name_edit.placeholder_text
 	_update_images()
 	
 func _update_active_image():
@@ -46,9 +48,11 @@ func _update_images():
 	if Config.at_max_images():
 		add_image_button.disabled = true
 		image_name_edit.editable = false
+		image_name_edit.placeholder_text = "At max images, no more images can be added ..."
 	else:
 		add_image_button.disabled = false
 		image_name_edit.editable = true
+		image_name_edit.placeholder_text = _orig_placholder_text
 		
 	if button_group != null:
 		button_group.pressed.disconnect(_image_selected)
