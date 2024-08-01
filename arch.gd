@@ -289,10 +289,13 @@ func _process(delta):
 	if cur_path_segment_idx >= Config.active_path().size():
 		Config.set_moving(false)
 		return
+		
+	if !Config.moving():
+		return
 	
-	var segment:PathSegment = Config.active_path()[cur_path_segment_idx]
 	if !pausing_enabled || !pausing:
-		if segment.walk(delta):
+		var seg:PathSegment = Config.active_path()[cur_path_segment_idx]
+		if seg.walk(delta):
 			pausing = true
 			cur_path_segment_idx += 1
 	else:
@@ -309,19 +312,22 @@ func _update_button_states():
 	if Config.active_path().size() > 0:
 		pause_play_button.disabled = false
 		
-		var seg = Config.active_path()[cur_path_segment_idx]
-		if cur_path_segment_idx == 0 && seg.progress() == 0:
-			back_step_button.disabled = true
-		else:
+		if cur_path_segment_idx > 0:
 			back_step_button.disabled = false
+		else:
+			var seg = Config.active_path()[cur_path_segment_idx]
+			if seg.progress() == 0:
+				back_step_button.disabled = true
+			else:
+				back_step_button.disabled = false
 	else:
 		back_step_button.disabled = true
 		pause_play_button.disabled = true
 			
 	if !Config.moving():
 		pause_play_button.icon = play_icon
-		return
-	pause_play_button.icon = pause_icon
+	else:
+		pause_play_button.icon = pause_icon
 
 func _sync_image_status():
 	image_status_zoomed.have_metadata = have_metadata
