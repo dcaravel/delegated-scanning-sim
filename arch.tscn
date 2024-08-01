@@ -1053,6 +1053,8 @@ text = "v0.0.0"
 label_settings = SubResource("LabelSettings_2k1n6")
 vertical_alignment = 1
 
+[connection signal="gui_input" from="BottomPanelBG" to="." method="_on_bottom_panel_bg_gui_input"]
+[connection signal="gui_input" from="TopPanelBG" to="." method="_on_top_panel_bg_gui_input"]
 [connection signal="item_selected" from="DelegatedScanningConfig/DefaultClusterOption" to="." method="_on_default_cluster_option_item_selected"]
 [connection signal="config_updated" from="DelegatedScanningConfig/dev" to="." method="_on_dev_config_updated"]
 [connection signal="config_updated" from="DelegatedScanningConfig/prod" to="." method="_on_prod_config_updated"]
@@ -1060,6 +1062,7 @@ vertical_alignment = 1
 [connection signal="toggled" from="EnabledForRadios/NoneRadio" to="." method="_on_none_radio_toggled"]
 [connection signal="toggled" from="EnabledForRadios/AllRegistriesRadio" to="." method="_on_all_registries_radio_toggled"]
 [connection signal="toggled" from="EnabledForRadios/SpecificRegistriesRadio" to="." method="_on_specific_registries_radio_toggled"]
+[connection signal="gui_input" from="LogPanel" to="." method="_on_log_panel_gui_input"]
 [connection signal="pressed" from="FlowControls/ResetButton" to="." method="_on_reset_button_pressed"]
 [connection signal="pressed" from="FlowControls/PausePlayButton" to="." method="_on_pause_play_button_pressed"]
 [connection signal="pressed" from="FlowControls/BackStepButton" to="." method="_on_back_step_button_pressed"]

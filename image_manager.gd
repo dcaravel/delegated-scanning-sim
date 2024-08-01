@@ -79,3 +79,9 @@ func _on_image_name_edit_text_submitted(new_text):
 	Config.add_image(new_text)
 	image_name_edit.text=""
 	image_name_edit.release_focus()
+
+func _on_image_name_edit_focus_entered():
+	Config.pause_global_num_key_input_processing()
+
+func _on_image_name_edit_focus_exited():
+	Config.unpause_global_num_key_input_processing()

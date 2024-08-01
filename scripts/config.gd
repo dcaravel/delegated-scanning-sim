@@ -73,6 +73,11 @@ func get_images() -> Array[String]:
 	return _images
 
 func add_image(p_image:String):
+	p_image = p_image.strip_edges()
+	
+	if p_image.is_empty():
+		return
+		
 	if has_image(p_image):
 		return
 		
@@ -147,17 +152,35 @@ func reset_cluster_clicked() -> void:
 #########################
 
 var keyToAction = {
-	KEY_1: Callable(self, "set_active_image").bind(0),
-	KEY_2: Callable(self, "set_active_image").bind(1),
-	KEY_3: Callable(self, "set_active_image").bind(2),
-	KEY_4: Callable(self, "set_active_image").bind(3),
-	KEY_5: Callable(self, "set_active_image").bind(4),
-	KEY_6: Callable(self, "set_active_image").bind(5),
-	KEY_7: Callable(self, "set_active_image").bind(6),
-	KEY_8: Callable(self, "set_active_image").bind(7),
-	KEY_9: Callable(self, "set_active_image").bind(8),
+	KEY_1: Callable(self, "_handleNumKey").bind(0),
+	KEY_2: Callable(self, "_handleNumKey").bind(1),
+	KEY_3: Callable(self, "_handleNumKey").bind(2),
+	KEY_4: Callable(self, "_handleNumKey").bind(3),
+	KEY_5: Callable(self, "_handleNumKey").bind(4),
+	KEY_6: Callable(self, "_handleNumKey").bind(5),
+	KEY_7: Callable(self, "_handleNumKey").bind(6),
+	KEY_8: Callable(self, "_handleNumKey").bind(7),
+	KEY_9: Callable(self, "_handleNumKey").bind(8),
 }
+
+var _key_input_paused:bool = false
+
+func pause_global_num_key_input_processing() -> void:
+	_key_input_paused = true
+
+func unpause_global_num_key_input_processing() -> void:
+	_key_input_paused = false
+
+func _handleNumKey(p_num:int) -> void:
+	if !_key_input_paused:
+		set_active_image(p_num)
 
 func _input(event:InputEvent):
 	if event is InputEventKey and event.pressed and keyToAction.has(event.keycode):
 		keyToAction[event.keycode].call()
+
+func clear_focus(v:Viewport) -> void:
+	var c = v.gui_get_focus_owner()
+	if c == null:
+		return
+	c.release_focus()

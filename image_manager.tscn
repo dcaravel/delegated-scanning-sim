@@ -49,5 +49,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_constants/separation = 0
 
+[connection signal="focus_entered" from="VBoxContainer/HBoxContainer/ImageNameEdit" to="." method="_on_image_name_edit_focus_entered"]
+[connection signal="focus_exited" from="VBoxContainer/HBoxContainer/ImageNameEdit" to="." method="_on_image_name_edit_focus_exited"]
 [connection signal="text_submitted" from="VBoxContainer/HBoxContainer/ImageNameEdit" to="." method="_on_image_name_edit_text_submitted"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/AddImageButton" to="." method="_on_add_image_button_pressed"]

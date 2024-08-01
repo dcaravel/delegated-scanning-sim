@@ -132,7 +132,7 @@ func _ready():
 	version_label.text = "v" + get_text_file_content(version_txt_path)
 	# The enum and list of clusters must be the same, otherwise the dropdowns will not match the output
 	assert(Global.CLUSTER.size() == Global.CLUSTERS.size())
-	
+
 	SignalManager.log_entry_popped.connect(_on_log_entry_pop)
 	SignalManager.log_cleared.connect(_on_log_clear)
 	SignalManager.deploy_to_cluster.connect(_on_deploy_to_cluster)
@@ -284,15 +284,7 @@ func _image_status() -> ImageStatusMini:
 func _process(delta):
 	_sync_image_status()
 	
-	if cur_path_segment_idx >= Config.active_path().size():
-		forward_step_button.disabled = true
-	else:
-		forward_step_button.disabled = false
-		
-	if !Config.moving():
-		pause_play_button.icon = play_icon
-		return
-	pause_play_button.icon = pause_icon
+	_update_button_states()
 
 	if cur_path_segment_idx >= Config.active_path().size():
 		Config.set_moving(false)
@@ -307,6 +299,29 @@ func _process(delta):
 		if pause_seg.walk(delta):
 			pausing = false
 			pause_seg.reset()
+
+func _update_button_states():
+	if cur_path_segment_idx >= Config.active_path().size():
+		forward_step_button.disabled = true
+	else:
+		forward_step_button.disabled = false
+	
+	if Config.active_path().size() > 0:
+		pause_play_button.disabled = false
+		
+		var seg = Config.active_path()[cur_path_segment_idx]
+		if cur_path_segment_idx == 0 && seg.progress() == 0:
+			back_step_button.disabled = true
+		else:
+			back_step_button.disabled = false
+	else:
+		back_step_button.disabled = true
+		pause_play_button.disabled = true
+			
+	if !Config.moving():
+		pause_play_button.icon = play_icon
+		return
+	pause_play_button.icon = pause_icon
 
 func _sync_image_status():
 	image_status_zoomed.have_metadata = have_metadata
@@ -873,16 +888,14 @@ func _on_back_step_button_pressed():
 	Config.set_moving(false)
 	if cur_path_segment_idx >= Config.active_path().size():
 		cur_path_segment_idx = Config.active_path().size()-1
-	var seg:PathSegment
-	var progress:float
-	
+
 	if Config.active_path().size() == 0:
 		return
-		
-	seg = Config.active_path()[cur_path_segment_idx]
-	progress = seg.progress()
 	
+	var seg:PathSegment		
+	seg = Config.active_path()[cur_path_segment_idx]
 	seg.reset()
+
 	if cur_path_segment_idx >= 1:
 		cur_path_segment_idx -= 1
 		
@@ -923,3 +936,16 @@ func _on_pause_play_button_pressed():
 #func _on_save_test_code_edit_text_changed():
 	#var file:FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	#file.store_string(save_test_code_edit.text)
+
+func _handle_background_input_event(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == 1: # left click
+		Config.clear_focus(get_viewport())
+		
+func _on_bottom_panel_bg_gui_input(event):
+	_handle_background_input_event(event)
+
+func _on_top_panel_bg_gui_input(event):
+	_handle_background_input_event(event)
+
+func _on_log_panel_gui_input(event):
+	_handle_background_input_event(event)
