@@ -7,6 +7,7 @@ const metadata_pill_scene = preload("res://pills/metadata_pill_sm.tscn")
 const indexreport_pill_scene = preload("res://pills/index_report_pill_sm.tscn")
 const vulnreport_pill_scene = preload("res://pills/vuln_report_pill_sm.tscn")
 const sig_pill_scene = preload("res://pills/signatures_pill_sm.tscn")
+const sig_verify_pill_scene = preload("res://pills/signature_verification_pill_sm.tscn")
 const error_scene = preload("res://error_popup.tscn")
 const image_status_mini = preload("res://ImageStatusMini.tscn")
 
@@ -24,15 +25,17 @@ const pill_scenes:Array = [
 	indexreport_pill_scene,
 	vulnreport_pill_scene,
 	sig_pill_scene,
+	sig_verify_pill_scene
 ]
 
-enum {MD,IR,VR,SIG}
+enum {MD,IR,VR,SIG,SIGV}
 enum ENABLED_FOR {NONE, ALL, SPECIFIC}
 
 @export var have_metadata:bool = false
 @export var have_index_report:bool = false
 @export var have_vuln_report:bool = false
 @export var have_signatures:bool = false
+@export var have_sigverification:bool = false
 @export var have_error:bool = false
 
 var cur_path_segment_idx=0
@@ -193,6 +196,7 @@ func _reset(soft:bool=false):
 	have_index_report = false
 	have_vuln_report = false
 	have_signatures = false
+	have_sigverification = false
 	have_error = false
 	
 	for segment in Config.active_path():
@@ -243,8 +247,12 @@ func _pill(idx:int):
 	var c = pill_scenes[idx].instantiate()
 	pill.add_child(c)
 	c.active=true
-	c.scale = Vector2(0.5, 0.5)
-	c.position = Vector2(-12, -6)
+	if idx == IR or idx == VR:
+		c.scale = Vector2(0.3, 0.5)
+		c.position = Vector2(-7, -6)
+	else:
+		c.scale = Vector2(0.5, 0.5)
+		c.position = Vector2(-12, -6)
 	c.z_index = MAX_ZINDEX
 	return pill
 
@@ -274,6 +282,7 @@ func _image_status() -> ImageStatusMini:
 	dupe.have_index_report = have_index_report
 	dupe.have_vuln_report = have_vuln_report
 	dupe.have_signatures = have_signatures
+	dupe.have_sigverification = have_sigverification
 	dupe.have_error = have_error
 	
 	dupe.position = Vector2(-13, -21)
@@ -334,6 +343,7 @@ func _sync_image_status():
 	image_status_zoomed.have_index_report = have_index_report
 	image_status_zoomed.have_vuln_report = have_vuln_report
 	image_status_zoomed.have_signatures = have_signatures
+	image_status_zoomed.have_sigverification = have_sigverification
 	image_status_zoomed.have_error = have_error
 
 
@@ -474,7 +484,10 @@ func _D() -> Array[PathSegment]:
 		central_scan_cloud_sc.c("a8"),
 		central_scan_cloud_sc.c("a9").micon(_midIconCBC("Get image signature from registry"), 30),
 		central_scan_cloud_sc.c("a9").reverse().sicon(_pillC(SIG)).wicon(_pillC(SIG)).eicon(_pillC(SIG)).onevent(_signatureCB).trail(false),
-		central_scan_cloud_sc.c("a10").eicon(_dot),
+		central_scan_cloud_sc.c("a10"),
+		central_scan_cloud_sc.c("a10_1").eicon(_pillC(SIGV)).micon(_midIconCBC("Verify image signatures"), 20),
+		central_scan_cloud_sc.c("a10_1").reverse().eicon(_pillC(SIGV)).onevent(_signatureVerificationCB).trail(false),
+		central_scan_cloud_sc.c("a10_2"),
 		central_scan_cloud_sc.c("a11").wicon(_image_status).eicon(_image_status).micon(_midIconCBC("Store final image in DB"), 20),
 		central_scan_cloud_sc.c("a11").reverse().trail(false),
 		central_scan_cloud_sc.c("a12").wicon(_image_status).eicon(_dot),
@@ -603,6 +616,9 @@ func _N() -> Array[PathSegment]:
 		central_match_sc.c("a2").eicon(_pillC(VR)).micon(_midIconCBC("Get vuln report from matcher"), 30),
 		central_match_sc.c("a2").reverse().wicon(_pillC(VR)).eicon(_pillC(VR)).onevent(_vulnReportCB).trail(false),
 		central_match_sc.c("a3"),
+		central_match_sc.c("a3_1").eicon(_pillC(SIGV)).micon(_midIconCBC("Verify image signatures"), 20),
+		central_match_sc.c("a3_1").reverse().eicon(_pillC(SIGV)).onevent(_signatureVerificationCB).trail(false),
+		central_match_sc.c("a3_2"),
 		central_match_sc.c("a4").sicon(_dot).wicon(_image_status).eicon(_image_status).micon(_midIconCBC("Store final image in DB"), 20),
 		central_match_sc.c("a5").wicon(_dot).eicon(_dot),
 	]
@@ -780,6 +796,13 @@ func _signatureCB(p_event:Global.Event):
 		Global.Event.RESET:
 			have_signatures = false
 
+func _signatureVerificationCB(p_event:Global.Event):
+	match p_event:
+		Global.Event.END:
+			have_sigverification = true
+		Global.Event.RESET:
+			have_sigverification = false
+			
 func _errorStatusCB(p_event:Global.Event):
 	match p_event:
 		Global.Event.END:

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://eisvelgj1tgw"]
+
+[ext_resource type="StyleBox" uid="uid://b1yy7062uksaa" path="res://theme/panel/inactive.stylebox" id="1_jymah"]
+[ext_resource type="Script" path="res://pills/signature_verification_pill_sm.gd" id="2_vmiig"]
+
+[node name="SignaturesPill" type="Label"]
+offset_left = -8.0
+offset_top = -4.0
+offset_right = 38.0
+offset_bottom = 19.0
+scale = Vector2(0.35, 0.35)
+theme_override_colors/font_color = Color(1, 1, 1, 0.117647)
+theme_override_styles/normal = ExtResource("1_jymah")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_vmiig")

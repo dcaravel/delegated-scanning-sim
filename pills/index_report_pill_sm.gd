@@ -4,7 +4,7 @@ class_name IndexReportPillSM
 @export var active:bool = false
 
 var inactive_color = Color("ffffff1e")
-var inactive_stylebox = preload("res://theme/panel/inactive.stylebox")
+var inactive_stylebox = preload("res://theme/panel/inactive_left.stylebox")
 var active_stylebox = preload("res://theme/panel/indexreport.stylebox")
 
 func _ready():

@@ -1,11 +1,11 @@
 extends Label
-class_name VulnReportPillSM
+class_name SignatureVerificationPillSM
 
 @export var active:bool = false
 
 var inactive_color = Color("ffffff1e")
-var inactive_stylebox = preload("res://theme/panel/inactive_right.stylebox")
-var active_stylebox = preload("res://theme/panel/vulnreport.stylebox")
+var inactive_stylebox = preload("res://theme/panel/inactive.stylebox")
+var active_stylebox = preload("res://theme/panel/signature_verification.stylebox")
 
 func _ready():
 	pass

@@ -1,4 +1,4 @@
-[gd_scene load_steps=98 format=3 uid="uid://1d30nevdx8ls"]
+[gd_scene load_steps=102 format=3 uid="uid://1d30nevdx8ls"]
 
 [ext_resource type="Script" path="res://arch.gd" id="1_p2u15"]
 [ext_resource type="PackedScene" uid="uid://bq8pyne1pxix3" path="res://cluster.tscn" id="2_70j8o"]
@@ -281,7 +281,19 @@ point_count = 2
 
 [sub_resource type="Curve2D" id="Curve2D_7r4vv"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 232, 248, 0, 0, 0, 0, 112, 248)
+"points": PackedVector2Array(0, 0, 0, 0, 232, 248, 0, 0, 0, 0, 168, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_eixuo"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 168, 248, 0, 0, 0, 0, 168, 208)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_5l8bi"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 168, 248, 0, 0, 0, 0, 112, 248)
 }
 point_count = 2
 
@@ -347,19 +359,31 @@ point_count = 2
 
 [sub_resource type="Curve2D" id="Curve2D_m8pmu"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 232, 248, 0, 0, 0, 0, 176, 248)
+"points": PackedVector2Array(0, 0, 0, 0, 232, 248, 0, 0, 0, 0, 184, 248)
 }
 point_count = 2
 
 [sub_resource type="Curve2D" id="Curve2D_h0b1x"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 176, 248, 0, 0, 0, 0, 176, 112)
+"points": PackedVector2Array(0, 0, 0, 0, 184, 248, 0, 0, 0, 0, 184, 112)
 }
 point_count = 2
 
 [sub_resource type="Curve2D" id="Curve2D_vsr3a"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 176, 248, 0, 0, 0, 0, 112, 248)
+"points": PackedVector2Array(0, 0, 0, 0, 184, 248, 0, 0, 0, 0, 144, 248)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_nbiat"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 144, 248, 0, 0, 0, 0, 144, 208)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_4f2q0"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 144, 248, 0, 0, 0, 0, 112, 248)
 }
 point_count = 2
 
@@ -644,9 +668,9 @@ vertical_alignment = 2
 
 [node name="ImageStatusZoomed" parent="." instance=ExtResource("8_6wjqu")]
 layout_mode = 0
-offset_left = 172.0
+offset_left = 160.0
 offset_top = 384.0
-offset_right = 292.0
+offset_right = 288.0
 offset_bottom = 544.0
 
 [node name="BigCloud" type="Node2D" parent="."]
@@ -920,7 +944,6 @@ curve = SubResource("Curve2D_167ag")
 curve = SubResource("Curve2D_lubov")
 
 [node name="central-match" type="Node2D" parent="Paths"]
-visible = false
 
 [node name="a1" type="Path2D" parent="Paths/central-match"]
 curve = SubResource("Curve2D_pce0t")
@@ -931,6 +954,12 @@ curve = SubResource("Curve2D_o0nub")
 [node name="a3" type="Path2D" parent="Paths/central-match"]
 curve = SubResource("Curve2D_7r4vv")
 
+[node name="a3_1" type="Path2D" parent="Paths/central-match"]
+curve = SubResource("Curve2D_eixuo")
+
+[node name="a3_2" type="Path2D" parent="Paths/central-match"]
+curve = SubResource("Curve2D_5l8bi")
+
 [node name="a4" type="Path2D" parent="Paths/central-match"]
 curve = SubResource("Curve2D_y71fi")
 
@@ -938,6 +967,7 @@ curve = SubResource("Curve2D_y71fi")
 curve = SubResource("Curve2D_k0oa5")
 
 [node name="central-scan" type="Node2D" parent="Paths"]
+visible = false
 
 [node name="a1" type="Path2D" parent="Paths/central-scan"]
 curve = SubResource("Curve2D_bpxek")
@@ -972,6 +1002,12 @@ curve = SubResource("Curve2D_h0b1x")
 [node name="a10" type="Path2D" parent="Paths/central-scan"]
 curve = SubResource("Curve2D_vsr3a")
 
+[node name="a10_1" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_nbiat")
+
+[node name="a10_2" type="Path2D" parent="Paths/central-scan"]
+curve = SubResource("Curve2D_4f2q0")
+
 [node name="a11" type="Path2D" parent="Paths/central-scan"]
 curve = SubResource("Curve2D_bhks4")
 
@@ -997,6 +1033,7 @@ curve = SubResource("Curve2D_abe5l")
 curve = SubResource("Curve2D_ada67")
 
 [node name="central-roxctl-start" type="Node2D" parent="Paths"]
+visible = false
 
 [node name="a1" type="Path2D" parent="Paths/central-roxctl-start"]
 curve = SubResource("Curve2D_tgqcy")

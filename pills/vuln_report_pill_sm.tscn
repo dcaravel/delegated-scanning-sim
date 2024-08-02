@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://brrp6iv8mh8q3"]
 
-[ext_resource type="StyleBox" uid="uid://b1yy7062uksaa" path="res://theme/panel/inactive.stylebox" id="1_5ifp1"]
+[ext_resource type="StyleBox" uid="uid://brmlfug4q4g0c" path="res://theme/panel/inactive_right.stylebox" id="1_sxrqu"]
 [ext_resource type="Script" path="res://pills/vuln_report_pill_sm.gd" id="2_ha632"]
 
 [node name="VulnReportPill" type="Label"]
@@ -10,7 +10,7 @@ offset_right = 38.0
 offset_bottom = 19.0
 scale = Vector2(0.35, 0.35)
 theme_override_colors/font_color = Color(1, 1, 1, 0.117647)
-theme_override_styles/normal = ExtResource("1_5ifp1")
+theme_override_styles/normal = ExtResource("1_sxrqu")
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("2_ha632")
