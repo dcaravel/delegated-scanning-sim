@@ -50,7 +50,6 @@ func set_active_path(p_path:Array[PathSegment]) -> void:
 ## Images
 ##################
 var _images:Array[String] = [
-	"docker.io/library/nginx:1.25.0",
 	"quay.io/rhacs-eng/main:latest",
 	"prod.registry.io/hello/world:stable",
 	"dev.registry.io/repo/path:2.0",
