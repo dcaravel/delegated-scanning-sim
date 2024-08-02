@@ -501,7 +501,7 @@ offset_right = 713.0
 offset_bottom = 360.0
 cluster_name = "dev"
 cluster = 2
-registry_name = "dev.registry.io"
+registry_name = "dev.reg.local"
 
 [node name="OtherCluster" parent="." instance=ExtResource("2_70j8o")]
 offset_left = 448.0
@@ -560,7 +560,7 @@ text = "Cluster"
 offset_left = 1.0
 offset_top = 128.0
 offset_bottom = 160.0
-registry_name = "dev.registry.io"
+registry_name = "dev.reg.local"
 
 [node name="prod" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
 offset_left = 1.0

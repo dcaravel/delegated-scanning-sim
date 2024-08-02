@@ -35,12 +35,6 @@ enum ENABLED_FOR {NONE, ALL, SPECIFIC}
 @export var have_signatures:bool = false
 @export var have_error:bool = false
 
-# maps a cluster index (key) to the names of all the cluster local registries (val)
-var cluster_registries = {
-	0: ["prod.registry.io"],
-	1: ["dev.registry.io"],
-}
-
 var cur_path_segment_idx=0
 
 var enabled_for:ENABLED_FOR
@@ -120,7 +114,13 @@ var done_ready:bool = false
 # any registries in this dict are cluster local, any others are assumed internet accessable
 @onready var local_registries_animates = {
 	"prod.registry.io": _prodAnimateCB,
-	"dev.registry.io": _devAnimateCB,
+	"dev.reg.local": _devAnimateCB,
+}
+
+# maps a cluster index (key) to the names of all the cluster local registries (val)
+var cluster_registries = {
+	0: ["prod.registry.io"],
+	1: ["dev.reg.local"],
 }
 
 func get_text_file_content(filePath):

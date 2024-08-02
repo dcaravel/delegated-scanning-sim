@@ -52,7 +52,7 @@ func set_active_path(p_path:Array[PathSegment]) -> void:
 var _images:Array[String] = [
 	"quay.io/rhacs-eng/main:latest",
 	"prod.registry.io/hello/world:stable",
-	"dev.registry.io/repo/path:2.0",
+	"dev.reg.local/repo/path:2.0",
 ]
 var _max_images_size = 5
 var _default_active_image = 0
