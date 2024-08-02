@@ -31,12 +31,12 @@ const pill_scenes:Array = [
 enum {MD,IR,VR,SIG,SIGV}
 enum ENABLED_FOR {NONE, ALL, SPECIFIC}
 
-@export var have_metadata:bool = false
-@export var have_index_report:bool = false
-@export var have_vuln_report:bool = false
-@export var have_signatures:bool = false
-@export var have_sigverification:bool = false
-@export var have_error:bool = false
+var have_metadata:bool = false
+var have_index_report:bool = false
+var have_vuln_report:bool = false
+var have_signatures:bool = false
+var have_sigverification:bool = false
+var have_error:bool = false
 
 var cur_path_segment_idx=0
 
@@ -339,13 +339,12 @@ func _update_button_states():
 		pause_play_button.icon = pause_icon
 
 func _sync_image_status():
-	image_status_zoomed.have_metadata = have_metadata
-	image_status_zoomed.have_index_report = have_index_report
-	image_status_zoomed.have_vuln_report = have_vuln_report
-	image_status_zoomed.have_signatures = have_signatures
-	image_status_zoomed.have_sigverification = have_sigverification
-	image_status_zoomed.have_error = have_error
-
+	image_status_zoomed.have_metadata(have_metadata)
+	image_status_zoomed.have_index_report(have_index_report)
+	image_status_zoomed.have_vuln_report(have_vuln_report)
+	image_status_zoomed.have_signatures(have_signatures)
+	image_status_zoomed.have_sigverification(have_sigverification)
+	image_status_zoomed.have_error(have_error)
 
 func _sync_enabled_for_radio():
 	var group:ButtonGroup = none_radio.button_group

@@ -1,13 +1,11 @@
-@tool
 extends Control
 
-
-@export var have_metadata:bool = false
-@export var have_index_report:bool = false
-@export var have_vuln_report:bool = false
-@export var have_signatures:bool = false
-@export var have_sigverification:bool = false
-@export var have_error:bool = false
+@export var _have_metadata:bool = false
+@export var _have_index_report:bool = false
+@export var _have_vuln_report:bool = false
+@export var _have_signatures:bool = false
+@export var _have_sigverification:bool = false
+@export var _have_error:bool = false
 
 var inactive_color = Color("ffffff1e")
 var inactive_stylebox = preload("res://theme/panel/inactive.stylebox")
@@ -25,30 +23,90 @@ var signature_verification_stylebox = preload("res://theme/panel/signature_verif
 @onready var vuln_report_pill = $VulnReportPill
 @onready var signatures_pill = $SignaturesPill
 @onready var signature_verification_pill = $SignatureVerificationPill
+@onready var animation_player = $AnimationPlayer
+@onready var scan_label = $ScanLabel
 
+enum STATE {IDLE, ANIMATING}
+var state:STATE = STATE.IDLE
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	error_label.visible = have_error
+func _sync_state():
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	metadata_pill.add_theme_stylebox_override("normal", metadata_stylebox if have_metadata else inactive_stylebox)
-	index_report_pill.add_theme_stylebox_override("normal", index_report_stylebox if have_index_report else inactive_left_stylebox)
-	vuln_report_pill.add_theme_stylebox_override("normal",  vuln_report_stylebox if have_vuln_report else inactive_right_stylebox)
-	signatures_pill.add_theme_stylebox_override("normal",  signatures_stylebox if have_signatures else inactive_stylebox)
-	signature_verification_pill.add_theme_stylebox_override("normal",  signature_verification_stylebox if have_sigverification else inactive_stylebox)
-	error_label.visible = have_error
+	metadata_pill.add_theme_stylebox_override("normal", metadata_stylebox if _have_metadata else inactive_stylebox)
+	_update_font(metadata_pill, _have_metadata)
+	signatures_pill.add_theme_stylebox_override("normal",  signatures_stylebox if _have_signatures else inactive_stylebox)
+	_update_font(signatures_pill, _have_signatures)
+	signature_verification_pill.add_theme_stylebox_override("normal",  signature_verification_stylebox if _have_sigverification else inactive_stylebox)
+	_update_font(signature_verification_pill, _have_sigverification)
+	error_label.visible = _have_error
 	
-	_update_font(metadata_pill, have_metadata)
-	_update_font(index_report_pill, have_index_report)
-	_update_font(vuln_report_pill, have_vuln_report)
-	_update_font(signatures_pill, have_signatures)
-	_update_font(signature_verification_pill, have_sigverification)
+	if state == STATE.IDLE:
+		index_report_pill.add_theme_stylebox_override("normal", index_report_stylebox if _have_index_report else inactive_left_stylebox)
+		_update_font(index_report_pill, _have_index_report)
+		vuln_report_pill.add_theme_stylebox_override("normal",  vuln_report_stylebox if _have_vuln_report else inactive_right_stylebox)
+		_update_font(vuln_report_pill, _have_vuln_report)
+	
+func have_metadata(val:bool=true):
+	if val == _have_metadata:
+		return
+	_have_metadata = val
+	_sync_state()
 
+
+func have_index_report(val:bool=true):
+	if val == _have_index_report:
+		return
+	_have_index_report = val
+	_sync_state()
+
+
+func have_vuln_report(val:bool=true):
+	if val == _have_vuln_report:
+		return
+	_have_vuln_report = val
+	
+	if val == true && state == STATE.IDLE:
+		_sync_state()
+		state = STATE.ANIMATING
+		animation_player.play("doscan")
+		return
+	
+	if val == false:
+		animation_player.stop()
+		state = STATE.IDLE
+	
+	_sync_state()
+
+func have_signatures(val:bool=true):
+	if val == _have_signatures:
+		return
+	_have_signatures = val
+	_sync_state()
+
+	
+func have_sigverification(val:bool=true):
+	if val == _have_sigverification:
+		return
+	_have_sigverification = val
+	_sync_state()
+
+	
+func have_error(val:bool=true):
+	if val == _have_error:
+		return
+	_sync_state()	
+	_have_error = val
+
+func _ready():
+	_sync_state()
+	#_on_animation_player_animation_finished("doscan")
+	
 
 func _update_font(control, cond):
 	if cond:
 		control.remove_theme_color_override("font_color")
 	else:
 		control.add_theme_color_override("font_color", inactive_color)
+
+func _on_animation_player_animation_finished(anim_name):
+	#state = STATE.DONE
+	pass

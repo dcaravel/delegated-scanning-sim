@@ -1,12 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://dqsf4fb6s5p2m"]
+[gd_scene load_steps=13 format=3 uid="uid://dqsf4fb6s5p2m"]
 
 [ext_resource type="StyleBox" uid="uid://j1dsq6iyrr2h" path="res://theme/panel/scan.stylebox" id="1_sa2iu"]
 [ext_resource type="Script" path="res://ImageStatusZoom.gd" id="2_54lgo"]
 [ext_resource type="StyleBox" uid="uid://ca4mq5i8xaj1i" path="res://theme/panel/metadata.stylebox" id="3_b12e2"]
-[ext_resource type="StyleBox" uid="uid://b1yy7062uksaa" path="res://theme/panel/inactive.stylebox" id="3_gf2g1"]
 [ext_resource type="StyleBox" uid="uid://cqjwpx3hk0wp8" path="res://theme/panel/indexreport.stylebox" id="4_howrh"]
 [ext_resource type="StyleBox" uid="uid://dlbnycmu74gxr" path="res://theme/panel/vulnreport.stylebox" id="5_lc00w"]
 [ext_resource type="StyleBox" uid="uid://dxoses2v37e82" path="res://theme/panel/signatures.stylebox" id="6_88dd2"]
+[ext_resource type="StyleBox" uid="uid://cvjqv56xr3eo2" path="res://theme/panel/signature_verification.stylebox" id="7_6rdl0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q3dwx"]
 content_margin_left = 8.0
@@ -24,16 +24,69 @@ font_size = 20
 [sub_resource type="LabelSettings" id="LabelSettings_4jr3e"]
 font_size = 12
 
+[sub_resource type="Animation" id="Animation_uwpqv"]
+resource_name = "doscan"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:theme_override_colors/font_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../VulnReportPill:theme_override_colors/font_color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../ScanLabel:theme_override_colors/font_color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5, 1.2, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../ScanLabel:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.5, 1.2, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(2, 2), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0t3et"]
+_data = {
+"doscan": SubResource("Animation_uwpqv")
+}
+
 [node name="ImageStatusZoom" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 128.0
 offset_bottom = 160.0
 script = ExtResource("2_54lgo")
-have_metadata = true
-have_index_report = true
-have_vuln_report = true
-have_signatures = true
 
 [node name="BG" type="Panel" parent="."]
 layout_mode = 0
@@ -58,6 +111,7 @@ offset_left = 8.0
 offset_top = 40.0
 offset_right = 64.0
 offset_bottom = 63.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = ExtResource("4_howrh")
 text = "index"
 horizontal_alignment = 1
@@ -69,6 +123,7 @@ offset_left = 64.0
 offset_top = 40.0
 offset_right = 120.0
 offset_bottom = 63.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = ExtResource("5_lc00w")
 text = "match"
 horizontal_alignment = 1
@@ -91,10 +146,9 @@ offset_left = 8.0
 offset_top = 104.0
 offset_right = 120.0
 offset_bottom = 127.0
-theme_override_colors/font_color = Color(1, 1, 1, 0.117647)
-theme_override_font_sizes/font_size = 14
-theme_override_styles/normal = ExtResource("3_gf2g1")
-text = "sig verifcation"
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = ExtResource("7_6rdl0")
+text = "sig verification"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -122,12 +176,21 @@ label_settings = SubResource("LabelSettings_4jr3e")
 horizontal_alignment = 1
 
 [node name="ScanLabel" type="Label" parent="."]
-visible = false
 layout_mode = 0
-offset_left = 16.0
+offset_left = 18.0
 offset_top = 40.0
-offset_right = 112.0
+offset_right = 114.0
 offset_bottom = 63.0
+pivot_offset = Vector2(48, 15.595)
+theme_override_colors/font_color = Color(1, 1, 1, 0)
 text = "scan"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../IndexReportPill")
+libraries = {
+"": SubResource("AnimationLibrary_0t3et")
+}
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
