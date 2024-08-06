@@ -93,8 +93,8 @@ func have_sigverification(val:bool=true):
 func have_error(val:bool=true):
 	if val == _have_error:
 		return
-	_sync_state()	
 	_have_error = val
+	_sync_state()	
 
 func _ready():
 	_sync_state()
