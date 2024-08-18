@@ -1,0 +1,289 @@
+[gd_scene load_steps=21 format=3 uid="uid://bt603wobpgicy"]
+
+[ext_resource type="Script" path="res://delegated_scanning_config.gd" id="1_1gc8w"]
+[ext_resource type="ButtonGroup" uid="uid://cwfa668wfgd5l" path="res://theme/dele_config_radio_button_group.tres" id="2_3y2a1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3uyhb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fs0i5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_inmen"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nw544"]
+bg_color = Color(0.156863, 0.168627, 0.196078, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5kqnh"]
+bg_color = Color(0.156863, 0.168627, 0.196078, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0be5b"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_avmrl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_x1jer"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k7a8l"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wwhau"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7dja1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wg2ll"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6tiyp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xxbpi"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vtli4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7mfjj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dyt5t"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_whylg"]
+line_spacing = -1.0
+font_size = 11
+font_color = Color(0.762404, 0.762403, 0.762404, 1)
+
+[node name="DelegatedScanningConfig" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 512.0
+offset_bottom = 232.0
+script = ExtResource("1_1gc8w")
+
+[node name="EnabledForRadios" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 511.0
+offset_bottom = 32.0
+
+[node name="ColorRect" type="ColorRect" parent="EnabledForRadios"]
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 32.0
+color = Color(0.156863, 0.168627, 0.196078, 1)
+
+[node name="NoneRadio" type="CheckBox" parent="EnabledForRadios"]
+layout_mode = 0
+offset_left = 151.0
+offset_top = 3.0
+offset_right = 222.0
+offset_bottom = 28.0
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_3uyhb")
+button_pressed = true
+button_group = ExtResource("2_3y2a1")
+text = "None"
+
+[node name="AllRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
+layout_mode = 0
+offset_left = 222.0
+offset_top = 3.0
+offset_right = 334.0
+offset_bottom = 28.0
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fs0i5")
+button_group = ExtResource("2_3y2a1")
+text = "All registries"
+
+[node name="SpecificRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
+layout_mode = 0
+offset_left = 334.0
+offset_top = 3.0
+offset_right = 478.0
+offset_bottom = 28.0
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_inmen")
+button_group = ExtResource("2_3y2a1")
+text = "Specific registries"
+
+[node name="DelegateScanningForLabel" type="Label" parent="EnabledForRadios"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 144.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 12
+text = "Delegate scanning for"
+
+[node name="DefaultClusterControl" type="Panel" parent="."]
+layout_mode = 0
+offset_top = 34.0
+offset_right = 512.0
+offset_bottom = 88.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_nw544")
+
+[node name="SelectDefaultClusterLabel" type="Label" parent="DefaultClusterControl"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 2.0
+offset_right = 214.0
+offset_bottom = 19.0
+theme_override_font_sizes/font_size = 12
+text = "Select default cluster to delegate to"
+
+[node name="DefaultClusterOption" type="OptionButton" parent="DefaultClusterControl"]
+layout_mode = 2
+offset_left = 8.0
+offset_top = 22.0
+offset_right = 152.0
+offset_bottom = 46.0
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_3uyhb")
+
+[node name="Label" type="Label" parent="DefaultClusterControl"]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 24.0
+offset_right = 512.0
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(0.707967, 0.707967, 0.707967, 1)
+theme_override_font_sizes/font_size = 10
+text = "Select cluster to process CLI and API-originated scanning requests"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="RegistriesBox" type="Panel" parent="."]
+layout_mode = 0
+offset_top = 90.0
+offset_right = 512.0
+offset_bottom = 232.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5kqnh")
+
+[node name="RegistriesHeader" type="Control" parent="RegistriesBox"]
+anchors_preset = 0
+offset_right = 512.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="RegistryLabel" type="Label" parent="RegistriesBox/RegistriesHeader"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 2.0
+offset_right = 296.0
+offset_bottom = 18.0
+theme_override_font_sizes/font_size = 12
+text = "Source registry"
+
+[node name="ClusterIDLabel" type="Label" parent="RegistriesBox/RegistriesHeader"]
+layout_mode = 0
+offset_left = 288.0
+offset_top = 2.0
+offset_right = 478.0
+offset_bottom = 19.0
+theme_override_font_sizes/font_size = 12
+text = "Destination cluster (CLI/API only)"
+
+[node name="Registries" type="VBoxContainer" parent="RegistriesBox"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 22.0
+offset_right = 504.0
+offset_bottom = 118.0
+
+[node name="AddRegistryButton" type="Button" parent="RegistriesBox"]
+custom_minimum_size = Vector2(0, 17)
+layout_mode = 0
+offset_left = 16.0
+offset_top = 118.0
+offset_right = 97.0
+offset_bottom = 135.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.194556, 0.536973, 0.823811, 1)
+theme_override_font_sizes/font_size = 10
+theme_override_styles/focus = SubResource("StyleBoxEmpty_0be5b")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_avmrl")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_x1jer")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_k7a8l")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_wwhau")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_7dja1")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_wg2ll")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_6tiyp")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_xxbpi")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_vtli4")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_7mfjj")
+text = "+ Add registry"
+alignment = 2
+
+[node name="AddRegistryBox" type="ColorRect" parent="."]
+visible = false
+layout_mode = 0
+offset_top = 90.0
+offset_right = 512.0
+offset_bottom = 232.0
+color = Color(0.156863, 0.168627, 0.196078, 1)
+
+[node name="AddRegistryButton" type="Button" parent="AddRegistryBox"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -64.0
+offset_top = 110.0
+offset_right = 64.0
+offset_bottom = 135.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_dyt5t")
+text = "Add registry"
+
+[node name="NoRegistriesHeader" type="Label" parent="AddRegistryBox"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -248.0
+offset_top = 8.0
+offset_right = 248.0
+offset_bottom = 32.0
+grow_horizontal = 2
+text = "No registries specified."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AllRegistriesDesc" type="Label" parent="AddRegistryBox"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -248.0
+offset_top = 30.0
+offset_right = 248.0
+offset_bottom = 110.0
+grow_horizontal = 2
+text = "All Sensor observed images will be scanned within the local Secured Cluster.
+
+CLI and API-originated scans will be delegated to the selected default cluster. You can override this for specific registries."
+label_settings = SubResource("LabelSettings_whylg")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SpecificRegistriesDesc" type="Label" parent="AddRegistryBox"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -248.0
+offset_top = 30.0
+offset_right = 248.0
+offset_bottom = 110.0
+grow_horizontal = 2
+text = "Sensor observed images from the specified registries will be scanned within the local Secured Cluster. Central Services will scan images from the non-specified registries.
+
+CLI and API-originated image scans will be delegated to the selected cluster from the specified registries. Central Services will scan images from the non-specified registries."
+label_settings = SubResource("LabelSettings_whylg")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[connection signal="gui_input" from="EnabledForRadios/ColorRect" to="." method="_on_color_rect_gui_input"]
+[connection signal="pressed" from="EnabledForRadios/NoneRadio" to="." method="_on_none_radio_pressed"]
+[connection signal="pressed" from="EnabledForRadios/AllRegistriesRadio" to="." method="_on_all_registries_radio_pressed"]
+[connection signal="pressed" from="EnabledForRadios/SpecificRegistriesRadio" to="." method="_on_specific_registries_radio_pressed"]
+[connection signal="gui_input" from="DefaultClusterControl" to="." method="_on_default_cluster_control_gui_input"]
+[connection signal="item_selected" from="DefaultClusterControl/DefaultClusterOption" to="." method="_on_default_cluster_option_item_selected"]
+[connection signal="gui_input" from="RegistriesBox" to="." method="_on_registries_box_gui_input"]
+[connection signal="pressed" from="RegistriesBox/AddRegistryButton" to="." method="_on_add_registry_button_pressed"]
+[connection signal="gui_input" from="AddRegistryBox" to="." method="_on_add_registry_box_gui_input"]
+[connection signal="pressed" from="AddRegistryBox/AddRegistryButton" to="." method="_on_add_registry_button_pressed"]

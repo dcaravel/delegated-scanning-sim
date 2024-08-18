@@ -1,5 +1,9 @@
 extends Node
 
+func _init():
+	SignalManager.dele_scan_update_enabled_for.connect(_on_enabled_for_updated)
+	SignalManager.dele_scan_update_default_cluster.connect(_on_default_cluster_updated)
+
 ##################
 ## Walking / Moving
 ##################
@@ -183,3 +187,131 @@ func clear_focus(v:Viewport) -> void:
 	if c == null:
 		return
 	c.release_focus()
+
+#########################
+## DelegatedScanningConfig
+#########################
+
+# The default cluster IDX that represents 'None' (if Central scan) or 'Default' (if sensor deploy) 
+var _delegated_scanning_config:DelegatedScanningConfig = DelegatedScanningConfig.new()
+
+func get_delegated_scanning_config() -> DelegatedScanningConfig:
+	return _delegated_scanning_config
+
+func _on_enabled_for_updated(p_enabled_for:Global.ENABLED_FOR):
+	_delegated_scanning_config.set_enabled_for(p_enabled_for)
+	SignalManager.dele_scan_config_updated.emit()
+
+func _on_default_cluster_updated(p_idx:int):
+	print("Default Cluster ID updated via signal: ", p_idx)
+	_delegated_scanning_config.set_default_cluster_idx(p_idx)
+	SignalManager.dele_scan_config_updated.emit()
+
+class DelegatedScanningConfig:
+	var _enabled_for:Global.ENABLED_FOR
+	var _registries:Array[Global.Registry]
+	var _default_cluster_idx:int
+
+	func _init():
+		_default_cluster_idx = -1
+	
+	func _is_valid_registry_idx(p_idx:int) -> bool:
+		if p_idx < 0:
+			return false
+			
+		if p_idx > _registries.size()-1:
+			return false
+			
+		return true
+	
+	func get_enabled_for() -> Global.ENABLED_FOR:
+		return _enabled_for
+	
+	func get_registries() -> Array[Global.Registry]:
+		return _registries
+	
+	func get_num_registries() -> int:
+		return _registries.size()
+	
+	func get_registry(p_idx:int) -> Global.Registry:
+		if !_is_valid_registry_idx(p_idx):
+			return null
+			
+		return _registries[p_idx]
+	
+	func get_default_cluster() -> int:
+		return _default_cluster_idx
+	
+	func set_default_cluster_idx(p_idx:int) -> void:
+		# TODO: add validation?
+		_default_cluster_idx = p_idx
+		SignalManager.dele_scan_config_updated.emit()
+
+	func set_enabled_for(p_enabled_for:Global.ENABLED_FOR) -> void:
+		_enabled_for = p_enabled_for
+		SignalManager.dele_scan_config_updated.emit()
+
+	func add_registry(p_path:String="", p_cluster_idx:int=Global.CENTRAL_CLUSTER_IDX) -> bool:
+		if _registries.size() == Global.MAX_DELE_CONFIG_REGISTRIES:
+			return false
+
+		_registries.append(Global.Registry.new(p_path, p_cluster_idx))
+		SignalManager.dele_scan_config_updated.emit()
+		return true
+
+	func update_registry(p_idx:int, p_path:String, p_cluster_idx:int=-1):
+		if !_is_valid_registry_idx(p_idx):
+			return null
+		
+		_registries[p_idx] = Global.Registry.new(p_path, p_cluster_idx)
+		SignalManager.dele_scan_config_updated.emit()
+
+
+	func delete_registry(p_idx:int) -> bool:
+		if p_idx < 0:
+			return false
+		
+		if p_idx >= get_num_registries():
+			return false
+
+		_registries.remove_at(p_idx)
+		SignalManager.dele_scan_config_updated.emit()
+		return true
+
+class ShouldDelegateResult:
+	var _should:bool
+	var _dst_cluster:int
+
+	func _init(p_should:bool, p_cluster_idx:int):
+		_should = p_should
+		_dst_cluster = p_cluster_idx
+	
+	func should_delegate() -> bool:
+		return _should
+	
+	func dst_cluster() -> int:
+		return _dst_cluster
+
+func should_delegate(p_image:String) -> ShouldDelegateResult:
+	var c:DelegatedScanningConfig = get_delegated_scanning_config()
+	var e_for:Global.ENABLED_FOR = c.get_enabled_for()
+
+	if e_for == Global.ENABLED_FOR.NONE:
+		return ShouldDelegateResult.new(false, -1)
+
+	if e_for == Global.ENABLED_FOR.ALL:
+		for reg:Global.Registry in c.get_registries():
+			if reg.match(p_image):
+				var cluster_idx = c.get_default_cluster() if reg.get_cluster_idx() == Global.CENTRAL_CLUSTER_IDX else reg.get_cluster_idx()
+				return ShouldDelegateResult.new(true, cluster_idx)
+		
+		return ShouldDelegateResult.new(true, c.get_default_cluster())
+	
+	if e_for == Global.ENABLED_FOR.SPECIFIC:
+		for reg:Global.Registry in c.get_registries():
+			if reg.match(p_image):
+				var cluster_idx = c.get_default_cluster() if reg.get_cluster_idx() == Global.CENTRAL_CLUSTER_IDX else reg.get_cluster_idx()
+				return ShouldDelegateResult.new(true, cluster_idx)
+	
+
+	return ShouldDelegateResult.new(false, -1)

@@ -59,6 +59,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_hdj36")
 button_pressed = true
 
 [node name="DisabledLabel" type="Label" parent="."]
+visible = false
 modulate = Color(1, 1, 1, 0.956863)
 layout_mode = 0
 offset_left = 44.0

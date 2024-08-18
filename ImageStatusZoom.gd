@@ -106,7 +106,3 @@ func _update_font(control, cond):
 		control.remove_theme_color_override("font_color")
 	else:
 		control.add_theme_color_override("font_color", inactive_color)
-
-func _on_animation_player_animation_finished(anim_name):
-	#state = STATE.DONE
-	pass

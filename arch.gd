@@ -18,7 +18,6 @@ const version_txt_path = "res://version.txt"
 
 const nil:Callable = Callable()
 const _PathSegment = preload("res://scripts/path_segment.gd")
-const CENTRAL_CLUSTER_IDX:int = -1
 
 const pill_scenes:Array = [
 	metadata_pill_scene,
@@ -29,7 +28,6 @@ const pill_scenes:Array = [
 ]
 
 enum {MD,IR,VR,SIG,SIGV}
-enum ENABLED_FOR {NONE, ALL, SPECIFIC}
 
 var have_metadata:bool = false
 var have_index_report:bool = false
@@ -40,7 +38,6 @@ var have_error:bool = false
 
 var cur_path_segment_idx=0
 
-var enabled_for:ENABLED_FOR
 var pause_seg:PathSegment
 var pausing:bool = false
 var pausing_enabled:bool = false
@@ -70,7 +67,6 @@ var done_ready:bool = false
 @onready var back_step_button = $FlowControls/BackStepButton
 @onready var pause_play_button = $FlowControls/PausePlayButton
 @onready var image_status_zoomed = $ImageStatusZoomed
-@onready var delegated_scanning_config = $DelegatedScanningConfig
 @onready var c_0_to_central = $"Paths/c0-to-central"
 @onready var central_to_c_0 = $"Paths/central-to-c0"
 @onready var c_1_to_central = $"Paths/c1-to-central"
@@ -86,15 +82,8 @@ var done_ready:bool = false
 @onready var central_roxctl_to_central_scan = $"Paths/central-roxctl-to-central-scan"
 @onready var central_delegate_error = $"Paths/central-delegate-error"
 @onready var central_roxctl_to_cluster = $"Paths/central-roxctl-to-cluster"
-@onready var none_radio = $EnabledForRadios/NoneRadio
-@onready var all_registries_radio = $EnabledForRadios/AllRegistriesRadio
-@onready var dev = $DelegatedScanningConfig/dev
-@onready var prod = $DelegatedScanningConfig/prod
-@onready var quay = $DelegatedScanningConfig/quay
-@onready var default_cluster_option = $DelegatedScanningConfig/DefaultClusterOption
 @onready var popup_menu = $PopupMenu
 @onready var version_label = $VersionLabel
-
 
 @onready var cluster_scenes = {
 	0: prod_cluster,
@@ -102,12 +91,16 @@ var done_ready:bool = false
 	2: other_cluster
 }
 
+# paths from a secured cluster to central cluster
+# TODO: make these dynamic and calculate the path
 @onready var to_cluster_paths = {
 	0: central_to_c_0,
 	1: central_to_c_1,
 	2: central_to_c_2,
 }
 
+# paths from a secured cluster to central cluster
+# TODO: make these dynamic and calculate the path
 @onready var to_central_paths = {
 	0: c_0_to_central,
 	1: c_1_to_central,
@@ -141,9 +134,6 @@ func _ready():
 	SignalManager.deploy_to_cluster.connect(_on_deploy_to_cluster)
 	SignalManager.context_menu.connect(_on_context_menu)
 	
-	for cluster:String in Global.CLUSTERS:
-		default_cluster_option.add_item(cluster)
-
 	var apPath:String = "Registry/AnimationPlayer"
 	animationPlayers = [
 		null,
@@ -181,7 +171,6 @@ func _ready():
 	
 	# Set the initial speed value to the slider set in the editor / scene
 	_on_speed_slider_value_changed(speed_slider.value)
-	_sync_enabled_for_radio()
 	#_on_save_test_code_edit_ready()
 	done_ready = true
 	_reset()
@@ -345,22 +334,6 @@ func _sync_image_status():
 	image_status_zoomed.have_signatures(have_signatures)
 	image_status_zoomed.have_sigverification(have_sigverification)
 	image_status_zoomed.have_error(have_error)
-
-func _sync_enabled_for_radio():
-	var group:ButtonGroup = none_radio.button_group
-	var button:CheckBox = group.get_pressed_button()
-	
-	if button == none_radio:
-		enabled_for = ENABLED_FOR.NONE
-		delegated_scanning_config.hide()
-	elif button == all_registries_radio:	
-		enabled_for = ENABLED_FOR.ALL
-		delegated_scanning_config.show()
-	else:
-		enabled_for = ENABLED_FOR.SPECIFIC
-		delegated_scanning_config.show()
-	
-	_config_updated()
 	
 class SegCreator:
 	var base:Node
@@ -396,43 +369,6 @@ class SegCreator:
 	func trail(p_trail:bool) -> SegCreator:
 		dtrail = p_trail
 		return self
-
-# Returns:
-# 0 = true if should delegate, false otherwise
-# 1 = cluster index to delegate to (for roxctl requests)
-# [<delegate>, <cluster>]
-func _should_delegate_to_cluster(image:String):
-	if enabled_for == ENABLED_FOR.NONE:
-		return [false, -1]
-	
-	# subtracting 1 so that "None" = -1, "prod" = 0, and so on
-	var def_cluster_idx = default_cluster_option.selected-1
-
-	var dele_config_regs_list = [dev, prod, quay]
-	var cluster_idx = def_cluster_idx
-	if enabled_for == ENABLED_FOR.ALL:
-		for reg in dele_config_regs_list:
-			if !reg.enabled:
-				continue # skip this list item if it isn't toggled on
-
-			var reg_path = reg.registry_name
-			if image.begins_with(reg_path):
-				cluster_idx = def_cluster_idx if reg.selection == 0 else reg.selection-1
-				return [true, cluster_idx]
-
-		return [true, cluster_idx]
-	
-	if enabled_for == ENABLED_FOR.SPECIFIC:
-		for reg in dele_config_regs_list:
-			if !reg.enabled:
-				continue  # skip this list item if it isn't toggled on
-
-			var reg_path = reg.registry_name
-			if image.begins_with(reg_path):
-				cluster_idx = def_cluster_idx if reg.selection == 0 else reg.selection-1
-				return [true, cluster_idx]
-		
-	return [false, -1]
 
 func _extract_registry(p_image:String) -> String:
 	return p_image.get_slice("/", 0)
@@ -639,17 +575,20 @@ func _Q() -> Array[PathSegment]:
 		central_to_central_start_sc.c("b1").wicon(_image_status).eicon(_image_status),
 	]
 
+# The cluster returned is used depending on context to obtain the approprate cluster paths
+# or the paths to route the from central to a secured cluster.
 func _get_dst_cluster() -> int:
-	var tmp = _should_delegate_to_cluster(Config.get_active_image())
-	var dst_cluster:int = tmp[1]
+	var r:Config.ShouldDelegateResult = Config.should_delegate(Config.get_active_image())
+
+	# If Central was clicked the dst cluster is what was returned.
 	if Config.get_cluster_clicked() == -1:
-		return dst_cluster
+		return r.dst_cluster()
 	
+	# If a secured cluster was clicked, then the destination is the cluster itself.
 	return Config.get_cluster_clicked()
 
 # See docs\research.md for meaning of A, B, C etc.
 func _build_path(p_path_num:int) -> Array[PathSegment]: 
-	# print("Path: ", p_path_num)
 	var path:Array[PathSegment] = []
 	match p_path_num:
 		1: # scan central cloud
@@ -720,42 +659,39 @@ func _build_path(p_path_num:int) -> Array[PathSegment]:
 	return path
 
 func _get_path(p_src_cluster_idx:int, p_image:String) -> Array[PathSegment]:
-	if p_src_cluster_idx == CENTRAL_CLUSTER_IDX:
+	if p_src_cluster_idx == Global.CENTRAL_CLUSTER_IDX:
 		return _get_path_central_start(p_image)
 	
 	return _get_path_cluster_start(p_src_cluster_idx, p_image)
 
 func _get_path_central_start(image:String) -> Array[PathSegment]:
-	var tmp = _should_delegate_to_cluster(image)
-	var should_delegate:bool = tmp[0]
-	var dst_cluster:int = tmp[1]
+	var r:Config.ShouldDelegateResult = Config.should_delegate(image)
 
 	var reg:String = _extract_registry(image)
 	var reg_internet_accessable:bool = !local_registries_animates.has(reg)
 
-	if !should_delegate:
+	if !r.should_delegate():
 		# 01 if reg_internet_accessable else 02
 		return _build_path(1) if reg_internet_accessable else _build_path(2)
 	
-	if dst_cluster == CENTRAL_CLUSTER_IDX:
+	if r.dst_cluster() == Global.CENTRAL_CLUSTER_IDX:
 		return _build_path(3)
 	
 	if reg_internet_accessable:
 		return _build_path(4)
 	
-	if cluster_registries.has(dst_cluster) && cluster_registries[dst_cluster].has(reg):
+	if cluster_registries.has(r.dst_cluster()) && cluster_registries[r.dst_cluster()].has(reg):
 		return _build_path(5)
 
 	return _build_path(6)
 
 func _get_path_cluster_start(p_src_cluster_idx:int, image:String) -> Array[PathSegment]:
-	var tmp = _should_delegate_to_cluster(image)
-	var should_delegate:bool = tmp[0]
+	var r:Config.ShouldDelegateResult = Config.should_delegate(image)
 	
 	var reg:String = _extract_registry(image)
 	var reg_internet_accessable:bool = !local_registries_animates.has(reg)
 
-	if !should_delegate:
+	if !r.should_delegate():
 		# 10 if reg_internet_accessable else 11
 		return _build_path(10) if reg_internet_accessable else _build_path(11)
 	
@@ -894,6 +830,9 @@ func _on_quay_config_updated():
 	_config_updated()
 
 func _on_default_cluster_option_item_selected(_index):
+	# -1 = none/default
+	# 0 = prod, ..., etc. so that the index will map to a cluster in the clusters array
+	SignalManager.dele_scan_update_default_cluster.emit(_index-1)
 	_config_updated()
 
 func _on_context_menu(_p_cluster:Global.CLUSTER):
@@ -904,13 +843,22 @@ func _on_context_menu(_p_cluster:Global.CLUSTER):
 	pass
 
 func _on_none_radio_toggled(_toggled_on):
-	_sync_enabled_for_radio()
+	if !_toggled_on:
+		return
+
+	SignalManager.dele_scan_update_enabled_for.emit(Global.ENABLED_FOR.NONE)
 
 func _on_all_registries_radio_toggled(_toggled_on):
-	_sync_enabled_for_radio()
-	
+	if !_toggled_on:
+		return
+
+	SignalManager.dele_scan_update_enabled_for.emit(Global.ENABLED_FOR.ALL)
+		
 func _on_specific_registries_radio_toggled(_toggled_on):
-	_sync_enabled_for_radio()
+	if !_toggled_on:
+		return
+
+	SignalManager.dele_scan_update_enabled_for.emit(Global.ENABLED_FOR.SPECIFIC)
 
 func _on_back_step_button_pressed():
 	Config.set_moving(false)

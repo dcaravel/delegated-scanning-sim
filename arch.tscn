@@ -1,8 +1,7 @@
-[gd_scene load_steps=102 format=3 uid="uid://1d30nevdx8ls"]
+[gd_scene load_steps=98 format=3 uid="uid://1d30nevdx8ls"]
 
 [ext_resource type="Script" path="res://arch.gd" id="1_p2u15"]
 [ext_resource type="PackedScene" uid="uid://bq8pyne1pxix3" path="res://cluster.tscn" id="2_70j8o"]
-[ext_resource type="PackedScene" uid="uid://dtl428geay23t" path="res://registry.tscn" id="3_pco5m"]
 [ext_resource type="PackedScene" uid="uid://dtq65a7gfvplv" path="res://central_services.tscn" id="3_srn5w"]
 [ext_resource type="PackedScene" uid="uid://by3lsour21dm4" path="res://image_manager.tscn" id="5_yp0xd"]
 [ext_resource type="PackedScene" uid="uid://dyxof76c6vcef" path="res://log_panel.tscn" id="7_1jrm4"]
@@ -13,15 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://d1f7errq8u5g8" path="res://assets/play-svgrepo-com-16x16.png" id="9_f2pe8"]
 [ext_resource type="Texture2D" uid="uid://dijl4n88jtnv6" path="res://assets/forward-step-svgrepo-com.png" id="12_mln1t"]
 [ext_resource type="Script" path="res://PopupMenu.gd" id="12_ndm45"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3uyhb"]
-
-[sub_resource type="ButtonGroup" id="ButtonGroup_6wsxw"]
-resource_name = "DeleRegsRadio"
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fs0i5"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_inmen"]
+[ext_resource type="PackedScene" uid="uid://bt603wobpgicy" path="res://delegated_scanning_config.tscn" id="14_yr5sp"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rk3k5"]
 font_size = 12
@@ -31,23 +22,23 @@ font_color = Color(0.712129, 0.712129, 0.712129, 1)
 font_size = 10
 font_color = Color(0.712129, 0.712129, 0.712129, 1)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rgmtv"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6vqw1"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v2rmo"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6vqw1"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_i5cdb"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rgmtv"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbdf4"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fww3u"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_i5cdb"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b2k4s"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2lkia"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fww3u"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nlwxi"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2lkia"]
 
 [sub_resource type="Curve2D" id="Curve2D_o8erq"]
 _data = {
@@ -508,6 +499,19 @@ offset_bottom = 552.0
 color = Color(0.0768358, 0.0768358, 0.0768358, 1)
 metadata/_edit_lock_ = true
 
+[node name="BigCloud" type="Node2D" parent="."]
+
+[node name="Cloud4-svgrepo-com-256x256" type="Sprite2D" parent="BigCloud"]
+position = Vector2(232, 88)
+texture = ExtResource("8_aq7sb")
+
+[node name="BigCloudLabel" type="Label" parent="BigCloud"]
+offset_left = 277.0
+offset_top = 21.0
+offset_right = 350.0
+offset_bottom = 44.0
+text = "registry..."
+
 [node name="ProdCluster" parent="." instance=ExtResource("2_70j8o")]
 offset_left = 448.0
 offset_top = 16.0
@@ -541,103 +545,6 @@ offset_left = 48.0
 offset_top = 193.0
 offset_right = 416.0
 offset_bottom = 361.0
-
-[node name="DelegatedScanningConfig" type="Control" parent="."]
-anchors_preset = 0
-offset_left = 703.0
-offset_top = 592.0
-offset_right = 1199.0
-offset_bottom = 800.0
-
-[node name="DefaultClusterIDLabel" type="Label" parent="DelegatedScanningConfig"]
-layout_mode = 2
-offset_left = 44.0
-offset_right = 181.0
-offset_bottom = 23.0
-text = "Default Cluster"
-
-[node name="DefaultClusterOption" type="OptionButton" parent="DelegatedScanningConfig"]
-layout_mode = 2
-offset_left = 44.0
-offset_top = 24.0
-offset_right = 192.0
-offset_bottom = 55.0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_3uyhb")
-
-[node name="RegistryLabel" type="Label" parent="DelegatedScanningConfig"]
-layout_mode = 0
-offset_left = 44.0
-offset_top = 64.0
-offset_right = 328.0
-offset_bottom = 87.0
-text = "Registry"
-
-[node name="ClusterIDLabel" type="Label" parent="DelegatedScanningConfig"]
-layout_mode = 0
-offset_left = 336.0
-offset_top = 64.0
-offset_right = 487.0
-offset_bottom = 87.0
-text = "Cluster"
-
-[node name="dev" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
-offset_left = 1.0
-offset_top = 128.0
-offset_bottom = 160.0
-registry_name = "dev.reg.local"
-
-[node name="prod" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
-offset_left = 1.0
-offset_top = 88.0
-offset_bottom = 120.0
-registry_name = "prod.registry.io"
-
-[node name="quay" parent="DelegatedScanningConfig" instance=ExtResource("3_pco5m")]
-offset_left = 1.0
-offset_top = 168.0
-offset_bottom = 200.0
-registry_name = "quay.io"
-
-[node name="EnabledForRadios" type="Control" parent="."]
-anchors_preset = 0
-offset_left = 704.0
-offset_top = 552.0
-offset_right = 1192.0
-offset_bottom = 584.0
-
-[node name="NoneRadio" type="CheckBox" parent="EnabledForRadios"]
-layout_mode = 0
-offset_right = 96.0
-offset_bottom = 32.0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_3uyhb")
-button_pressed = true
-button_group = SubResource("ButtonGroup_6wsxw")
-text = "None"
-
-[node name="AllRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
-layout_mode = 0
-offset_left = 96.0
-offset_right = 248.0
-offset_bottom = 32.0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_fs0i5")
-button_group = SubResource("ButtonGroup_6wsxw")
-text = "All Registries"
-
-[node name="SpecificRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
-layout_mode = 0
-offset_left = 248.0
-offset_right = 418.0
-offset_bottom = 32.0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_inmen")
-button_group = SubResource("ButtonGroup_6wsxw")
-text = "Specific Registries"
-
-[node name="BotLine2" type="Line2D" parent="EnabledForRadios"]
-position = Vector2(-474, -280)
-points = PackedVector2Array(962, 312, 474, 312)
-width = 1.0
-sharp_limit = 1.0
-round_precision = 1
 
 [node name="ImageManager" parent="." instance=ExtResource("5_yp0xd")]
 layout_mode = 0
@@ -673,19 +580,6 @@ offset_top = 384.0
 offset_right = 288.0
 offset_bottom = 544.0
 
-[node name="BigCloud" type="Node2D" parent="."]
-
-[node name="Cloud4-svgrepo-com-256x256" type="Sprite2D" parent="BigCloud"]
-position = Vector2(232, 88)
-texture = ExtResource("8_aq7sb")
-
-[node name="BigCloudLabel" type="Label" parent="BigCloud"]
-offset_left = 277.0
-offset_top = 21.0
-offset_right = 350.0
-offset_bottom = 44.0
-text = "registry..."
-
 [node name="LogPanel" parent="." instance=ExtResource("7_1jrm4")]
 offset_left = 792.0
 offset_right = 1200.0
@@ -709,9 +603,9 @@ offset_left = 1160.0
 offset_top = 520.0
 offset_right = 1192.0
 offset_bottom = 544.0
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_rgmtv")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_v2rmo")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6vqw1")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_v2rmo")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_rgmtv")
 icon = ExtResource("8_wo2kh")
 icon_alignment = 1
 
@@ -721,8 +615,8 @@ offset_left = 840.0
 offset_top = 520.0
 offset_right = 944.0
 offset_bottom = 544.0
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_i5cdb")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gbdf4")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_i5cdb")
 icon = ExtResource("9_f2pe8")
 clip_text = true
 icon_alignment = 1
@@ -733,8 +627,8 @@ offset_left = 800.0
 offset_top = 520.0
 offset_right = 832.0
 offset_bottom = 544.0
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_fww3u")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_b2k4s")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_fww3u")
 icon = ExtResource("9_6wee7")
 clip_text = true
 icon_alignment = 1
@@ -746,8 +640,8 @@ offset_left = 912.0
 offset_top = 520.0
 offset_right = 944.0
 offset_bottom = 544.0
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_2lkia")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_nlwxi")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_2lkia")
 icon = ExtResource("12_mln1t")
 clip_text = true
 icon_alignment = 1
@@ -1090,15 +984,14 @@ text = "v0.0.0"
 label_settings = SubResource("LabelSettings_2k1n6")
 vertical_alignment = 1
 
+[node name="DelegatedScanningConfig2" parent="." instance=ExtResource("14_yr5sp")]
+offset_left = 680.0
+offset_top = 560.0
+offset_right = 1192.0
+offset_bottom = 792.0
+
 [connection signal="gui_input" from="BottomPanelBG" to="." method="_on_bottom_panel_bg_gui_input"]
 [connection signal="gui_input" from="TopPanelBG" to="." method="_on_top_panel_bg_gui_input"]
-[connection signal="item_selected" from="DelegatedScanningConfig/DefaultClusterOption" to="." method="_on_default_cluster_option_item_selected"]
-[connection signal="config_updated" from="DelegatedScanningConfig/dev" to="." method="_on_dev_config_updated"]
-[connection signal="config_updated" from="DelegatedScanningConfig/prod" to="." method="_on_prod_config_updated"]
-[connection signal="config_updated" from="DelegatedScanningConfig/quay" to="." method="_on_quay_config_updated"]
-[connection signal="toggled" from="EnabledForRadios/NoneRadio" to="." method="_on_none_radio_toggled"]
-[connection signal="toggled" from="EnabledForRadios/AllRegistriesRadio" to="." method="_on_all_registries_radio_toggled"]
-[connection signal="toggled" from="EnabledForRadios/SpecificRegistriesRadio" to="." method="_on_specific_registries_radio_toggled"]
 [connection signal="gui_input" from="LogPanel" to="." method="_on_log_panel_gui_input"]
 [connection signal="pressed" from="FlowControls/ResetButton" to="." method="_on_reset_button_pressed"]
 [connection signal="pressed" from="FlowControls/PausePlayButton" to="." method="_on_pause_play_button_pressed"]

@@ -16,9 +16,6 @@ func _ready():
 	SignalManager.images_updated.connect(_update_images)
 	SignalManager.active_image_updated.connect(_update_active_image)
 	
-	#button_group = button_group_res.duplicate()
-	#button_group.pressed.connect(_image_selected)
-
 	_orig_placholder_text = image_name_edit.placeholder_text
 	_update_images()
 	
@@ -28,8 +25,6 @@ func _update_active_image():
 		
 
 func _image_selected(_base_button:BaseButton):
-	#var pressed = button_group.get_pressed_button()
-	#print("button group size: ", button_group.get_buttons().size(), " -- selected button ", _base_button.text, " -- pressed: ", pressed.text)
 	for button_idx:int in button_group.get_buttons().size():
 		var button = button_group.get_buttons()[button_idx]
 		if _base_button == button:
