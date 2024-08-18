@@ -5,11 +5,11 @@ const image_entry_scene = preload("res://image_entry.tscn")
 var button_group_res:ButtonGroup = preload("res://theme/image_entry_button_group.tres")
 var button_group:ButtonGroup
 var _orig_placholder_text:String
-	
-@onready var image_container = $VBoxContainer/ScrollContainer/ImageContainer
-@onready var image_name_edit = $VBoxContainer/HBoxContainer/ImageNameEdit
-@onready var scroll_container = $VBoxContainer/ScrollContainer
-@onready var add_image_button = $VBoxContainer/HBoxContainer/AddImageButton
+
+@onready var image_container: VBoxContainer = $VBoxContainer/ScrollContainer/ImageContainer
+@onready var image_name_edit: LineEdit = $VBoxContainer/HBoxContainer/ImageNameEdit
+@onready var scroll_container: ScrollContainer = $VBoxContainer/ScrollContainer
+@onready var add_image_button: Button = $VBoxContainer/HBoxContainer/AddImageButton
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

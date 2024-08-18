@@ -8,6 +8,7 @@ extends Control
 @onready var specific_registries_desc = $AddRegistryBox/SpecificRegistriesDesc
 @onready var registries: VBoxContainer = $RegistriesBox/Registries
 @onready var add_registry_button: Button = $RegistriesBox/AddRegistryButton
+@onready var lines: Node2D = $Lines
 
 const _registry_scene = preload("res://registry_real.tscn")
 
@@ -18,6 +19,7 @@ func _ready():
 	default_cluster_control.hide()
 	add_registry_box.hide()
 	registries_box.hide()
+	lines.hide()
 	
 	add_registry_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	
@@ -42,15 +44,18 @@ func _sync_registry_controls() -> void:
 		default_cluster_control.hide()
 		add_registry_box.hide()
 		registries_box.hide()
+		lines.hide()
 		return
 	
 	default_cluster_control.show()
+	lines.show()
 		
 	if cfg.get_num_registries() > 0:
 		registries_box.show()
 		add_registry_box.hide()
 		return
-		
+	
+	registries_box.hide()
 	add_registry_box.show()
 	if cfg.get_enabled_for() == Global.ENABLED_FOR.ALL:
 		all_registries_desc.show()

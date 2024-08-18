@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://d1yakxej4vlq7" path="res://cluster_overlay.tscn" id="1_o7yi8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5c2nx"]
-bg_color = Color(0.180392, 0.180392, 0.180392, 1)
+bg_color = Color(0.129412, 0.14902, 0.180392, 1)
 
 [node name="CentralServices" type="Control"]
 layout_mode = 3

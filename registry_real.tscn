@@ -22,13 +22,13 @@ clip_contents = true
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 3
 anchors_preset = 0
-offset_right = 496.0
+offset_right = 576.0
 offset_bottom = 24.0
 script = ExtResource("1_7tcl7")
 
 [node name="Registry" type="LineEdit" parent="."]
 layout_mode = 0
-offset_right = 272.0
+offset_right = 304.0
 offset_bottom = 25.0
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 12
@@ -36,17 +36,17 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_nnns8")
 
 [node name="Cluster" type="OptionButton" parent="."]
 layout_mode = 0
-offset_left = 280.0
-offset_right = 472.0
+offset_left = 312.0
+offset_right = 536.0
 offset_bottom = 24.0
 theme_override_font_sizes/font_size = 12
 theme_override_styles/focus = SubResource("StyleBoxEmpty_5cfi1")
 
 [node name="DeleteButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 480.0
+offset_left = 544.0
 offset_top = 4.0
-offset_right = 496.0
+offset_right = 560.0
 offset_bottom = 20.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_yivaq")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hi0kr")

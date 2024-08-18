@@ -548,9 +548,10 @@ offset_bottom = 361.0
 
 [node name="ImageManager" parent="." instance=ExtResource("5_yp0xd")]
 layout_mode = 0
-offset_top = 553.0
-offset_right = 576.0
-offset_bottom = 776.0
+offset_left = 8.0
+offset_top = 560.0
+offset_right = 608.0
+offset_bottom = 783.0
 
 [node name="As Of Label" type="Label" parent="."]
 layout_mode = 0
@@ -558,19 +559,19 @@ offset_left = 8.0
 offset_top = 776.0
 offset_right = 152.0
 offset_bottom = 799.0
-text = "As of version: 4.4.4"
+text = "As of version: 4.5.1"
 label_settings = SubResource("LabelSettings_rk3k5")
 vertical_alignment = 2
 
 [node name="Disclaimer" type="Label" parent="."]
 layout_mode = 0
-offset_left = 160.0
+offset_left = 616.0
 offset_top = 776.0
-offset_right = 611.0
+offset_right = 1192.0
 offset_bottom = 799.0
 text = "Disclaimer: may be inaccuracies, test and verify before making changes to real installations."
 label_settings = SubResource("LabelSettings_fntr6")
-horizontal_alignment = 1
+horizontal_alignment = 2
 vertical_alignment = 2
 
 [node name="ImageStatusZoomed" parent="." instance=ExtResource("8_6wjqu")]
@@ -985,10 +986,10 @@ label_settings = SubResource("LabelSettings_2k1n6")
 vertical_alignment = 1
 
 [node name="DelegatedScanningConfig2" parent="." instance=ExtResource("14_yr5sp")]
-offset_left = 680.0
+offset_left = 616.0
 offset_top = 560.0
 offset_right = 1192.0
-offset_bottom = 792.0
+offset_bottom = 784.0
 
 [connection signal="gui_input" from="BottomPanelBG" to="." method="_on_bottom_panel_bg_gui_input"]
 [connection signal="gui_input" from="TopPanelBG" to="." method="_on_top_panel_bg_gui_input"]

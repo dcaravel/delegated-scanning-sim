@@ -9,11 +9,9 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_inmen"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nw544"]
-bg_color = Color(0.156863, 0.168627, 0.196078, 1)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ehp1q"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5kqnh"]
-bg_color = Color(0.156863, 0.168627, 0.196078, 1)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0g7gp"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0be5b"]
 
@@ -47,27 +45,34 @@ font_color = Color(0.762404, 0.762403, 0.762404, 1)
 [node name="DelegatedScanningConfig" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 512.0
-offset_bottom = 232.0
+offset_right = 576.0
+offset_bottom = 224.0
 script = ExtResource("1_1gc8w")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 576.0
+offset_bottom = 224.0
+color = Color(0.129412, 0.14902, 0.180392, 1)
 
 [node name="EnabledForRadios" type="Control" parent="."]
 anchors_preset = 0
-offset_right = 511.0
+offset_right = 576.0
 offset_bottom = 32.0
 
 [node name="ColorRect" type="ColorRect" parent="EnabledForRadios"]
+visible = false
 layout_mode = 0
 offset_right = 512.0
 offset_bottom = 32.0
-color = Color(0.156863, 0.168627, 0.196078, 1)
+color = Color(0.129412, 0.14902, 0.180392, 1)
 
 [node name="NoneRadio" type="CheckBox" parent="EnabledForRadios"]
 layout_mode = 0
 offset_left = 151.0
-offset_top = 3.0
+offset_top = 1.0
 offset_right = 222.0
-offset_bottom = 28.0
+offset_bottom = 26.0
 theme_override_font_sizes/font_size = 12
 theme_override_styles/focus = SubResource("StyleBoxEmpty_3uyhb")
 button_pressed = true
@@ -76,10 +81,10 @@ text = "None"
 
 [node name="AllRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
 layout_mode = 0
-offset_left = 222.0
-offset_top = 3.0
-offset_right = 334.0
-offset_bottom = 28.0
+offset_left = 230.0
+offset_top = 1.0
+offset_right = 342.0
+offset_bottom = 26.0
 theme_override_font_sizes/font_size = 12
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fs0i5")
 button_group = ExtResource("2_3y2a1")
@@ -87,10 +92,10 @@ text = "All registries"
 
 [node name="SpecificRegistriesRadio" type="CheckBox" parent="EnabledForRadios"]
 layout_mode = 0
-offset_left = 334.0
-offset_top = 3.0
-offset_right = 478.0
-offset_bottom = 28.0
+offset_left = 350.0
+offset_top = 1.0
+offset_right = 494.0
+offset_bottom = 26.0
 theme_override_font_sizes/font_size = 12
 theme_override_styles/focus = SubResource("StyleBoxEmpty_inmen")
 button_group = ExtResource("2_3y2a1")
@@ -107,10 +112,10 @@ text = "Delegate scanning for"
 
 [node name="DefaultClusterControl" type="Panel" parent="."]
 layout_mode = 0
-offset_top = 34.0
-offset_right = 512.0
-offset_bottom = 88.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_nw544")
+offset_top = 30.0
+offset_right = 576.0
+offset_bottom = 84.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_ehp1q")
 
 [node name="SelectDefaultClusterLabel" type="Label" parent="DefaultClusterControl"]
 layout_mode = 0
@@ -134,7 +139,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_3uyhb")
 layout_mode = 0
 offset_left = 152.0
 offset_top = 24.0
-offset_right = 512.0
+offset_right = 568.0
 offset_bottom = 48.0
 theme_override_colors/font_color = Color(0.707967, 0.707967, 0.707967, 1)
 theme_override_font_sizes/font_size = 10
@@ -145,10 +150,10 @@ autowrap_mode = 2
 
 [node name="RegistriesBox" type="Panel" parent="."]
 layout_mode = 0
-offset_top = 90.0
-offset_right = 512.0
-offset_bottom = 232.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_5kqnh")
+offset_top = 86.0
+offset_right = 576.0
+offset_bottom = 220.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_0g7gp")
 
 [node name="RegistriesHeader" type="Control" parent="RegistriesBox"]
 anchors_preset = 0
@@ -167,9 +172,9 @@ text = "Source registry"
 
 [node name="ClusterIDLabel" type="Label" parent="RegistriesBox/RegistriesHeader"]
 layout_mode = 0
-offset_left = 288.0
+offset_left = 320.0
 offset_top = 2.0
-offset_right = 478.0
+offset_right = 510.0
 offset_bottom = 19.0
 theme_override_font_sizes/font_size = 12
 text = "Destination cluster (CLI/API only)"
@@ -178,15 +183,15 @@ text = "Destination cluster (CLI/API only)"
 layout_mode = 0
 offset_left = 8.0
 offset_top = 22.0
-offset_right = 504.0
+offset_right = 568.0
 offset_bottom = 118.0
 
 [node name="AddRegistryButton" type="Button" parent="RegistriesBox"]
-custom_minimum_size = Vector2(0, 17)
+custom_minimum_size = Vector2(88, 17)
 layout_mode = 0
 offset_left = 16.0
 offset_top = 118.0
-offset_right = 97.0
+offset_right = 104.0
 offset_bottom = 135.0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.194556, 0.536973, 0.823811, 1)
@@ -205,13 +210,12 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_7mfjj")
 text = "+ Add registry"
 alignment = 2
 
-[node name="AddRegistryBox" type="ColorRect" parent="."]
+[node name="AddRegistryBox" type="Control" parent="."]
 visible = false
-layout_mode = 0
-offset_top = 90.0
-offset_right = 512.0
-offset_bottom = 232.0
-color = Color(0.156863, 0.168627, 0.196078, 1)
+anchors_preset = 0
+offset_top = 86.0
+offset_right = 576.0
+offset_bottom = 220.0
 
 [node name="AddRegistryButton" type="Button" parent="AddRegistryBox"]
 layout_mode = 1
@@ -219,9 +223,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -64.0
-offset_top = 110.0
+offset_top = 105.0
 offset_right = 64.0
-offset_bottom = 135.0
+offset_bottom = 130.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 12
 theme_override_styles/focus = SubResource("StyleBoxEmpty_dyt5t")
@@ -233,9 +237,8 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -248.0
-offset_top = 8.0
 offset_right = 248.0
-offset_bottom = 32.0
+offset_bottom = 24.0
 grow_horizontal = 2
 text = "No registries specified."
 horizontal_alignment = 1
@@ -246,10 +249,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -248.0
-offset_top = 30.0
-offset_right = 248.0
-offset_bottom = 110.0
+offset_left = -280.0
+offset_top = 26.0
+offset_right = 280.0
+offset_bottom = 106.0
 grow_horizontal = 2
 text = "All Sensor observed images will be scanned within the local Secured Cluster.
 
@@ -260,14 +263,15 @@ vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="SpecificRegistriesDesc" type="Label" parent="AddRegistryBox"]
+visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -248.0
-offset_top = 30.0
-offset_right = 248.0
-offset_bottom = 110.0
+offset_left = -280.0
+offset_top = 22.0
+offset_right = 280.0
+offset_bottom = 102.0
 grow_horizontal = 2
 text = "Sensor observed images from the specified registries will be scanned within the local Secured Cluster. Central Services will scan images from the non-specified registries.
 
@@ -276,6 +280,19 @@ label_settings = SubResource("LabelSettings_whylg")
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="Lines" type="Node2D" parent="."]
+position = Vector2(0, -4)
+
+[node name="Line1" type="Line2D" parent="Lines"]
+points = PackedVector2Array(8, 32, 568, 32)
+width = 1.0
+default_color = Color(0.498039, 0.498039, 0.498039, 1)
+
+[node name="Line2" type="Line2D" parent="Lines"]
+points = PackedVector2Array(8, 88, 568, 88)
+width = 1.0
+default_color = Color(0.498039, 0.498039, 0.498039, 1)
 
 [connection signal="gui_input" from="EnabledForRadios/ColorRect" to="." method="_on_color_rect_gui_input"]
 [connection signal="pressed" from="EnabledForRadios/NoneRadio" to="." method="_on_none_radio_pressed"]

@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://d1yakxej4vlq7" path="res://cluster_overlay.tscn" id="3_1x4ag"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5c2nx"]
-bg_color = Color(0.180392, 0.180392, 0.180392, 1)
+bg_color = Color(0.129412, 0.14902, 0.180392, 1)
 
 [sub_resource type="Animation" id="Animation_ooj3w"]
 length = 0.001
