@@ -43,4 +43,7 @@ class Registry:
 		_cluster_idx = p_idx
 	
 	func match(p_image:String) -> bool:
+		if _path.length() == 0:
+			return false
+			
 		return p_image.begins_with(_path)
