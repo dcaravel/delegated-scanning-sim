@@ -556,10 +556,10 @@ offset_bottom = 783.0
 [node name="As Of Label" type="Label" parent="."]
 layout_mode = 0
 offset_left = 8.0
-offset_top = 776.0
+offset_top = 782.0
 offset_right = 152.0
 offset_bottom = 799.0
-text = "As of version: 4.5.1"
+text = "As of version: 4.6.1"
 label_settings = SubResource("LabelSettings_rk3k5")
 vertical_alignment = 2
 
