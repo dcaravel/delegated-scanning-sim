@@ -46,13 +46,13 @@ font_color = Color(0.762404, 0.762403, 0.762404, 1)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 576.0
-offset_bottom = 224.0
+offset_bottom = 232.0
 script = ExtResource("1_1gc8w")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0
 offset_right = 576.0
-offset_bottom = 224.0
+offset_bottom = 232.0
 color = Color(0.129412, 0.14902, 0.180392, 1)
 
 [node name="EnabledForRadios" type="Control" parent="."]

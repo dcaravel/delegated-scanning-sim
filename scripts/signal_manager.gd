@@ -24,3 +24,6 @@ signal dele_scan_add_registry(p_reg:Global.Registry)
 signal dele_scan_update_registry(p_reg_idx:int, p_reg:Global.Registry)
 signal dele_scan_delete_registry(p_reg_idx:int)
 signal dele_scan_config_updated
+
+# Version Setting
+signal version_change(p_version:String)

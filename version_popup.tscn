@@ -1,0 +1,96 @@
+[gd_scene load_steps=7 format=3 uid="uid://b3pm7gwgyq8cm"]
+
+[ext_resource type="Script" path="res://version_popup.gd" id="1_5pe24"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1qge1"]
+bg_color = Color(0.211765, 0.239216, 0.290196, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h351l"]
+bg_color = Color(0.129412, 0.14902, 0.180392, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_r7mym"]
+font_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dja7a"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.129412, 0.14902, 0.180392, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_r4c13"]
+font_size = 12
+
+[node name="PopupPanel" type="Panel"]
+custom_minimum_size = Vector2(13.74, 35.435)
+offset_right = 496.0
+offset_bottom = 216.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1qge1")
+script = ExtResource("1_5pe24")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 488.0
+offset_bottom = 208.0
+theme_override_constants/separation = 8
+
+[node name="SelectAsOfVersion" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "Select as of version:"
+
+[node name="Panel_4_7" type="Panel" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_h351l")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Panel_4_7"]
+layout_mode = 2
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 472.0
+offset_bottom = 64.0
+
+[node name="Label" type="Label" parent="VBoxContainer/Panel_4_7/VBoxContainer"]
+layout_mode = 2
+text = "4.7"
+
+[node name="Label2" type="Label" parent="VBoxContainer/Panel_4_7/VBoxContainer"]
+layout_mode = 2
+text = "Baseline (4.4 - 4.7)"
+label_settings = SubResource("LabelSettings_r7mym")
+
+[node name="Panel_4_8" type="Panel" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 88)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dja7a")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Panel_4_8"]
+layout_mode = 2
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 472.0
+offset_bottom = 80.0
+
+[node name="Label" type="Label" parent="VBoxContainer/Panel_4_8/VBoxContainer"]
+layout_mode = 2
+text = "4.8"
+
+[node name="Label2" type="Label" parent="VBoxContainer/Panel_4_8/VBoxContainer"]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+text = "For ad-hoc scan requests (ie: roxctl image scan) - Central will now attempt the scan before returning the error \"no cluster specified\""
+label_settings = SubResource("LabelSettings_r4c13")
+autowrap_mode = 2
+
+[connection signal="mouse_entered" from="VBoxContainer/Panel_4_7" to="." method="_on_panel_4_7_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/Panel_4_7" to="." method="_on_panel_4_7_mouse_exited"]
+[connection signal="mouse_entered" from="VBoxContainer/Panel_4_8" to="." method="_on_panel_4_8_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/Panel_4_8" to="." method="_on_panel_4_8_mouse_exited"]

@@ -84,6 +84,8 @@ var done_ready:bool = false
 @onready var central_roxctl_to_cluster = $"Paths/central-roxctl-to-cluster"
 @onready var popup_menu = $PopupMenu
 @onready var version_label = $VersionLabel
+@onready var version_popup: Popup = $VersionPopup
+@onready var as_of_label: Button = $"As Of Label"
 
 @onready var cluster_scenes = {
 	0: prod_cluster,
@@ -125,6 +127,13 @@ func get_text_file_content(filePath):
 	return content
 
 func _ready():
+	#version_popup = PopupPanel.new()
+	#version_popup.title = "My Popup"
+	#version_popup.add_child(version_popup_scene.instantiate())
+	#add_child(version_popup)
+	
+	
+	
 	version_label.text = "v" + get_text_file_content(version_txt_path)
 	# The enum and list of clusters must be the same, otherwise the dropdowns will not match the output
 	assert(Global.CLUSTER.size() == Global.CLUSTERS.size())
@@ -133,6 +142,7 @@ func _ready():
 	SignalManager.log_cleared.connect(_on_log_clear)
 	SignalManager.deploy_to_cluster.connect(_on_deploy_to_cluster)
 	SignalManager.context_menu.connect(_on_context_menu)
+	SignalManager.version_change.connect(_on_version_change)
 	
 	var apPath:String = "Registry/AnimationPlayer"
 	animationPlayers = [
@@ -675,7 +685,13 @@ func _get_path_central_start(image:String) -> Array[PathSegment]:
 		return _build_path(1) if reg_internet_accessable else _build_path(2)
 	
 	if r.dst_cluster() == Global.CENTRAL_CLUSTER_IDX:
-		return _build_path(3)
+		if Config.version() == "4.7":
+			return _build_path(3)
+		else:
+			if reg_internet_accessable:
+				return _build_path(1)
+			else:
+				return _build_path(2)
 	
 	if reg_internet_accessable:
 		return _build_path(4)
@@ -816,25 +832,6 @@ func _midIconCB(p_text:String) -> Node:
 	_add_log_entry(_get_last_log_letter(), p_text)
 	return i
 
-func _config_updated():
-	# TODO: instead of doing a full reset, perhaps just change the behavior of the flow controls
-	_reset()
-
-func _on_prod_config_updated():
-	_config_updated()
-
-func _on_dev_config_updated():
-	_config_updated()
-
-func _on_quay_config_updated():
-	_config_updated()
-
-func _on_default_cluster_option_item_selected(_index):
-	# -1 = none/default
-	# 0 = prod, ..., etc. so that the index will map to a cluster in the clusters array
-	SignalManager.dele_scan_update_default_cluster.emit(_index-1)
-	_config_updated()
-
 func _on_context_menu(_p_cluster:Global.CLUSTER):
 	# disabled in preference # buttons
 	#popup_menu.active_cluster = p_cluster
@@ -925,3 +922,11 @@ func _on_top_panel_bg_gui_input(event):
 
 func _on_log_panel_gui_input(event):
 	_handle_background_input_event(event)
+
+func _on_as_of_label_pressed() -> void:
+	version_popup.show()
+	
+func _on_version_change(version:String) -> void:
+	as_of_label.text = "As of version: " + version + " "
+	version_popup.hide()
+	

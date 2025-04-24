@@ -1,4 +1,4 @@
-[gd_scene load_steps=98 format=3 uid="uid://1d30nevdx8ls"]
+[gd_scene load_steps=102 format=3 uid="uid://1d30nevdx8ls"]
 
 [ext_resource type="Script" path="res://arch.gd" id="1_p2u15"]
 [ext_resource type="PackedScene" uid="uid://bq8pyne1pxix3" path="res://cluster.tscn" id="2_70j8o"]
@@ -12,11 +12,15 @@
 [ext_resource type="Texture2D" uid="uid://d1f7errq8u5g8" path="res://assets/play-svgrepo-com-16x16.png" id="9_f2pe8"]
 [ext_resource type="Texture2D" uid="uid://dijl4n88jtnv6" path="res://assets/forward-step-svgrepo-com.png" id="12_mln1t"]
 [ext_resource type="Script" path="res://PopupMenu.gd" id="12_ndm45"]
+[ext_resource type="Texture2D" uid="uid://px1cqgx8lkur" path="res://assets/change-16x16.png" id="14_jxwuc"]
 [ext_resource type="PackedScene" uid="uid://bt603wobpgicy" path="res://delegated_scanning_config.tscn" id="14_yr5sp"]
+[ext_resource type="PackedScene" uid="uid://b3pm7gwgyq8cm" path="res://version_popup.tscn" id="15_8lr6t"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_rk3k5"]
-font_size = 12
-font_color = Color(0.712129, 0.712129, 0.712129, 1)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3qfnc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cexxk"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vt4k6"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_fntr6"]
 font_size = 10
@@ -551,28 +555,31 @@ layout_mode = 0
 offset_left = 8.0
 offset_top = 560.0
 offset_right = 608.0
-offset_bottom = 783.0
+offset_bottom = 768.0
 
-[node name="As Of Label" type="Label" parent="."]
+[node name="As Of Label" type="Button" parent="."]
 layout_mode = 0
 offset_left = 8.0
-offset_top = 782.0
-offset_right = 152.0
-offset_bottom = 799.0
-text = "As of version: 4.6.1"
-label_settings = SubResource("LabelSettings_rk3k5")
-vertical_alignment = 2
+offset_top = 772.0
+offset_right = 128.0
+offset_bottom = 796.0
+theme_override_font_sizes/font_size = 10
+theme_override_styles/focus = SubResource("StyleBoxEmpty_3qfnc")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_cexxk")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_vt4k6")
+text = "As of version: 4.7 "
+icon = ExtResource("14_jxwuc")
 
 [node name="Disclaimer" type="Label" parent="."]
 layout_mode = 0
-offset_left = 616.0
+offset_left = 120.0
 offset_top = 776.0
-offset_right = 1192.0
-offset_bottom = 799.0
+offset_right = 608.0
+offset_bottom = 792.0
 text = "Disclaimer: may be inaccuracies, test and verify before making changes to real installations."
 label_settings = SubResource("LabelSettings_fntr6")
 horizontal_alignment = 2
-vertical_alignment = 2
+vertical_alignment = 1
 
 [node name="ImageStatusZoomed" parent="." instance=ExtResource("8_6wjqu")]
 layout_mode = 0
@@ -989,10 +996,17 @@ vertical_alignment = 1
 offset_left = 616.0
 offset_top = 560.0
 offset_right = 1192.0
-offset_bottom = 784.0
+offset_bottom = 792.0
+
+[node name="VersionPopup" type="Popup" parent="."]
+initial_position = 2
+size = Vector2i(496, 216)
+
+[node name="PopupPanel" parent="VersionPopup" instance=ExtResource("15_8lr6t")]
 
 [connection signal="gui_input" from="BottomPanelBG" to="." method="_on_bottom_panel_bg_gui_input"]
 [connection signal="gui_input" from="TopPanelBG" to="." method="_on_top_panel_bg_gui_input"]
+[connection signal="pressed" from="As Of Label" to="." method="_on_as_of_label_pressed"]
 [connection signal="gui_input" from="LogPanel" to="." method="_on_log_panel_gui_input"]
 [connection signal="pressed" from="FlowControls/ResetButton" to="." method="_on_reset_button_pressed"]
 [connection signal="pressed" from="FlowControls/PausePlayButton" to="." method="_on_pause_play_button_pressed"]

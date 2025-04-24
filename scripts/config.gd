@@ -3,6 +3,18 @@ extends Node
 func _init():
 	SignalManager.dele_scan_update_enabled_for.connect(_on_enabled_for_updated)
 	SignalManager.dele_scan_update_default_cluster.connect(_on_default_cluster_updated)
+	SignalManager.version_change.connect(_on_version_change)
+
+##################
+## Version
+##################
+var _version:String = "4.7"
+
+func _on_version_change(p_version:String):
+	_version = p_version
+
+func version() -> String:
+	return _version
 
 ##################
 ## Walking / Moving
@@ -297,7 +309,7 @@ func should_delegate(p_image:String) -> ShouldDelegateResult:
 	var e_for:Global.ENABLED_FOR = c.get_enabled_for()
 
 	if e_for == Global.ENABLED_FOR.NONE:
-		return ShouldDelegateResult.new(false, -1)
+		return ShouldDelegateResult.new(false, Global.CENTRAL_CLUSTER_IDX)
 
 	if e_for == Global.ENABLED_FOR.ALL:
 		for reg:Global.Registry in c.get_registries():
@@ -314,4 +326,4 @@ func should_delegate(p_image:String) -> ShouldDelegateResult:
 				return ShouldDelegateResult.new(true, cluster_idx)
 	
 
-	return ShouldDelegateResult.new(false, -1)
+	return ShouldDelegateResult.new(false, Global.CENTRAL_CLUSTER_IDX)
