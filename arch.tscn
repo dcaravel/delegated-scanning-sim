@@ -1,6 +1,6 @@
 [gd_scene load_steps=102 format=3 uid="uid://1d30nevdx8ls"]
 
-[ext_resource type="Script" path="res://arch.gd" id="1_p2u15"]
+[ext_resource type="Script" uid="uid://buie876epnn76" path="res://arch.gd" id="1_p2u15"]
 [ext_resource type="PackedScene" uid="uid://bq8pyne1pxix3" path="res://cluster.tscn" id="2_70j8o"]
 [ext_resource type="PackedScene" uid="uid://dtq65a7gfvplv" path="res://central_services.tscn" id="3_srn5w"]
 [ext_resource type="PackedScene" uid="uid://by3lsour21dm4" path="res://image_manager.tscn" id="5_yp0xd"]
@@ -11,38 +11,38 @@
 [ext_resource type="Texture2D" uid="uid://dxwjp014yh72h" path="res://assets/backward-step-svgrepo-com-16x16.png" id="9_6wee7"]
 [ext_resource type="Texture2D" uid="uid://d1f7errq8u5g8" path="res://assets/play-svgrepo-com-16x16.png" id="9_f2pe8"]
 [ext_resource type="Texture2D" uid="uid://dijl4n88jtnv6" path="res://assets/forward-step-svgrepo-com.png" id="12_mln1t"]
-[ext_resource type="Script" path="res://PopupMenu.gd" id="12_ndm45"]
+[ext_resource type="Script" uid="uid://uegs2y2v0qfw" path="res://PopupMenu.gd" id="12_ndm45"]
 [ext_resource type="Texture2D" uid="uid://px1cqgx8lkur" path="res://assets/change-16x16.png" id="14_jxwuc"]
 [ext_resource type="PackedScene" uid="uid://bt603wobpgicy" path="res://delegated_scanning_config.tscn" id="14_yr5sp"]
 [ext_resource type="PackedScene" uid="uid://b3pm7gwgyq8cm" path="res://version_popup.tscn" id="15_8lr6t"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3qfnc"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vt4k6"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cexxk"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vt4k6"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3qfnc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_fntr6"]
 font_size = 10
 font_color = Color(0.712129, 0.712129, 0.712129, 1)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6vqw1"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rgmtv"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v2rmo"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rgmtv"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbdf4"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6vqw1"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_i5cdb"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b2k4s"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbdf4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fww3u"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nlwxi"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b2k4s"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2lkia"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nlwxi"]
 
 [sub_resource type="Curve2D" id="Curve2D_o8erq"]
 _data = {
@@ -517,6 +517,7 @@ offset_bottom = 44.0
 text = "registry..."
 
 [node name="ProdCluster" parent="." instance=ExtResource("2_70j8o")]
+layout_mode = 0
 offset_left = 448.0
 offset_top = 16.0
 offset_right = 713.0
@@ -527,6 +528,7 @@ registry_name = "prod.registry.io"
 metadata/_edit_pinned_properties_ = [&"cluster_name"]
 
 [node name="DevCluster" parent="." instance=ExtResource("2_70j8o")]
+layout_mode = 0
 offset_left = 448.0
 offset_top = 192.0
 offset_right = 713.0
@@ -536,6 +538,7 @@ cluster = 2
 registry_name = "dev.reg.local"
 
 [node name="OtherCluster" parent="." instance=ExtResource("2_70j8o")]
+layout_mode = 0
 offset_left = 448.0
 offset_top = 368.0
 offset_right = 713.0
@@ -545,6 +548,7 @@ cluster = 3
 registry_name = ""
 
 [node name="CentralServices" parent="." instance=ExtResource("3_srn5w")]
+layout_mode = 0
 offset_left = 48.0
 offset_top = 193.0
 offset_right = 416.0
@@ -564,10 +568,10 @@ offset_top = 772.0
 offset_right = 128.0
 offset_bottom = 796.0
 theme_override_font_sizes/font_size = 10
-theme_override_styles/focus = SubResource("StyleBoxEmpty_3qfnc")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_cexxk")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_vt4k6")
-text = "As of version: 4.7 "
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_cexxk")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_3qfnc")
+text = "As of version: 4.8 "
 icon = ExtResource("14_jxwuc")
 
 [node name="Disclaimer" type="Label" parent="."]
@@ -589,6 +593,7 @@ offset_right = 288.0
 offset_bottom = 544.0
 
 [node name="LogPanel" parent="." instance=ExtResource("7_1jrm4")]
+layout_mode = 0
 offset_left = 792.0
 offset_right = 1200.0
 
@@ -611,9 +616,9 @@ offset_left = 1160.0
 offset_top = 520.0
 offset_right = 1192.0
 offset_bottom = 544.0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_6vqw1")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_v2rmo")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_rgmtv")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_v2rmo")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6vqw1")
 icon = ExtResource("8_wo2kh")
 icon_alignment = 1
 
@@ -623,8 +628,8 @@ offset_left = 840.0
 offset_top = 520.0
 offset_right = 944.0
 offset_bottom = 544.0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_gbdf4")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_i5cdb")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gbdf4")
 icon = ExtResource("9_f2pe8")
 clip_text = true
 icon_alignment = 1
@@ -635,8 +640,8 @@ offset_left = 800.0
 offset_top = 520.0
 offset_right = 832.0
 offset_bottom = 544.0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_b2k4s")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_fww3u")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_b2k4s")
 icon = ExtResource("9_6wee7")
 clip_text = true
 icon_alignment = 1
@@ -648,8 +653,8 @@ offset_left = 912.0
 offset_top = 520.0
 offset_right = 944.0
 offset_bottom = 544.0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_nlwxi")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_2lkia")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_nlwxi")
 icon = ExtResource("12_mln1t")
 clip_text = true
 icon_alignment = 1
@@ -993,6 +998,7 @@ label_settings = SubResource("LabelSettings_2k1n6")
 vertical_alignment = 1
 
 [node name="DelegatedScanningConfig2" parent="." instance=ExtResource("14_yr5sp")]
+layout_mode = 0
 offset_left = 616.0
 offset_top = 560.0
 offset_right = 1192.0

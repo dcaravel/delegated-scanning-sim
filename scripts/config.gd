@@ -8,7 +8,7 @@ func _init():
 ##################
 ## Version
 ##################
-var _version:String = "4.7"
+var _version:String = "4.8"
 
 func _on_version_change(p_version:String):
 	_version = p_version
