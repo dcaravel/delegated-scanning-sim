@@ -85,6 +85,7 @@ var done_ready:bool = false
 @onready var popup_menu = $PopupMenu
 @onready var version_label = $VersionLabel
 @onready var version_popup: Popup = $VersionPopup
+@onready var version_popup_panel: Panel = $VersionPopup/PopupPanel
 @onready var as_of_label: Button = $"As Of Label"
 
 @onready var cluster_scenes = {
@@ -131,6 +132,10 @@ func _ready():
 	#version_popup.title = "My Popup"
 	#version_popup.add_child(version_popup_scene.instantiate())
 	#add_child(version_popup)
+
+	# Update popup size on window resize
+	get_viewport().size_changed.connect(_update_popup_size)
+	_update_popup_size()
 	
 	
 	
@@ -923,8 +928,24 @@ func _on_top_panel_bg_gui_input(event):
 func _on_log_panel_gui_input(event):
 	_handle_background_input_event(event)
 
+func _update_popup_size() -> void:
+	var viewport_size = get_viewport().get_visible_rect().size
+	# Scale popup to be 75% of viewport width and 50% of viewport height
+	var popup_width = viewport_size.x * 0.75
+	var popup_height = viewport_size.y * 0.5
+
+	# Update both the Popup and the PopupPanel child
+	version_popup.size = Vector2i(popup_width, popup_height)
+	version_popup_panel.custom_minimum_size = Vector2(popup_width, popup_height)
+	version_popup_panel.size = Vector2(popup_width, popup_height)
+
+	# Center the popup in the window
+	var popup_pos = Vector2i((viewport_size.x - popup_width) / 2, (viewport_size.y - popup_height) / 2)
+	version_popup.position = popup_pos
+
 func _on_as_of_label_pressed() -> void:
-	version_popup.show()
+	_update_popup_size()
+	version_popup.popup_centered()
 	
 func _on_version_change(version:String) -> void:
 	as_of_label.text = "As of version: " + version + " "

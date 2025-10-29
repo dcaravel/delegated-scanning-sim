@@ -13,7 +13,7 @@ border_width_bottom = 1
 bg_color = Color(0.129412, 0.14902, 0.180392, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_r7mym"]
-font_size = 12
+font_size = 24
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dja7a"]
 content_margin_left = 6.0
@@ -23,43 +23,55 @@ content_margin_bottom = 6.0
 bg_color = Color(0.129412, 0.14902, 0.180392, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_r4c13"]
-font_size = 12
+font_size = 24
 
 [node name="PopupPanel" type="Panel"]
-custom_minimum_size = Vector2(13.74, 35.435)
-offset_right = 496.0
-offset_bottom = 216.0
+custom_minimum_size = Vector2(900, 400)
+offset_right = 900.0
+offset_bottom = 400.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_1qge1")
 script = ExtResource("1_5pe24")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 488.0
-offset_bottom = 208.0
-theme_override_constants/separation = 8
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
 
 [node name="SelectAsOfVersion" type="Label" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 24)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "Select as of version:"
 
 [node name="Panel_4_7" type="Panel" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_h351l")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Panel_4_7"]
-layout_mode = 2
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 472.0
-offset_bottom = 64.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Label" type="Label" parent="VBoxContainer/Panel_4_7/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 32
 text = "4.7"
 
 [node name="Label2" type="Label" parent="VBoxContainer/Panel_4_7/VBoxContainer"]
@@ -68,19 +80,25 @@ text = "Baseline (4.4 - 4.7)"
 label_settings = SubResource("LabelSettings_r7mym")
 
 [node name="Panel_4_8" type="Panel" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 88)
+custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_dja7a")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Panel_4_8"]
-layout_mode = 2
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 472.0
-offset_bottom = 80.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Label" type="Label" parent="VBoxContainer/Panel_4_8/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 32
 text = "4.8"
 
 [node name="Label2" type="Label" parent="VBoxContainer/Panel_4_8/VBoxContainer"]

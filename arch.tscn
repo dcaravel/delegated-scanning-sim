@@ -1006,7 +1006,7 @@ offset_bottom = 792.0
 
 [node name="VersionPopup" type="Popup" parent="."]
 initial_position = 2
-size = Vector2i(496, 216)
+size = Vector2i(900, 400)
 
 [node name="PopupPanel" parent="VersionPopup" instance=ExtResource("15_8lr6t")]
 
