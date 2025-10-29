@@ -930,9 +930,19 @@ func _on_log_panel_gui_input(event):
 
 func _update_popup_size() -> void:
 	var viewport_size = get_viewport().get_visible_rect().size
+
 	# Scale popup to be 75% of viewport width and 50% of viewport height
 	var popup_width = viewport_size.x * 0.75
 	var popup_height = viewport_size.y * 0.5
+
+	# Clamp to reasonable maximum sizes (especially for web export)
+	# Max width: 1000px, Max height: 600px
+	popup_width = min(popup_width, 1000)
+	popup_height = min(popup_height, 600)
+
+	# Also ensure minimum sizes for small windows
+	popup_width = max(popup_width, 600)
+	popup_height = max(popup_height, 300)
 
 	# Update both the Popup and the PopupPanel child
 	version_popup.size = Vector2i(popup_width, popup_height)
